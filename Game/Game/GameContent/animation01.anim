@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<Animation>
+  <FrameTime>0,2</FrameTime>
+  <NumberOfFrames>20</NumberOfFrames>
+  <Keyframe FrameNumber="0">
+    <Bone Name="Right Upper Leg">
+      <Index>6</Index>
+      <ParentIndex>0</ParentIndex>
+      <Position>
+        <X>0</X>
+        <Y>158</Y>
+      </Position>
+      <Rotation>-5,497787</Rotation>
+      <Scale>
+        <X>1</X>
+        <Y>1</Y>
+      </Scale>
+      <Length>69</Length>
+    </Bone>
+    <Bone Name="Right Lower Leg">
+      <Index>7</Index>
+      <ParentIndex>6</ParentIndex>
+      <Position>
+        <X>-48,79028</X>
+        <Y>48,79044</Y>
+      </Position>
+      <Rotation>-0,2926993</Rotation>
+      <Scale>
+        <X>1</X>
+        <Y>1</Y>
+      </Scale>
+      <Length>65</Length>
+    </Bone>
+  </Keyframe>
+  <Keyframe FrameNumber="3" />
+  <Keyframe FrameNumber="8" />
+  <Keyframe FrameNumber="12" />
+  <Keyframe FrameNumber="15" />
+  <Keyframe FrameNumber="19" />
+</Animation>

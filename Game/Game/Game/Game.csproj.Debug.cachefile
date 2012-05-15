@@ -1,0 +1,77 @@
+Content\GameScreen\Textures\background.xnb
+Content\GameScreen\Textures\blank.xnb
+Content\GameScreen\Textures\gradient.xnb
+Content\Weapon\Textures\BR55BattleRifle[2].xnb
+Content\General\Textures\Pine_Tree.xnb
+Content\General\Textures\Fern.xnb
+Content\General\Textures\Fern_Branch.xnb
+Content\General\Textures\Rock[1].xnb
+Content\General\Textures\Rock[2].xnb
+Content\Animation\Textures\Main Character[Head].xnb
+Content\Animation\Textures\Main Character[LeftFoot].xnb
+Content\Animation\Textures\Main Character[LowerArm].xnb
+Content\Animation\Textures\Main Character[LowerLeg].xnb
+Content\Animation\Textures\Main Character[RightFoot].xnb
+Content\Animation\Textures\Main Character[Torso].xnb
+Content\Animation\Textures\Main Character[UpperArm].xnb
+Content\Animation\Textures\Main Character[UpperLeg].xnb
+Content\General\Textures\Backdrop_Guy[1].xnb
+Content\General\Textures\Ruins[1].xnb
+Content\General\Textures\Hazy_Field[1].xnb
+Content\General\Textures\Hazy_Field[2].xnb
+Content\General\Textures\Hazy_Field_Pillar[1].xnb
+Content\General\Textures\Hazy_Field_Tree[1].xnb
+Content\GameScreen\Textures\Gradient[1].xnb
+Content\Weapon\Textures\M90ShotgunBulletV1.xnb
+Content\Weapon\Textures\M7SMGV1.xnb
+Content\UI\Textures\arrow_collapse.xnb
+Content\UI\Textures\arrow_expand.xnb
+Content\UI\Textures\arrow_fat_down.xnb
+Content\UI\Textures\arrow_fat_up.xnb
+Content\UI\Textures\button.xnb
+Content\Spartan\Textures\SpartanHeadV2.xnb
+Content\Spartan\Textures\SpartanTorsoV1.xnb
+Content\Spartan\Textures\SpartanBackArmV1.xnb
+Content\Spartan\Textures\SpartanRightArmV2.xnb
+Content\Spartan\Textures\Legs\Jumping\Right\SpartanRightLegsJumpV1[1].xnb
+Content\Spartan\Textures\Legs\Jumping\Right\SpartanRightLegsJumpV1[2].xnb
+Content\Spartan\Textures\Legs\Jumping\Right\SpartanRightLegsJumpV1[3].xnb
+Content\Spartan\Textures\Legs\Jumping\Right\SpartanRightLegsJumpV1[4].xnb
+Content\Spartan\Textures\Legs\Jumping\Right\SpartanRightLegsJumpV1[5].xnb
+Content\Spartan\Textures\Legs\Jumping\Right\SpartanRightLegsJumpV1[6].xnb
+Content\Spartan\Textures\Legs\Jumping\Right\SpartanRightLegsJumpV1[7].xnb
+Content\Spartan\Textures\Legs\Running\Right\SpartanRightLegsV1[1].xnb
+Content\Spartan\Textures\Legs\Running\Right\SpartanRightLegsV1[2].xnb
+Content\Spartan\Textures\Legs\Running\Right\SpartanRightLegsV1[3].xnb
+Content\Spartan\Textures\Legs\Running\Right\SpartanRightLegsV1[4].xnb
+Content\Spartan\Textures\Legs\Running\Right\SpartanRightLegsV1[5].xnb
+Content\Spartan\Textures\Legs\Running\Right\SpartanRightLegsV1[6].xnb
+Content\Spartan\Textures\Legs\Running\Right\SpartanRightLegsV1[7].xnb
+Content\Spartan\Textures\Legs\Running\Right\SpartanRightLegsV1[8].xnb
+Content\Spartan\Textures\Legs\Running\Right\SpartanRightLegsV1[9].xnb
+Content\Spartan\Textures\Legs\Running\Right\LegsIdleRightV2.xnb
+Content\General\Textures\FrozenMetalGroundV1[1].xnb
+Content\Animation\Textures\guy_foot.xnb
+Content\Animation\Textures\guy_hand.xnb
+Content\Animation\Textures\guy_head.xnb
+Content\Animation\Textures\guy_lower_arm.xnb
+Content\Animation\Textures\guy_lower_leg.xnb
+Content\Animation\Textures\guy_torso.xnb
+Content\Animation\Textures\guy_upper_arm.xnb
+Content\Animation\Textures\guy_upper_leg.xnb
+Content\General\Textures\Ruins[2].xnb
+Content\General\Textures\Rainy_Trees[1].xnb
+Content\General\Textures\Forest[1].xnb
+Content\General\Textures\Distant_City.xnb
+Content\General\Textures\Harbor_Town.xnb
+Content\General\Textures\Forenoon_Fable[1].xnb
+Content\General\Textures\BlueBoxV1[1].xnb
+Content\GameScreen\Fonts\Halo.xnb
+Content\GameScreen\Fonts\HaloOutline.xnb
+Content\GameScreen\Fonts\detailsFont.xnb
+Content\GameScreen\Fonts\diagnosticFont.xnb
+Content\GameScreen\Fonts\frameRateCounterFont.xnb
+Content\GameScreen\Fonts\gamefont.xnb
+Content\GameScreen\Fonts\menufont.xnb
+Content\GameScreen\Fonts\ClaireHand.xnb
+Content\animation01.xnb
