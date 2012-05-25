@@ -62,7 +62,7 @@ namespace Library.GUI.Basic
         /// <param name="position">The position of the picturebox.</param>
         /// <param name="width">The width of this picturebox.</param>
         /// <param name="height">The height of this picturebox.</param>
-        public override void Initialize(GraphicalUserInterface gui, Vector2 position, float width, float height)
+        protected override void Initialize(GraphicalUserInterface gui, Vector2 position, float width, float height)
         {
             //The inherited method.
             base.Initialize(gui, position, width, height);

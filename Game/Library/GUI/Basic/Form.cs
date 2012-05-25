@@ -67,7 +67,7 @@ namespace Library.GUI.Basic
         /// <param name="position">The position of this form.</param>
         /// <param name="height">The height of this form.</param>
         /// <param name="width">The width of this form.</param>
-        public override void Initialize(GraphicalUserInterface gui, Vector2 position, float width, float height)
+        protected override void Initialize(GraphicalUserInterface gui, Vector2 position, float width, float height)
         {
             //The inherited method.
             base.Initialize(gui, position, width, height);
@@ -199,7 +199,7 @@ namespace Library.GUI.Basic
         protected override void OnItemBoundsChange(object obj, BoundsChangedEventArgs e)
         {
             //Update the form's layout.
-            _Layout.UpdateLayout();
+            _Layout.Update();
         }
         /// <summary>
         /// If an item has either been granted focus or lost it.

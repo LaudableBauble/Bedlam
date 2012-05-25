@@ -67,7 +67,7 @@ namespace Library.GUI.Basic
         /// <param name="position">The position of this item.</param>
         /// <param name="height">The height of this item.</param>
         /// <param name="width">The width of this item.</param>
-        public override void Initialize(GraphicalUserInterface gui, Vector2 position, float width, float height)
+        protected override void Initialize(GraphicalUserInterface gui, Vector2 position, float width, float height)
         {
             //The inherited method.
             base.Initialize(gui, position, width, height);

@@ -61,7 +61,7 @@ namespace Library.GUI
         /// <param name="position">The position of this dialog.</param>
         /// <param name="height">The height of this dialog.</param>
         /// <param name="width">The width of this dialog.</param>
-        public override void Initialize(GraphicalUserInterface gui, Vector2 position, float width, float height)
+        protected override void Initialize(GraphicalUserInterface gui, Vector2 position, float width, float height)
         {
             //The inherited method.
             base.Initialize(gui, position, width, height);

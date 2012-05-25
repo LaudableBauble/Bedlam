@@ -54,7 +54,7 @@ namespace Library.GUI.Basic
         /// <param name="position">The position of this expander.</param>
         /// <param name="height">The height of this expander.</param>
         /// <param name="width">The width of this expander.</param>
-        public override void Initialize(GraphicalUserInterface gui, Vector2 position, float width, float height)
+        protected override void Initialize(GraphicalUserInterface gui, Vector2 position, float width, float height)
         {
             //The inherited method.
             base.Initialize(gui, position, width, height);
@@ -91,6 +91,9 @@ namespace Library.GUI.Basic
         {
             //The inherited method.
             base.Update(gametime);
+
+            //Update the layout.
+            _Layout.Update();
         }
         /// <summary>
         /// Handle user input.

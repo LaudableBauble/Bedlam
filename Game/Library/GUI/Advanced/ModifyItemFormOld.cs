@@ -57,7 +57,7 @@ namespace Library.GUI
         /// <param name="position">The position of this form.</param>
         /// <param name="height">The height of this form.</param>
         /// <param name="width">The width of this form.</param>
-        public override void Initialize(GraphicalUserInterface gui, Vector2 position, float width, float height)
+        protected override void Initialize(GraphicalUserInterface gui, Vector2 position, float width, float height)
         {
             //The inherited method.
             base.Initialize(gui, position, width, height);

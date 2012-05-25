@@ -69,7 +69,7 @@ namespace Library.GUI.Basic
         /// <param name="position">The position of the component.</param>
         /// <param name="width">The width of this component.</param>
         /// <param name="height">The height of this component.</param>
-        public virtual void Initialize(GraphicalUserInterface gui, Vector2 position, float width, float height)
+        protected virtual void Initialize(GraphicalUserInterface gui, Vector2 position, float width, float height)
         {
             //Initialize some variables.
             _GUI = gui;
