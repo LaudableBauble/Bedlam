@@ -100,6 +100,9 @@ namespace Library.GUI.Basic
 
             //Manage the list of items.
             ManageItems();
+            //Update the layout.
+            _Layout.Update();
+
             //Fade the component appropriately.
             Fade(gametime);
         }
@@ -198,8 +201,8 @@ namespace Library.GUI.Basic
         /// <param name="e">The event arguments.</param>
         protected override void OnItemBoundsChange(object obj, BoundsChangedEventArgs e)
         {
-            //Update the form's layout.
-            _Layout.Update();
+            //Request a layout readjustment.
+            _Layout.RequestUpdate();
         }
         /// <summary>
         /// If an item has either been granted focus or lost it.

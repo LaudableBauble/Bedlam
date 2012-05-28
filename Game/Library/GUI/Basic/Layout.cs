@@ -90,11 +90,11 @@ namespace Library.GUI.Basic
         /// </summary>
         public void Update()
         {
-            //If the layout is dirty, update it.
-            if (_IsDirty) { UpdateLayout(); }
+            //Quit if the layout isn't enabled.
+            if (!_IsEnabled) { return; }
 
-            //The layout is no longer dirty.
-            _IsDirty = false;
+            //If the layout is dirty, update it.
+            if (_IsDirty) { UpdateLayout(); _IsDirty = false; }
         }
 
         /// <summary>
@@ -360,8 +360,8 @@ namespace Library.GUI.Basic
             //Whether to check a row or column.
             switch (structure)
             {
-                case (LayoutStructure.Row): { return (_Width - (2 * _Padding) - ((RowCount(index) - 1) * _Margin)); }
-                case (LayoutStructure.Column): { return (_Height - (2 * _Padding) - ((ColumnCount(index) - 1) * _Margin)); }
+                case (LayoutStructure.Row): { return (AvailableWidth - ((RowCount(index) - 1) * _Margin)); }
+                case (LayoutStructure.Column): { return (AvailableHeight - ((ColumnCount(index) - 1) * _Margin)); }
                 default: { return 0; }
             }
         }
@@ -422,7 +422,7 @@ namespace Library.GUI.Basic
         public Vector2 Position
         {
             get { return _Position; }
-            set { _Position = value; }
+            set { _Position = value; RequestUpdate(); }
         }
         /// <summary>
         /// The width of the layout grid.
@@ -441,7 +441,21 @@ namespace Library.GUI.Basic
             set { _Height = value; }
         }
         /// <summary>
-        /// The desired width of the layout grid, if a man can dream. This value is based off of each cell's goal width.
+        /// The available width of the layout grid, ie. the amount of width not eaten up by padding.
+        /// </summary>
+        public float AvailableWidth
+        {
+            get { return _Width - _Padding * 2; }
+        }
+        /// <summary>
+        /// The available height of the layout grid, ie. the amount of height not eaten up by padding.
+        /// </summary>
+        public float AvailableHeight
+        {
+            get { return _Height - _Padding * 2; }
+        }
+        /// <summary>
+        /// The desired width of the layout grid, if one is allowed to dream. This value is based off of each cell's goal width.
         /// </summary>
         public float DesiredWidth
         {
@@ -473,7 +487,7 @@ namespace Library.GUI.Basic
             }
         }
         /// <summary>
-        /// The desired height of the layout grid, if a man can dream. This value is based off of each cell's goal height.
+        /// The desired height of the layout grid, if one is allowed to dream. This value is based off of each cell's goal height.
         /// </summary>
         public float DesiredHeight
         {
@@ -483,21 +497,21 @@ namespace Library.GUI.Basic
                 float height = 0;
 
                 //For each cell in the grid.
-                for (int row = 0; row < _Grid.GetLength(1); row++)
+                for (int column = 0; column < _Grid.GetLength(0); column++)
                 {
-                    //The desired height of this row.
-                    float rowHeight = 0;
-                    for (int xCell = 0; xCell < _Grid.GetLength(0); xCell++)
+                    //The desired height of this column.
+                    float columnHeight = 0;
+                    for (int yCell = 0; yCell < _Grid.GetLength(1); yCell++)
                     {
                         //If the cell does not have a valid item, stop here.
-                        if (_Grid[xCell, row] == null) { continue; }
+                        if (_Grid[column, yCell] == null) { continue; }
 
-                        //Add the cell's goal width to the row's height.
-                        rowHeight += (xCell > 0) ? _Grid[xCell, row].GoalHeight + _Margin : _Grid[xCell, row].GoalHeight;
+                        //Add the cell's goal height to the column's height.
+                        columnHeight += (yCell > 0) ? _Grid[column, yCell].GoalHeight + _Margin : _Grid[column, yCell].GoalHeight;
                     }
 
-                    //If the row's goal height is greater than the layout's desired height, change them.
-                    if (rowHeight > height) { height = rowHeight; }
+                    //If the column's goal height is greater than the layout's desired height, change them.
+                    if (columnHeight > height) { height = columnHeight; }
                 }
 
                 //Return the desired width.
@@ -521,7 +535,7 @@ namespace Library.GUI.Basic
             set { _MaxRows = value; }
         }
         /// <summary>
-        /// The padding of the layout, ie. the amount of space left free just inside the layout area.
+        /// The padding of the layout, ie. the amount of space left free around the layout's content area.
         /// </summary>
         public float Padding
         {
@@ -529,7 +543,7 @@ namespace Library.GUI.Basic
             set { _Padding = value; }
         }
         /// <summary>
-        /// The margin of the layout, ie. the amount of space left free around the layout area.
+        /// The margin of the layout, ie. the amount of space left free around the layout's content area.
         /// </summary>
         public float Margin
         {

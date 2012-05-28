@@ -151,39 +151,16 @@ namespace Library.GUI.Basic
             //If the item has been recently modified update the label's and button's position, width and height.
             _Button.Position = Position;
             _Header.Position = Position + new Vector2(20, 0);
-
-            //Calculate the complete size of the expander.
-            UpdateTrueSize();
+            _Layout.Position = Position + new Vector2(0, 15);
         }
         /// <summary>
         /// Calculate the true size of this expander, one including all the child items.
         /// </summary>
         private void UpdateTrueSize()
         {
-            //The new size.
-            /*Vector2 start = _Position;
-            Vector2 end = _Position;
-
-            //For each child item, update the size.
-            _Items.ForEach(delegate(Component item)
-            {
-                //Continue only if the item is active and visible.
-                if (!item.IsActive || !item.IsVisible) { return; }
-
-                //Update the start and end positions of the expander's items.
-                start.X = (item.Position.X < start.X) ? item.Position.X : start.X;
-                start.Y = (item.Position.Y < start.Y) ? item.Position.Y : start.Y;
-                end.X = (item.Position.X + item.Width > end.X) ? item.Position.X + item.Width : end.X;
-                end.Y = (item.Position.Y + item.Height > end.Y) ? item.Position.Y + item.Height : end.Y;
-            });
-
             //Update the extender's size.
-            Width = (_IsExpanded) ? end.X - start.X : _Button.Width + 20 + _Header.Width;
-            Height = (_IsExpanded) ? end.Y - start.Y : Math.Max(_Button.Height, _Header.Height);*/
-
-            //Update the extender's size.
-            Width = (_IsExpanded) ? _Layout.Width : _Button.Width + 20 + _Header.Width;
-            Height = (_IsExpanded) ? _Layout.Height : Math.Max(_Button.Height, _Header.Height);
+            Width = _IsExpanded ? _Layout.Width : _Button.Width + 20 + _Header.Width;
+            Height = _IsExpanded ? _Layout.Height + Math.Max(_Button.Height, _Header.Height) : Math.Max(_Button.Height, _Header.Height);
         }
         /// <summary>
         /// The header has been clicked.
@@ -200,19 +177,9 @@ namespace Library.GUI.Basic
         /// </summary>
         private void SwitchState()
         {
-            //Switch state.
-            if (_IsExpanded)
-            {
-                //Contract the control.
-                _IsExpanded = false;
-                _ItemContent.ForEach(item => item.IsActive = false);
-            }
-            else
-            {
-                //Expand the control.
-                _IsExpanded = true;
-                _ItemContent.ForEach(item => item.IsActive = true);
-            }
+            //Expand or contract the control.
+            _IsExpanded = !_IsExpanded;
+            _ItemContent.ForEach(item => item.IsActive = _IsExpanded);
 
             //Update the size of the expander control.
             UpdateTrueSize();

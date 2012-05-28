@@ -89,6 +89,9 @@ namespace Library.GUI.Basic
             //If the component has changed its size voluntarily, do the same with the cell. Also change the goal size.
             if (_Component.Width != _Width) { _Width = _Component.Width; _GoalWidth = _Component.Width; }
             if (_Component.Height != _Height) { _Height = _Component.Height; _GoalHeight = _Component.Height; }
+
+            //Request a layout readjustment.
+            _Layout.RequestUpdate();
         }
 
         /// <summary>
