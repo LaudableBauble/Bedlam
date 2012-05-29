@@ -35,6 +35,8 @@ namespace Library.GUI.Basic
         protected bool _HasFocus;
         protected bool _IsMouseHovering;
         protected float _Transparence;
+        protected float _MaxTransparence;
+        protected float _MinTransparence;
         protected int _DrawOrder;
         protected CellStyle _CellStyle;
         protected List<Component> _Items;
@@ -58,7 +60,6 @@ namespace Library.GUI.Basic
         public event MouseDownHandler MouseDown;
         public event MouseHoverHandler MouseHover;
         public event PositionChangeHandler PositionChange;
-        public event ItemTypeChangeHandler VocalTypeChange;
         #endregion
 
         #region Methods
@@ -82,6 +83,8 @@ namespace Library.GUI.Basic
             _HasFocus = false;
             _IsMouseHovering = false;
             _Transparence = .5f;
+            _MaxTransparence = 0;
+            _MinTransparence = 1;
             _DrawOrder = 0;
             _CellStyle = CellStyle.Dynamic;
             _Items = new List<Component>();
@@ -133,65 +136,60 @@ namespace Library.GUI.Basic
         /// <param name="input">The helper for reading input from the user.</param>
         public virtual void HandleInput(InputState input)
         {
-            //If the component is active, write the input to the box.
-            if (_IsActive)
+            //If the component is not active nor visible, discontinue.
+            if (!_IsActive || !_IsVisible) { return; }
+
+            //If the left mouse button has been pressed.
+            if (input.IsNewLeftMouseClick())
             {
-                //If the component is visible.
-                if (_IsVisible)
+                //If the user clicks somewhere on the item, fire the event.
+                if (Helper.IsPointWithinBox(new Vector2(Mouse.GetState().X, Mouse.GetState().Y), Position, Width, Height))
                 {
-                    //If the left mouse button has been pressed.
-                    if (input.IsNewLeftMouseClick())
-                    {
-                        //If the user clicks somewhere on the item, fire the event.
-                        if (Helper.IsPointWithinBox(new Vector2(Mouse.GetState().X, Mouse.GetState().Y), Position, Width, Height))
-                        {
-                            //Fire the event.
-                            MouseClickInvoke(new Vector2(Mouse.GetState().X, Mouse.GetState().Y), MouseButton.Left);
-                        }
-                        //If not, see if it is appropriate to defocus the component.
-                        else { FocusChangeInvoke(false); }
-                    }
-
-                    //If the right mouse button has been pressed.
-                    if (input.IsNewRightMouseClick())
-                    {
-                        //If the user clicks somewhere on the item, fire the event.
-                        if (Helper.IsPointWithinBox(new Vector2(Mouse.GetState().X, Mouse.GetState().Y), Position, Width, Height))
-                        {
-                            //Fire the event.
-                            MouseClickInvoke(new Vector2(Mouse.GetState().X, Mouse.GetState().Y), MouseButton.Right);
-                        }
-                        //If not, see if it is appropriate to defocus the component.
-                        else { FocusChangeInvoke(false); }
-                    }
-
-                    //If the left mouse button is being held down.
-                    if (input.IsNewLeftMousePress())
-                    {
-                        //If the user clicks somewhere on the item, fire the event.
-                        if (Helper.IsPointWithinBox(new Vector2(Mouse.GetState().X, Mouse.GetState().Y), Position, Width, Height))
-                        {
-                            //Fire the event.
-                            MouseDownInvoke(Helper.GetMousePosition(), MouseButton.Left);
-                        }
-                    }
-
-                    //If the mouse is currently hovering over the component.
-                    if (Helper.IsPointWithinBox(Helper.GetMousePosition(), Position, Width, Height))
-                    {
-                        //If the mouse has just entered the component's surface, fire the event and enable the flag.
-                        if (!_IsMouseHovering) { MouseHoverInvoke(); }
-                    }
-                    //Else, disable the flag.
-                    else { _IsMouseHovering = false; }
-
-                    //Loop through all items and give them access to user input.
-                    foreach (Component item in _Items)
-                    {
-                        //Enable the item to handle input.
-                        item.HandleInput(input);
-                    }
+                    //Fire the event.
+                    MouseClickInvoke(new Vector2(Mouse.GetState().X, Mouse.GetState().Y), MouseButton.Left);
                 }
+                //If not, see if it is appropriate to defocus the component.
+                else { FocusChangeInvoke(false); }
+            }
+
+            //If the right mouse button has been pressed.
+            if (input.IsNewRightMouseClick())
+            {
+                //If the user clicks somewhere on the item, fire the event.
+                if (Helper.IsPointWithinBox(new Vector2(Mouse.GetState().X, Mouse.GetState().Y), Position, Width, Height))
+                {
+                    //Fire the event.
+                    MouseClickInvoke(new Vector2(Mouse.GetState().X, Mouse.GetState().Y), MouseButton.Right);
+                }
+                //If not, see if it is appropriate to defocus the component.
+                else { FocusChangeInvoke(false); }
+            }
+
+            //If the left mouse button is being held down.
+            if (input.IsNewLeftMousePress())
+            {
+                //If the user clicks somewhere on the item, fire the event.
+                if (Helper.IsPointWithinBox(new Vector2(Mouse.GetState().X, Mouse.GetState().Y), Position, Width, Height))
+                {
+                    //Fire the event.
+                    MouseDownInvoke(Helper.GetMousePosition(), MouseButton.Left);
+                }
+            }
+
+            //If the mouse is currently hovering over the component.
+            if (Helper.IsPointWithinBox(Helper.GetMousePosition(), Position, Width, Height))
+            {
+                //If the mouse has just entered the component's surface, fire the event and enable the flag.
+                if (!_IsMouseHovering) { MouseHoverInvoke(); }
+            }
+            //Else, disable the flag.
+            else { _IsMouseHovering = false; }
+
+            //Loop through all items and give them access to user input.
+            foreach (Component item in _Items)
+            {
+                //Enable the item to handle input.
+                item.HandleInput(input);
             }
         }
         /// <summary>
@@ -284,7 +282,7 @@ namespace Library.GUI.Basic
             return false;
         }
         /// <summary>
-        /// Update all tier one draw orders, according to the current state of the list.
+        /// Update all tier one childrens' draw orders, according to the current state of the list.
         /// </summary>
         private void UpdateDrawOrders()
         {
@@ -328,7 +326,7 @@ namespace Library.GUI.Basic
         protected virtual void ChangeTransparence(float value)
         {
             //Change the transparence.
-            _Transparence = Math.Max(Math.Min(value, 1), 0);
+            _Transparence = Math.Max(Math.Min(value, _MinTransparence), _MaxTransparence);
 
             //Change all sprites' transparence as well.
             foreach (Sprite sprite in _Sprite.Sprites) { sprite.Transparence = _Transparence; }
@@ -555,12 +553,28 @@ namespace Library.GUI.Basic
             set { _IsMouseHovering = value; }
         }
         /// <summary>
-        /// The transparence of this item.
+        /// The transparence of this item, ie. a value between 1 (opaque) and 0 (transparent).
         /// </summary>
         public float Transparence
         {
             get { return _Transparence; }
             set { ChangeTransparence(value); }
+        }
+        /// <summary>
+        /// The maximum transparence of this item, ie. a value between 1 (opaque) and 0 (transparent). The transparence cannot go lower than this value.
+        /// </summary>
+        public float MaxTransparence
+        {
+            get { return _MaxTransparence; }
+            set { _MaxTransparence = value; ChangeTransparence(_Transparence); }
+        }
+        /// <summary>
+        /// The minimum transparence of this item, ie. a value between 1 (opaque) and 0 (transparent). The transparence cannot go lower than this value.
+        /// </summary>
+        public float MinTransparence
+        {
+            get { return _MinTransparence; }
+            set { _MinTransparence = value; ChangeTransparence(_Transparence); }
         }
         /// <summary>
         /// The item's draw order, ie. how early or late the item wants to be drawn in relation to other items.

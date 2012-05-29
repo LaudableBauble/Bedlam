@@ -130,13 +130,6 @@ namespace Library.GUI
         }
 
         /// <summary>
-        /// Update all inner components.
-        /// </summary>
-        private void UpdateComponents()
-        {
-
-        }
-        /// <summary>
         /// Update the inner components when an item type has been selected.
         /// </summary>
         /// <param name="o">The object to fire the event.</param>

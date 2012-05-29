@@ -39,23 +39,16 @@ namespace Library.Enums
     /// </summary>
     public enum FacingDirection
     {
-        None,
-        Left,
-        Right
+        None, Left, Right
     }
-
     /// <summary>
     /// The different types of items avaliable to the game.
     /// This enum do not represent any specific or unique item but only the different base classes to choose from.
     /// </summary>
     public enum ItemType
     {
-        Item,
-        TextureItem,
-        Entity,
-        Character
+        Item, TextureItem, Entity, Character
     }
-
     /// <summary>
     /// A list of available items in the game.
     /// </summary>
@@ -63,7 +56,6 @@ namespace Library.Enums
     {
 
     }
-
     /// <summary>
     /// A list of available entities in the game.
     /// </summary>
@@ -71,7 +63,6 @@ namespace Library.Enums
     {
         Box
     }
-
     /// <summary>
     /// A list of available characters in the game.
     /// </summary>
@@ -79,13 +70,18 @@ namespace Library.Enums
     {
 
     }
-
     /// <summary>
     /// The structure elements of a layout grid.
     /// </summary>
     public enum LayoutStructure
     {
-        Row,
-        Column
+        Row, Column
+    }
+    /// <summary>
+    /// The level state describes what the level is currently up to.
+    /// </summary>
+    public enum LevelState
+    {
+        Pause, Play
     }
 }

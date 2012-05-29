@@ -65,7 +65,6 @@ namespace Library.GUI.Basic
         /// </summary>
         public override void LoadContent()
         {
-            //The inherited method.
             base.LoadContent();
         }
         /// <summary>

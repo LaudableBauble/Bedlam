@@ -82,6 +82,9 @@ namespace Library.GUI.Basic
         /// </summary>
         public override void LoadContent()
         {
+            //Reset the sprites.
+            _Sprite.Clear();
+
             //Create the item's texture and load the font.
             AddSprite(DrawingHelper.CreateRectangleTexture(GUI.GraphicsDevice, (int)Width, (int)Height, new Color(0, 0, 0, 155))).Position = Position;
             _Font = GUI.ContentManager.Load<SpriteFont>("GameScreen/Fonts/diagnosticFont");

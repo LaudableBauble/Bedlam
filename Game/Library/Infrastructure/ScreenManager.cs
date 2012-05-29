@@ -155,19 +155,15 @@ namespace Library.Infrastructure
 
                 if (screen.ScreenState == ScreenState.TransitionOn || screen.ScreenState == ScreenState.Active)
                 {
-                    // If this is the first active screen we came across,
-                    // give it a chance to handle input.
+                    // If this is the first active screen we came across, give it a chance to handle input.
                     if (!otherScreenHasFocus)
                     {
                         screen.HandleInput(input);
-
                         otherScreenHasFocus = true;
                     }
 
-                    // If this is an active non-popup, inform any subsequent
-                    // screens that they are covered by it.
-                    if (!screen.IsPopup)
-                        coveredByOtherScreen = true;
+                    // If this is an active non-popup, inform any subsequent screens that they are covered by it.
+                    if (!screen.IsPopup) { coveredByOtherScreen = true; }
                 }
             }
 

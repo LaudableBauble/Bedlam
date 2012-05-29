@@ -271,6 +271,15 @@ namespace Library.Imagery
             }
         }
         /// <summary>
+        /// Clear all sprites.
+        /// </summary>
+        public void Clear()
+        {
+            _Sprites.Clear();
+            _SpritesToAdd.Clear();
+            _SpritesToRemove.Clear();
+        }
+        /// <summary>
         /// Get the bounds of a certain texture asset.
         /// </summary>
         /// <param name="name">The file name of this frame.</param>
@@ -386,7 +395,7 @@ namespace Library.Imagery
         /// </summary>
         public List<Sprite> Sprites
         {
-            get { return (_Sprites); }
+            get { return _Sprites; }
             set { _Sprites = value; }
         }
         /// <summary>

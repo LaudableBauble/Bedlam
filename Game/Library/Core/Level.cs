@@ -21,22 +21,15 @@ using FarseerPhysics.Factories;
 using Library;
 using Library.Animate;
 using Library.Core;
+using Library.Enums;
 using Library.GUI;
 using Library.GUI.Basic;
 using Library.Imagery;
 using Library.Infrastructure;
+using Library.Tools;
 
 namespace Library.Core
 {
-    /// <summary>
-    /// The level state describes what the level is currently up to.
-    /// </summary>
-    public enum LevelState
-    {
-        Pause,
-        Play
-    }
-
     /// <summary>
     /// A level holds all the necessary information of a segmented piece of the game world and can be launched by the engine at the appropriate
     /// time.
@@ -45,9 +38,7 @@ namespace Library.Core
     {
         #region Fields
         private string _Name;
-        private List<Layer> _Layers;
-        private List<Layer> _LayersToAdd;
-        private List<Layer> _LayersToRemove;
+        private RobustList<Layer> _Layers;
         private bool _IsVisible;
         private Camera2D _Camera;
         private GraphicsDevice _GraphicsDevice;
@@ -55,7 +46,6 @@ namespace Library.Core
         private SpriteBatch _SpriteBatch;
         private World _World;
         private LevelState _State;
-
 
         public delegate void LayerChangedHandler(object obj, EventArgs e);
         public event LayerChangedHandler LayerChanged;
@@ -97,9 +87,7 @@ namespace Library.Core
         {
             //Initialize some variables.
             _Name = name;
-            _Layers = new List<Layer>();
-            _LayersToAdd = new List<Layer>();
-            _LayersToRemove = new List<Layer>();
+            _Layers = new RobustList<Layer>();
             _IsVisible = true;
             _Camera = camera;
             _GraphicsDevice = null;
@@ -107,10 +95,6 @@ namespace Library.Core
             _SpriteBatch = null;
             _World = new World(new Vector2(0, 10));
             _State = LevelState.Play;
-
-            //Manage all layers, ie. add and remove them from the level.
-            //TODO: Launch these methods from an event invoker instead.
-            ManageLayers();
         }
         /// <summary>
         /// Load all content.
@@ -132,8 +116,7 @@ namespace Library.Core
         /// <param name="gameTime">The game time.</param>
         public void Update(GameTime gameTime)
         {
-            //Manage all layers, ie. add and remove them from the level.
-            //TODO: Launch these methods from an event invoker instead.
+            //Manage layers.
             ManageLayers();
 
             //Update the world simulator. Explanation: The update frequency will never fall below 30Hz.
@@ -169,8 +152,11 @@ namespace Library.Core
         /// <param name="layer">The layer to add.</param>
         public Layer AddLayer(Layer layer)
         {
-            //Add the layer.
-            _LayersToAdd.Add(layer);
+            //Add the layer and load its content..
+            _Layers.Add(layer);
+            if (_ContentManager != null) { layer.LoadContent(_ContentManager); }
+            LayerChangedInvoke();
+
             //Hook up to some events.
             GetLastLayer().ItemChanged += OnItemChanged;
             //Return the layer.
@@ -194,44 +180,8 @@ namespace Library.Core
         /// <param name="layer">The layer to remove.</param>
         public void RemoveLayer(Layer layer)
         {
-            //Remove the layer.
-            _LayersToRemove.Add(layer);
-        }
-        /// <summary>
-        /// Add and remove layers to and from the level.
-        /// </summary>
-        public void ManageLayers()
-        {
-            //If layers have been managed.
-            bool flag = false;
-
-            //If there is layers to add to the level, add them.
-            if (_LayersToAdd.Count != 0)
-            {
-                foreach (Layer layer in _LayersToAdd)
-                {
-                    //Add the layer.
-                    _Layers.Add(layer);
-                    //If the content manager has been set, load the layer's content.
-                    if (_ContentManager != null) { layer.LoadContent(_ContentManager); }
-                    //Turn on the flag.
-                    flag = true;
-                }
-
-                //Invoke the event.
-                LayerChangedInvoke();
-            }
-            //If there is layers to remove from the level, remove them.
-            if (_LayersToRemove.Count != 0) { foreach (Layer layer in _LayersToRemove) { _Layers.Remove(layer); } LayerChangedInvoke(); flag = true; }
-
-            //If layers have been managed.
-            if (flag)
-            {
-                //Sort the layers and clear the lists.
-                SortLayers();
-                _LayersToAdd.Clear();
-                _LayersToRemove.Clear();
-            }
+            _Layers.Remove(layer);
+            LayerChangedInvoke();
         }
         /// <summary>
         /// Get the index of an item in a layer.
@@ -276,8 +226,7 @@ namespace Library.Core
         public Layer GetLastLayer()
         {
             //Return the last layer.
-            if (_LayersToAdd.Count == 0) { return _Layers[_Layers.Count - 1]; }
-            else { return _LayersToAdd[_LayersToAdd.Count - 1]; }
+            return _Layers.GetLastItem();
         }
         /// <summary>
         /// Get the item closest to the given position.
@@ -302,6 +251,14 @@ namespace Library.Core
             return item;
         }
         /// <summary>
+        /// Manage the level's list of layers, ie. add, remove and sort them.
+        /// </summary>
+        public void ManageLayers()
+        {
+            //Update the list of layers and sort them in necessary.
+            if (_Layers.Update()) { SortLayers(); }
+        }
+        /// <summary>
         /// Sort layers after descending scroll speed.
         /// </summary>
         public void SortLayers()
@@ -310,7 +267,7 @@ namespace Library.Core
             _Layers.Sort(delegate(Layer a, Layer b)
             {
                 return (int)(a.ScrollSpeed - b.ScrollSpeed).Length();
-            }); 
+            });
         }
         /// <summary>
         /// Change the visibility state of this level and each layer and item under it.
@@ -349,8 +306,7 @@ namespace Library.Core
         /// </summary>
         public List<Layer> Layers
         {
-            get { return _Layers; }
-            set { _Layers = value; }
+            get { return _Layers.Items; }
         }
         /// <summary>
         /// The name of the level.

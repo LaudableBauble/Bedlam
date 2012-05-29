@@ -8,7 +8,7 @@ using Library.GUI.Basic;
 namespace Library.GUI
 {
     /// <summary>
-    /// Compares two GUI components by draw order.
+    /// Compares two GUI components by drawing order.
     /// </summary>
     public class ComponentComparer : IComparer<Component>
     {

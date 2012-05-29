@@ -148,6 +148,9 @@ namespace Library.GUI.Basic
             //The inherited method.
             base.Draw(spriteBatch);
 
+            //If the component isn't active or visible, stop here.
+            if (!_IsActive || !_IsVisible) { return; }
+
             //Draw text.
             GUI.SpriteBatch.DrawString(_Font, CropText(), new Vector2((Position.X + 2), Position.Y), Color.White);
 

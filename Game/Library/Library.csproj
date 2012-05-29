@@ -166,6 +166,7 @@
     <Compile Include="Need of Overhaul\Object.cs" />
     <Compile Include="Need of Overhaul\Spartan.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Tools\RobustList.cs" />
     <Compile Include="Weaponry\Projectile.cs" />
     <Compile Include="Weaponry\Weapon.cs" />
     <Compile Include="Weaponry\WeaponFactory.cs" />

@@ -142,38 +142,29 @@ namespace Library.GUI
         /// <param name="input">The helper for reading input from the user.</param>
         public void HandleInput(InputState input)
         {
-            //If the GUI is active, continue.
-            if (_IsActive)
+            //If the GUI is not active nor visible, discontinue.
+            if (!_IsActive || !_IsVisible) { return; }
+
+            //Decide which collection of items to use.
+            if (_ForegroundItems.Count != 0) { _ForegroundItems.ForEach(item => item.HandleInput(input)); }
+            else { _Items.ForEach(item => item.HandleInput(input)); }
+
+            //If the right click list is enabled and the user has pressed the left mouse button.
+            if (_HasRightClicked && input.IsNewLeftMouseClick())
             {
-                //If the GUI is visible.
-                if (_IsVisible)
+                //If the user clicks somewhere else than on the list, disable it.
+                if (!Helper.IsPointWithinBox(new Vector2(Mouse.GetState().X, Mouse.GetState().Y), _RightClickList.Position, _RightClickList.Width, _RightClickList.Height))
                 {
-                    //Decide which collection of items to use.
-                    if (_ForegroundItems.Count != 0) { _ForegroundItems.ForEach(item => item.HandleInput(input)); }
-                    else { _Items.ForEach(item => item.HandleInput(input)); }
-
-                    //If the right click list is enabled and the user has pressed the left mouse button.
-                    if (_HasRightClicked && input.IsNewLeftMouseClick())
-                    {
-                        //If the user clicks somewhere else than on the list, disable it.
-                        if (!Helper.IsPointWithinBox(new Vector2(Mouse.GetState().X, Mouse.GetState().Y), _RightClickList.Position, _RightClickList.Width, _RightClickList.Height))
-                        {
-                            //Disable the list.
-                            EnableOrDisableRightClickList(false, Vector2.Zero);
-                        }
-                    }
-
-                    //If the right mouse button has been pressed, enable or disable the right click list.
-                    if (input.IsNewRightMouseClick())
-                    {
-                        //Enable or disable it.
-                        EnableOrDisableRightClickList(true, new Vector2(Mouse.GetState().X, Mouse.GetState().Y));
-                    }
-
-                    //Enable the right click list to handle user input, if the time is right.
-                    if (_HasRightClicked) { _RightClickList.HandleInput(input); }
+                    //Disable the list.
+                    EnableOrDisableRightClickList(false, Vector2.Zero);
                 }
             }
+
+            //If the right mouse button has been pressed, enable or disable the right click list.
+            if (input.IsNewRightMouseClick()) { EnableOrDisableRightClickList(true, new Vector2(Mouse.GetState().X, Mouse.GetState().Y)); }
+
+            //Enable the right click list to handle user input, if the time is right.
+            if (_HasRightClicked) { _RightClickList.HandleInput(input); }
         }
         /// <summary>
         /// Draw the GUI.
@@ -337,8 +328,8 @@ namespace Library.GUI
             //Hook up some events from this item.
             item.DrawOrderChange += OnDrawOrderChange;
             item.MouseClick += OnItemClick;
+            item.MouseDown += OnItemClick;
             item.Dispose += OnItemDispose;
-            item.VocalTypeChange += OnItemVocalTypeChange;
         }
         /// <summary>
         /// Remove events from an item.
@@ -348,7 +339,6 @@ namespace Library.GUI
         {
             //Unsubscribe some events from this item.
             item.Dispose -= OnItemDispose;
-            item.VocalTypeChange -= OnItemVocalTypeChange;
         }
         /// <summary>
         /// An item of this GUI has been clicked on, deal with it.

@@ -74,7 +74,7 @@ namespace Game.Editors
 
         #region Constructors
         /// <summary>
-        /// Create a level editor.
+        /// Constructor for a level editor.
         /// </summary>
         /// <param name="viewport">The window's viewport.</param>
         public LevelEditor(Rectangle viewport)
@@ -115,7 +115,7 @@ namespace Game.Editors
 
             //Modify the tab control.
             _TabControl.AddTab(_ModifyItemForm);
-            _TabControl.AddTab(new SpriteDialog(_GUI, new Vector2(viewport.Width - 300, 75), 300, 500)); 
+            _TabControl.AddTab(new SpriteDialog(_GUI, new Vector2(viewport.Width - 300, 75), 300, 500));
 
             //Add items to the GUI.
             _GUI.AddItem(_TreeView);
@@ -225,6 +225,9 @@ namespace Game.Editors
             _GUI.LoadContent(graphicsDevice, contentManager, spriteBatch);
             _Level.LoadContent(graphicsDevice, contentManager);
             _DebugSystem.LoadContent(graphicsDevice, contentManager);
+
+            //Set-up the tree view.
+            SetUpTreeView();
 
             //Load some brushes.
             _SelectionBrush.Load(graphicsDevice);
@@ -576,7 +579,7 @@ namespace Game.Editors
             _DebugSystem.HandleInput(input);
 
             #region Camera
-            //If the CTRL button is down.
+            //If the CTRL button is not held down.
             if (!input.IsKeyDown(Keys.LeftControl))
             {
                 //Manage the camera movement.
@@ -622,21 +625,21 @@ namespace Game.Editors
                     //Handle the item grapple.
                     GrappleItem();
                 }
+            }
 
-                //If the user disengages the grapple function.
-                if (input.IsNewLeftMouseReleased())
+            //If the user disengages the grapple function.
+            if (input.IsNewLeftMouseReleased())
+            {
+                //If the grapple joint exists.
+                if (_MouseGrappleJoint != null)
                 {
-                    //If the grapple joint exists.
-                    if (_MouseGrappleJoint != null)
-                    {
-                        //Remove the grapple joint from the world simulation.
-                        _Level.World.RemoveJoint(_MouseGrappleJoint);
-                        _MouseGrappleJoint = null;
-                    }
-
-                    //Reset the grapple point.
-                    _ItemGrapplePoint = Vector2.Zero;
+                    //Remove the grapple joint from the world simulation.
+                    _Level.World.RemoveJoint(_MouseGrappleJoint);
+                    _MouseGrappleJoint = null;
                 }
+
+                //Reset the grapple point.
+                _ItemGrapplePoint = Vector2.Zero;
             }
             #endregion
 
@@ -1014,8 +1017,7 @@ namespace Game.Editors
         /// <returns>The index of the item.</returns>
         private int GetItemIndex(Item item)
         {
-            //Return the index.
-            return (_Level.GetItemIndex(item));
+            return _Level.GetItemIndex(item);
         }
         /// <summary>
         /// Get the index of the layer an item resides in.
@@ -1024,8 +1026,7 @@ namespace Game.Editors
         /// <returns>The index of the layer.</returns>
         private int GetLayerIndex(Item item)
         {
-            //Return the index.
-            return (_Level.GetLayerIndex(item));
+            return _Level.GetLayerIndex(item);
         }
         /// <summary>
         /// Get the index of a layer.
@@ -1034,8 +1035,7 @@ namespace Game.Editors
         /// <returns>The index of the layer.</returns>
         private int GetLayerIndex(Layer layer)
         {
-            //Return the index.
-            return (_Level.GetLayerIndex(layer));
+            return _Level.GetLayerIndex(layer);
         }
         /// <summary>
         /// Get the item closest to the given position.
@@ -1044,7 +1044,6 @@ namespace Game.Editors
         /// <returns>The closest item.</returns>
         public Item GetItemAtPosition(Vector2 position)
         {
-            //Return the closest item.
             return _Level.GetItemAtPosition(position);
         }
         /// <summary>
