@@ -25,7 +25,6 @@ namespace Library.Animate
         private int _Index;
         private int _ParentIndex;
         private bool _RootBone;
-
         private Vector2 _AbsolutePosition;
         private float _AbsoluteRotation;
         private Vector2 _RelativePosition;

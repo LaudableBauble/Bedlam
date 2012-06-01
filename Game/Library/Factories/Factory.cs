@@ -662,7 +662,6 @@ namespace Library.Factories
         /// <param name="rotationOffset">The bone sprite's rotation offset.</param>
         public void AddBone(Skeleton skeleton, string name, string spritePath, Vector2 position, float length, float rotation, Vector2 origin, float rotationOffset)
         {
-            //Add the bone.
             AddBone(skeleton, name, spritePath, -1, position, length, rotation, Vector2.One, origin, rotationOffset);
         }
         /// <summary>
@@ -680,7 +679,6 @@ namespace Library.Factories
         public void AddBone(Skeleton skeleton, string name, string spritePath, int parentIndex, Vector2 position, float length, float rotation, Vector2 origin,
             float rotationOffset)
         {
-            //Add the bone.
             AddBone(skeleton, name, spritePath, -1, parentIndex, position, length, rotation, Vector2.One, origin, rotationOffset);
         }
         /// <summary>
@@ -715,7 +713,6 @@ namespace Library.Factories
         public void AddBone(Skeleton skeleton, string name, string spritePath, Vector2 position, float length, float rotation, Vector2 scale, Vector2 origin,
             float rotationOffset)
         {
-            //Add the bone.
             AddBone(skeleton, name, spritePath, -1, position, length, rotation, scale, origin, rotationOffset);
         }
         /// <summary>
@@ -734,7 +731,6 @@ namespace Library.Factories
         public void AddBone(Skeleton skeleton, string name, string spritePath, int index, Vector2 position, float length, float rotation, Vector2 scale, Vector2 origin,
             float rotationOffset)
         {
-            //Add the bone.
             AddBone(skeleton, name, spritePath, index, -1, position, length, rotation, scale, origin, rotationOffset);
         }
         /// <summary>
@@ -761,7 +757,7 @@ namespace Library.Factories
             if (!spritePath.Equals(""))
             {
                 Factory.Instance.AddSprite(skeleton.Sprites, name, spritePath, position, 0, 1, 0, 0, 0, (skeleton.Bones.Count - 1).ToString(), origin);
-                skeleton.Sprites.LastSprite().RotationOffset = rotationOffset;
+                skeleton.Sprites.GetSprite(name).RotationOffset = rotationOffset;
             }
         }
         #endregion

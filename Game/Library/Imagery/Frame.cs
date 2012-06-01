@@ -35,7 +35,7 @@ namespace Library.Imagery
         /// <param name="height">The height of the frame.</param>
         public Frame(string path, float width, float height)
         {
-            Intialize(path, null, width, height, new Vector2((_Width / 2), (_Height / 2)));
+            Intialize(path, null, width, height, Vector2.Zero);
         }
         /// <summary>
         /// Constructor for a frame.
@@ -56,7 +56,7 @@ namespace Library.Imagery
         /// <param name="height">The height of the frame.</param>
         public Frame(Texture2D texture, float width, float height)
         {
-            Intialize("", texture, width, height, new Vector2((_Width / 2), (_Height / 2)));
+            Intialize("", texture, width, height, Vector2.Zero);
         }
         /// <summary>
         /// Constructor for a frame.

@@ -121,7 +121,6 @@ namespace Library.Animate
             _Sprites.Draw(spriteBatch);
         }
 
-        #region Add Bone
         /// <summary>
         /// Add a bone to the skeleton.
         /// </summary>
@@ -135,9 +134,6 @@ namespace Library.Animate
             //Set the index of this bone if it has not been already set.
             if (_Bones[_Bones.Count - 1].Index == -1) { _Bones[_Bones.Count - 1].Index = (_Bones.Count - 1); }
         }
-        #endregion
-
-        #region Add Sprite
         /// <summary>
         /// Add a sprite to the skeleton.
         /// </summary>
@@ -146,7 +142,6 @@ namespace Library.Animate
         /// <param name="origin">The origin of the sprite relative to the bone.</param>
         public void AddSprite(string path, int boneIndex, Vector2 origin)
         {
-            //Add a sprite.
             Factory.Instance.AddSprite(_Sprites, _Bones[boneIndex].Name, path, _Bones[boneIndex].AbsolutePosition, 0, 1, 0, 0, 0, boneIndex.ToString(), origin);
         }
         /// <summary>
@@ -157,11 +152,8 @@ namespace Library.Animate
         /// <param name="origin">The origin of the sprite relative to the bone.</param>
         public void AddSprite(Texture2D texture, int boneIndex, Vector2 origin)
         {
-            //Add a sprite.
             Factory.Instance.AddSprite(_Sprites, _Bones[boneIndex].Name, texture, _Bones[boneIndex].AbsolutePosition, 0, 1, 0, 0, 0, boneIndex.ToString(), origin);
         }
-        #endregion
-
         /// <summary>
         /// Transform the skeleton according to the state of its animation.
         /// </summary>
@@ -328,13 +320,6 @@ namespace Library.Animate
         {
             //Calculate the position of the bone by looking at the position, rotation and length of its parent.
             return (Vector2.Distance(Bones[index].RelativePosition, childPosition));
-        }
-        public void AdjustToParent(int index, int parentIndex)
-        {
-            //Calculate the position, rotation and length of the bone by looking at the position, rotation and length of its parent.
-            //_Bones[index].Position = CalculatePosition(parentIndex);
-            //_Bones[index].Position = CalculateRotation(index
-            //_Bones[index].Position = 
         }
         /// <summary>
         /// Whether a root bone exists in the skeleton.

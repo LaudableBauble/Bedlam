@@ -257,7 +257,7 @@ namespace Library.Imagery
             Rectangle rectangle = _Manager.GetTextureBounds(path);
 
             //Add the frame.
-            AddFrame(new Frame(path, rectangle.Width, rectangle.Height));
+            AddFrame(new Frame(path, rectangle.Width, rectangle.Height, origin));
         }
         /// <summary>
         /// Add a frame to the sprite.

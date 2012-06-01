@@ -60,7 +60,7 @@ namespace Library.Entities
         /// <param name="scale">The scale of the box.</param>
         /// <param name="width">The width of the box.</param>
         /// <param name="height">The height of the box.</param>
-        private override void Initialize(Level level, string name, Vector2 position, float rotation, Vector2 scale, float width, float height)
+        protected override void Initialize(Level level, string name, Vector2 position, float rotation, Vector2 scale, float width, float height)
         {
             //Call the base method.
             base.Initialize(level, name, position, rotation, scale, width, height);

@@ -85,7 +85,7 @@ namespace Game.Editors
             _GUI = new GraphicalUserInterface();
             _IsGUIClicked = false;
 
-            #region Character
+            //Create the character.
             _Character = new Character(new Level("redundant", null), "deafult", new Vector2(600, 250), 0, Vector2.One, 0, 0);
             _Character.Skeleton.Initialize(screen.ScreenManager.GraphicsDevice);
             _Character.AddAnimation();
@@ -96,113 +96,6 @@ namespace Game.Editors
             _Character.Skeleton.AddKeyframe(0, 12);
             _Character.Skeleton.AddKeyframe(0, 15);
             _Character.Skeleton.AddKeyframe(0, 19);
-
-            #region OldCharacter
-            /*//Torso.
-            Factory.Instance.AddBone(_Character.Skeleton, "Animation/Textures/guy_torso", new Vector2(600, 250), 135, new Vector2(22, 0));
-            _Character.Skeleton.Bones[0].AbsoluteRotation = ((float)Math.PI);
-            _Character.Skeleton.Bones[0].Name = "Torso";
-
-            //Head.
-            Factory.Instance.AddBone(_Character.Skeleton, "Animation/Textures/guy_head", 0, new Vector2(600, 250), 78, new Vector2(30.5f, 0));
-            _Character.Skeleton.Bones[1].Name = "Head";
-
-            //Left Upper Arm.
-            Factory.Instance.AddBone(_Character.Skeleton, "Animation/Textures/guy_upper_arm", 0, new Vector2(600, 250), 58, new Vector2(10, 0));
-            _Character.Skeleton.Bones[2].AbsoluteRotation = ((float)Math.PI / 2);
-            _Character.Skeleton.Bones[2].Name = "Left Upper Arm";
-            //Left Lower Arm.
-            Factory.Instance.AddBone(_Character.Skeleton, "Animation/Textures/guy_lower_arm", 2, 49, new Vector2(8, 0));
-            _Character.Skeleton.Bones[3].AbsoluteRotation = ((float)Math.PI);
-            _Character.Skeleton.Bones[3].Name = "Left Lower Arm";
-            //Left Hand.
-            Factory.Instance.AddBone(_Character.Skeleton, "Animation/Textures/guy_hand", 3, 19, new Vector2(7.5f, 0));
-            _Character.Skeleton.Bones[4].AbsoluteRotation = ((float)Math.PI);
-            _Character.Skeleton.Bones[4].Name = "Left Hand";
-
-            //Right Upper Arm.
-            Factory.Instance.AddBone(_Character.Skeleton, "Animation/Textures/guy_upper_arm", 0, new Vector2(600, 250), 58, new Vector2(10, 0));
-            _Character.Skeleton.Bones[5].AbsoluteRotation = -((float)Math.PI / 2);
-            _Character.Skeleton.Bones[5].Name = "Right Upper Arm";
-            //Right Lower Arm.
-            Factory.Instance.AddBone(_Character.Skeleton, "Animation/Textures/guy_lower_arm", 5, 49, new Vector2(8, 0));
-            _Character.Skeleton.Bones[6].AbsoluteRotation = ((float)Math.PI);
-            _Character.Skeleton.Bones[6].Name = "Right Lower Arm";
-            //Right Hand.
-            Factory.Instance.AddBone(_Character.Skeleton, "Animation/Textures/guy_hand", 6, 19, new Vector2(7.5f, 0));
-            _Character.Skeleton.Bones[7].AbsoluteRotation = ((float)Math.PI);
-            _Character.Skeleton.Bones[7].Name = "Right Hand";
-
-            //Right Upper Leg.
-            Factory.Instance.AddBone(_Character.Skeleton, "Animation/Textures/guy_upper_leg", 0, new Vector2(600, 385), 83, new Vector2(13, 0));
-            _Character.Skeleton.Bones[8].AbsoluteRotation = 3 * (-(float)Math.PI / 4);
-            _Character.Skeleton.Bones[8].Name = "Right Upper Leg";
-            //Right Lower Leg.
-            Factory.Instance.AddBone(_Character.Skeleton, "Animation/Textures/guy_lower_leg", 8, 69, new Vector2(10.5f, 0));
-            _Character.Skeleton.Bones[9].AbsoluteRotation = 3.5f * (-(float)Math.PI / 4);
-            _Character.Skeleton.Bones[9].Name = "Right Lower Leg";
-            //Right Foot.
-            Factory.Instance.AddBone(_Character.Skeleton, "Animation/Textures/guy_foot", 9, 48, new Vector2(10.5f, 0));
-            _Character.Skeleton.Bones[10].AbsoluteRotation = (-(float)Math.PI / 2);
-            _Character.Skeleton.Bones[10].Name = "Right Foot";
-
-            //Left Upper Leg.
-            Factory.Instance.AddBone(_Character.Skeleton, "Animation/Textures/guy_upper_leg", 0, new Vector2(600, 385), 83, new Vector2(13, 0));
-            _Character.Skeleton.Bones[11].AbsoluteRotation = 3 * ((float)Math.PI / 4);
-            _Character.Skeleton.Bones[11].Name = "Left Upper Leg";
-            //Left Lower Leg.
-            Factory.Instance.AddBone(_Character.Skeleton, "Animation/Textures/guy_lower_leg", 11, 69, new Vector2(10.5f, 0));
-            _Character.Skeleton.Bones[12].AbsoluteRotation = 3.5f * ((float)Math.PI / 4);
-            _Character.Skeleton.Bones[12].Name = "Left Lower Leg";
-            //Left Foot.
-            Factory.Instance.AddBone(_Character.Skeleton, "Animation/Textures/guy_foot", 12, 48, new Vector2(10.5f, 0));
-            _Character.Skeleton.Bones[13].AbsoluteRotation = ((float)Math.PI / 2);
-            _Character.Skeleton.Bones[13].Name = "Left Foot";*/
-            #endregion
-
-            #region NewCharacter
-            //Torso.
-            Factory.Instance.AddBone(_Character.Skeleton, "Torso", "Animation/Textures/Main Character[Torso]", new Vector2(600, 250), 158, (float)Math.PI,
-                new Vector2(35f, 0.5f), (float)Math.PI);
-
-            //Head.
-            Factory.Instance.AddBone(_Character.Skeleton, "Head", "Animation/Textures/Main Character[Head]", 0, new Vector2(600, 250), 128, new Vector2(49, 128));
-
-            //Left Upper Arm.
-            Factory.Instance.AddBone(_Character.Skeleton, "Left Upper Arm", "Animation/Textures/Main Character[UpperArm]", 0, new Vector2(600, 250), 72,
-                (float)Math.PI / 2, new Vector2(9.5f, 0), (float)Math.PI);
-            //Left Lower Arm.
-            Factory.Instance.AddBone(_Character.Skeleton, "Left Lower Arm", "Animation/Textures/Main Character[LowerArm]", 2, 68, (float)Math.PI, new Vector2(8.5f, 0),
-                -(float)Math.PI);
-
-            //Right Upper Arm.
-            Factory.Instance.AddBone(_Character.Skeleton, "Right Upper Arm", "Animation/Textures/Main Character[UpperArm]", 0, new Vector2(600, 250), 72,
-                -((float)Math.PI / 2), new Vector2(9.5f, 0), (float)Math.PI);
-            //Right Lower Arm.
-            Factory.Instance.AddBone(_Character.Skeleton, "Right Lower Arm", "Animation/Textures/Main Character[LowerArm]", 4, 68, (float)Math.PI, new Vector2(8.5f, 0),
-                (float)Math.PI);
-
-            //Right Upper Leg.
-            Factory.Instance.AddBone(_Character.Skeleton, "Right Upper Leg", "Animation/Textures/Main Character[UpperLeg]", 0, new Vector2(600, 408), 69,
-                3 * (-(float)Math.PI / 4), new Vector2(9.5f, 0), (float)Math.PI);
-            //Right Lower Leg.
-            Factory.Instance.AddBone(_Character.Skeleton, "Right Lower Leg", "Animation/Textures/Main Character[LowerLeg]", 6, 65, 3.5f * (-(float)Math.PI / 4),
-                new Vector2(6.5f, 0), -(float)Math.PI);
-            //Right Foot.
-            Factory.Instance.AddBone(_Character.Skeleton, "Right Foot", "Animation/Textures/Main Character[RightFoot]", 7, 65, -(float)Math.PI / 2, new Vector2(11.5f, 0),
-                -(float)Math.PI);
-
-            //Left Upper Leg.
-            Factory.Instance.AddBone(_Character.Skeleton, "Left Upper Leg", "Animation/Textures/Main Character[UpperLeg]", 0, new Vector2(600, 408), 69,
-                3 * ((float)Math.PI / 4), new Vector2(9.5f, 0), (float)Math.PI);
-            //Left Lower Leg.
-            Factory.Instance.AddBone(_Character.Skeleton, "Left Lower Leg", "Animation/Textures/Main Character[LowerLeg]", 9, 65, 3.5f * ((float)Math.PI / 4),
-                new Vector2(6.5f, 0), (float)Math.PI);
-            //Left Foot.
-            Factory.Instance.AddBone(_Character.Skeleton, "Left Foot", "Animation/Textures/Main Character[LeftFoot]", 10, 65, (float)Math.PI / 2, new Vector2(11.5f, 0),
-                (float)Math.PI);
-            #endregion
-            #endregion
 
             //Intialize the list of modified bones.
             ResetModifiedBones();
@@ -292,6 +185,52 @@ namespace Game.Editors
         {
             //Save the content manager for further use.
             _ContentManager = contentManager;
+
+            //Give the content manager to the character prematurely.
+            _Character.Skeleton.Sprites.ContentManager = contentManager;
+
+            #region Character
+            //Torso.
+            Factory.Instance.AddBone(_Character.Skeleton, "Torso", "Animation/Textures/Main Character[Torso]", new Vector2(600, 250), 158, (float)Math.PI,
+                new Vector2(35f, 0.5f), (float)Math.PI);
+
+            //Head.
+            Factory.Instance.AddBone(_Character.Skeleton, "Head", "Animation/Textures/Main Character[Head]", 0, new Vector2(600, 250), 128, new Vector2(49, 128));
+
+            //Left Upper Arm.
+            Factory.Instance.AddBone(_Character.Skeleton, "Left Upper Arm", "Animation/Textures/Main Character[UpperArm]", 0, new Vector2(600, 250), 72,
+                (float)Math.PI / 2, new Vector2(9.5f, 0), (float)Math.PI);
+            //Left Lower Arm.
+            Factory.Instance.AddBone(_Character.Skeleton, "Left Lower Arm", "Animation/Textures/Main Character[LowerArm]", 2, 68, (float)Math.PI, new Vector2(8.5f, 0),
+                -(float)Math.PI);
+
+            //Right Upper Arm.
+            Factory.Instance.AddBone(_Character.Skeleton, "Right Upper Arm", "Animation/Textures/Main Character[UpperArm]", 0, new Vector2(600, 250), 72,
+                -((float)Math.PI / 2), new Vector2(9.5f, 0), (float)Math.PI);
+            //Right Lower Arm.
+            Factory.Instance.AddBone(_Character.Skeleton, "Right Lower Arm", "Animation/Textures/Main Character[LowerArm]", 4, 68, (float)Math.PI, new Vector2(8.5f, 0),
+                (float)Math.PI);
+
+            //Right Upper Leg.
+            Factory.Instance.AddBone(_Character.Skeleton, "Right Upper Leg", "Animation/Textures/Main Character[UpperLeg]", 0, new Vector2(600, 408), 69,
+                3 * (-(float)Math.PI / 4), new Vector2(9.5f, 0), (float)Math.PI);
+            //Right Lower Leg.
+            Factory.Instance.AddBone(_Character.Skeleton, "Right Lower Leg", "Animation/Textures/Main Character[LowerLeg]", 6, 65, 3.5f * (-(float)Math.PI / 4),
+                new Vector2(6.5f, 0), -(float)Math.PI);
+            //Right Foot.
+            Factory.Instance.AddBone(_Character.Skeleton, "Right Foot", "Animation/Textures/Main Character[RightFoot]", 7, 65, -(float)Math.PI / 2, new Vector2(11.5f, 0),
+                -(float)Math.PI);
+
+            //Left Upper Leg.
+            Factory.Instance.AddBone(_Character.Skeleton, "Left Upper Leg", "Animation/Textures/Main Character[UpperLeg]", 0, new Vector2(600, 408), 69,
+                3 * ((float)Math.PI / 4), new Vector2(9.5f, 0), (float)Math.PI);
+            //Left Lower Leg.
+            Factory.Instance.AddBone(_Character.Skeleton, "Left Lower Leg", "Animation/Textures/Main Character[LowerLeg]", 9, 65, 3.5f * ((float)Math.PI / 4),
+                new Vector2(6.5f, 0), (float)Math.PI);
+            //Left Foot.
+            Factory.Instance.AddBone(_Character.Skeleton, "Left Foot", "Animation/Textures/Main Character[LeftFoot]", 10, 65, (float)Math.PI / 2, new Vector2(11.5f, 0),
+                (float)Math.PI);
+            #endregion
 
             //Load the character.
             _Character.LoadContent(_ContentManager);

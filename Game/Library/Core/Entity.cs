@@ -45,7 +45,7 @@ namespace Library.Core
         /// <param name="scale">The scale of the item.</param>
         /// <param name="width">The width of the item.</param>
         /// <param name="height">The height of the item.</param>
-        public override void Initialize(Level level, string name, Vector2 position, float rotation, Vector2 scale, float width, float height)
+        protected override void Initialize(Level level, string name, Vector2 position, float rotation, Vector2 scale, float width, float height)
         {
             //Call the base method.
             base.Initialize(level, name, position, rotation, scale, width, height);

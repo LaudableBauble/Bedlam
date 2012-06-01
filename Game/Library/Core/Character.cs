@@ -24,7 +24,7 @@ using Library.Imagery;
 namespace Library.Core
 {
     /// <summary>
-    /// The character extends the functionality of the entity and allows it to be animated with a skeleton.
+    /// A character extends the functionality of the entity and allows it to be animated with a skeleton.
     /// </summary>
     public class Character : Entity
     {
@@ -45,7 +45,6 @@ namespace Library.Core
         /// <param name="height">The height of the item.</param>
         public Character(Level level, string name, Vector2 position, float rotation, Vector2 scale, float width, float height)
         {
-            //Intialize the character.
             Initialize(level, name, position, rotation, scale, width, height);
         }
         #endregion
@@ -61,7 +60,7 @@ namespace Library.Core
         /// <param name="scale">The scale of the item.</param>
         /// <param name="width">The width of the item.</param>
         /// <param name="height">The height of the item.</param>
-        public override void Initialize(Level level, string name, Vector2 position, float rotation, Vector2 scale, float width, float height)
+        protected override void Initialize(Level level, string name, Vector2 position, float rotation, Vector2 scale, float width, float height)
         {
             //Call the base method.
             base.Initialize(level, name, position, rotation, scale, width, height);
@@ -125,7 +124,6 @@ namespace Library.Core
         /// </summary>
         public void AddAnimation()
         {
-            //Add an animation to the skeleton.
             _Skeleton.AddAnimation();
         }
         /// <summary>
@@ -133,7 +131,6 @@ namespace Library.Core
         /// </summary>
         public void AddAnimation(Animation animation)
         {
-            //Add an animation to the skeleton.
             _Skeleton.AddAnimation(animation);
         }
         /// <summary>
@@ -144,7 +141,6 @@ namespace Library.Core
         /// <param name="origin">The origin of the sprite relative to the bone.</param>
         public virtual void AddSprite(string name, int boneIndex, Vector2 origin)
         {
-            //Add a sprite.
             _Skeleton.AddSprite(name, boneIndex, origin);
         }
         /// <summary>
@@ -155,7 +151,6 @@ namespace Library.Core
         /// <param name="origin">The origin of the sprite relative to the bone.</param>
         public virtual void AddSprites(Texture2D texture, int boneIndex, Vector2 origin)
         {
-            //Add a sprite.
             _Skeleton.AddSprite(texture, boneIndex, origin);
         }
         #endregion

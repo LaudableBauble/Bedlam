@@ -133,9 +133,6 @@ namespace Library.Imagery
             //Add the sprite to the list.
             _SpritesInner.Add(sprite);
 
-            //Sort the list by depth.
-            _SpritesInner.Sort((x, y) => x.Depth.CompareTo(y.Depth));
-
             //If we have a valid content manager, load the sprite's content.
             if (_ContentManager != null) { sprite.LoadContent(); }
 
@@ -230,6 +227,9 @@ namespace Library.Imagery
         /// </summary>
         public void ManageSprites()
         {
+            //Sort the list by depth.
+            _SpritesInner.Sort((x, y) => x.Depth.CompareTo(y.Depth));
+
             //Put all the sprites to update and draw in a seperate list.
             _SpritesOuter = new List<Sprite>(_SpritesInner);
         }
