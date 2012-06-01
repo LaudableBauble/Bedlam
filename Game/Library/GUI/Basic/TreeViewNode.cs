@@ -98,6 +98,10 @@ namespace Library.GUI.Basic
             _Checkbox = new Checkbox(gui, new Vector2((Position.X + _Button.Width + 2), Position.Y), width, height);
             _NodeState = TreeViewNodeState.None;
 
+            //Add the items to the list.
+            Add(_Button);
+            Add(_Checkbox);
+
             //Hook up some events.
             _Checkbox.CheckboxTick += OnCheckboxTicked;
             _Button.MouseClick += OnButtonMouseClick;
@@ -109,10 +113,6 @@ namespace Library.GUI.Basic
         {
             //The inherited method.
             base.LoadContent();
-
-            //Load the checkbox's content.
-            _Checkbox.LoadContent();
-            _Button.LoadContent();
 
             //Add textures to the button.
             Sprite button = _Button.AddSprite("UI/Textures/arrow_expand");
@@ -141,10 +141,6 @@ namespace Library.GUI.Basic
             //The inherited method.
             base.Update(gametime);
 
-            //Update the checkbox and the button.
-            _Checkbox.Update(gametime);
-            _Button.Update(gametime);
-
             //Update every child node.
             foreach (TreeViewNode node in _Nodes) { node.Update(gametime); }
         }
@@ -163,25 +159,6 @@ namespace Library.GUI.Basic
                 //If the item is visible.
                 if (IsVisible)
                 {
-                    //If the item has focus.
-                    if (HasFocus)
-                    {
-                        //If the left mouse button has been pressed.
-                        if (input.IsNewLeftMouseClick())
-                        {
-                            //If the user clicks somewhere else, defocus the item.
-                            if (!Helper.IsPointWithinBox(new Vector2(Mouse.GetState().X, Mouse.GetState().Y), Position, Width, Height))
-                            {
-                                //Defocus this item.
-                                HasFocus = false;
-                            }
-                        }
-                    }
-
-                    //Let the checkbox and button handle user input.
-                    _Checkbox.HandleInput(input);
-                    _Button.HandleInput(input);
-
                     //Enable the child nodes to handle user input.
                     foreach (TreeViewNode node in _Nodes) { node.HandleInput(input); }
                 }
@@ -201,12 +178,6 @@ namespace Library.GUI.Basic
                 {
                     //The inherited method.
                     base.Draw(spriteBatch);
-
-                    //Draw the checkbox.
-                    _Checkbox.Draw(spriteBatch);
-
-                    //If the node's state isn't none, draw the button.
-                    if (_NodeState != TreeViewNodeState.None) { _Button.Draw(spriteBatch); }
 
                     //Draw all child nodes.
                     foreach (TreeViewNode node in _Nodes) { node.Draw(spriteBatch); }
@@ -306,10 +277,10 @@ namespace Library.GUI.Basic
         /// Check all child node's checkboxes.
         /// </summary>
         /// <param name="isChecked">If the child nodes should be ticked or not.</param>
-        public void NodeTickedInvoke(bool isChecked)
+        private void NodeTickedInvoke(bool isChecked)
         {
             //Loop through all nodes and tick their checkboxes.
-            foreach (TreeViewNode node in _Nodes) { node.Checkbox.IsChecked = isChecked; node.NodeTickedInvoke(isChecked); }
+            foreach (TreeViewNode node in _Nodes) { node.IsTicked = isChecked; }
 
             //If someone has hooked up a delegate to the event, fire it.
             if (Ticked != null) { Ticked(this, new TickEventArgs(isChecked)); }
@@ -321,7 +292,6 @@ namespace Library.GUI.Basic
         /// <param name="e">The event arguments.</param>
         private void OnCheckboxTicked(object obj, TickEventArgs e)
         {
-            //Pass along the event data to all children.
             NodeTickedInvoke(e.IsChecked);
         }
         /// <summary>
@@ -383,9 +353,9 @@ namespace Library.GUI.Basic
             //Now either hide or show the list of child nodes.
             switch (_NodeState)
             {
-                case (TreeViewNodeState.Collapsed): { foreach (TreeViewNode node in _Nodes) { node.IsVisible = false; } break; }
-                case (TreeViewNodeState.Expanded): { foreach (TreeViewNode node in _Nodes) { node.IsVisible = true; } break; }
-                case (TreeViewNodeState.None): { break; }
+                case (TreeViewNodeState.Collapsed): { foreach (TreeViewNode node in _Nodes) { node.IsVisible = false; } _Button.IsVisible = true; break; }
+                case (TreeViewNodeState.Expanded): { foreach (TreeViewNode node in _Nodes) { node.IsVisible = true; } _Button.IsVisible = true; break; }
+                case (TreeViewNodeState.None): { _Button.IsVisible = false; break; }
             }
         }
         /// <summary>
@@ -474,6 +444,11 @@ namespace Library.GUI.Basic
         {
             get { return _Checkbox; }
             set { _Checkbox = value; }
+        }
+        public bool IsTicked
+        {
+            get { return _Checkbox.IsChecked; }
+            set { _Checkbox.IsChecked = value; }
         }
         /// <summary>
         /// The state of this node in the tree view; that is whether it is collapsed, expanded or neither.

@@ -26,7 +26,7 @@ namespace Library.GUI.Basic
     {
         #region Fields
         protected GraphicalUserInterface _GUI;
-        protected SpriteCollection _Sprite;
+        protected SpriteManager _Sprite;
         protected Vector2 _Position;
         protected float _Width;
         protected float _Height;
@@ -42,24 +42,25 @@ namespace Library.GUI.Basic
         protected List<Component> _Items;
         protected Component _Parent;
         protected bool _UpdateDrawOrders;
+        #endregion
 
+        #region Events
+        public delegate void ComponentHandler(object obj, EventArgs e);
         public delegate void BoundsChangeHandler(object obj, BoundsChangedEventArgs e);
         public delegate void MouseClickHandler(object obj, MouseClickEventArgs e);
         public delegate void MouseDownHandler(object obj, MouseClickEventArgs e);
-        public delegate void MouseHoverHandler(object obj, EventArgs e);
-        public delegate void PositionChangeHandler(object obj, EventArgs e);
-        public delegate void ItemTypeChangeHandler(object obj, EventArgs e);
         public delegate void DisposeHandler(object obj, DisposeEventArgs e);
         public delegate void FocusChangeHandler(object obj, FocusChangeEventArgs e);
-        public delegate void DrawOrderChangeHandler(object obj, EventArgs e);
-        public event DrawOrderChangeHandler DrawOrderChange;
+        public event ComponentHandler DrawOrderChange;
         public event FocusChangeHandler FocusChange;
         public event DisposeHandler Dispose;
         public event BoundsChangeHandler BoundsChange;
         public event MouseClickHandler MouseClick;
         public event MouseDownHandler MouseDown;
-        public event MouseHoverHandler MouseHover;
-        public event PositionChangeHandler PositionChange;
+        public event ComponentHandler MouseHover;
+        public event ComponentHandler PositionChange;
+        public event ComponentHandler VisibilityChange;
+        public event ComponentHandler ActivityChange;
         #endregion
 
         #region Methods
@@ -75,7 +76,7 @@ namespace Library.GUI.Basic
             //Initialize some variables.
             _GUI = gui;
             _Position = position;
-            _Sprite = new SpriteCollection();
+            _Sprite = new SpriteManager();
             _Width = width;
             _Height = height;
             _IsActive = true;
@@ -230,21 +231,21 @@ namespace Library.GUI.Basic
         /// <summary>
         /// Add a sprite to the item.
         /// </summary>
-        /// <param name="name">The name of the asset to load.</param>
-        public Sprite AddSprite(string name)
+        /// <param name="path">The path of the asset to load.</param>
+        public Sprite AddSprite(string path)
         {
             //Add a sprite.
-            return Factory.Instance.AddSprite(_Sprite, name, _Position, 0, 1, 0, 0, 0, "Sprite" + _Sprite.SpriteCount);
+            return Factory.Instance.AddSprite(_Sprite, "Sprite" + _Sprite.Count, path, _Position, 0, 1, 0, 0, 0, "Sprite" + _Sprite.Count);
         }
         /// <summary>
         /// Add a sprite to the item.
         /// </summary>
-        /// <param name="name">The name of the asset to load.</param>
+        /// <param name="path">The path of the asset to load.</param>
         /// <param name="position">The position of the sprite.</param>
-        public Sprite AddSprite(string name, Vector2 position)
+        public Sprite AddSprite(string path, Vector2 position)
         {
             //Add a sprite.
-            return Factory.Instance.AddSprite(_Sprite, name, position, 0, 1, 0, 0, 0, "Sprite" + _Sprite.SpriteCount);
+            return Factory.Instance.AddSprite(_Sprite, "Sprite" + _Sprite.Count, path, position, 0, 1, 0, 0, 0, "Sprite" + _Sprite.Count);
         }
         /// <summary>
         /// Add a sprite to the item.
@@ -254,7 +255,7 @@ namespace Library.GUI.Basic
         public Sprite AddSprite(Texture2D texture, Vector2 position)
         {
             //Add a sprite.
-            return Factory.Instance.AddSprite(_Sprite, texture.Name, texture, position, 0, 1, 0, 0, 0, "Sprite" + _Sprite.SpriteCount);
+            return Factory.Instance.AddSprite(_Sprite, texture.Name, texture, position, 0, 1, 0, 0, 0, "Sprite" + _Sprite.Count);
         }
         /// <summary>
         /// Add a sprite to the item.
@@ -263,7 +264,7 @@ namespace Library.GUI.Basic
         public Sprite AddSprite(Texture2D texture)
         {
             //Add a sprite.
-            return Factory.Instance.AddSprite(_Sprite, texture.Name, texture, _Position, 0, 1, 0, 0, 0, "Sprite" + _Sprite.SpriteCount);
+            return Factory.Instance.AddSprite(_Sprite, texture.Name, texture, _Position, 0, 1, 0, 0, 0, "Sprite" + _Sprite.Count);
         }
         /// <summary>
         /// See if any child items still has focus.
@@ -397,7 +398,7 @@ namespace Library.GUI.Basic
             //Update the variables.
             _Position = position;
             //If the item has any sprites, update their position as well.
-            _Sprite.UpdatePositions(position);
+            _Sprite.SetPosition(position);
 
             //Update the components.
             UpdateComponents();
@@ -478,6 +479,42 @@ namespace Library.GUI.Basic
             //If a change really took place and if someone has hooked up a delegate to the event, fire it.
             if (DrawOrderChange != null) { DrawOrderChange(this, new EventArgs()); }
         }
+        /// <summary>
+        /// Change the item's state of visibility.
+        /// </summary>
+        /// <param name="visibility">The new state of visibility.</param>
+        protected virtual void VisibilityChangeInvoke(bool visibility)
+        {
+            //If a change in visibility really happened.
+            if (_IsVisible == visibility) { return; }
+
+            //Change the visibility.
+            _IsVisible = visibility;
+
+            //Update all child items as well.
+            _Items.ForEach(item => item.IsVisible = visibility);
+
+            //If a change really took place and if someone has hooked up a delegate to the event, fire it.
+            if (VisibilityChange != null) { VisibilityChange(this, new EventArgs()); }
+        }
+        /// <summary>
+        /// Change the item's state of activity.
+        /// </summary>
+        /// <param name="activity">The new state of activity.</param>
+        protected virtual void ActivityChangeInvoke(bool activity)
+        {
+            //If a change in activity really happened.
+            if (_IsActive == activity) { return; }
+
+            //Change the activity.
+            _IsActive = activity;
+
+            //Update all child items as well.
+            _Items.ForEach(item => item.IsActive = activity);
+
+            //If a change really took place and if someone has hooked up a delegate to the event, fire it.
+            if (ActivityChange != null) { ActivityChange(this, new EventArgs()); }
+        }
         #endregion
 
         #region Properties
@@ -492,7 +529,7 @@ namespace Library.GUI.Basic
         /// <summary>
         /// The sprite that will make up the item.
         /// </summary>
-        public SpriteCollection Sprite
+        public SpriteManager Sprite
         {
             get { return _Sprite; }
         }
@@ -526,7 +563,7 @@ namespace Library.GUI.Basic
         public bool IsActive
         {
             get { return _IsActive; }
-            set { _IsActive = value; }
+            set { ActivityChangeInvoke(value); }
         }
         /// <summary>
         /// If the item is visible.
@@ -534,7 +571,7 @@ namespace Library.GUI.Basic
         public bool IsVisible
         {
             get { return _IsVisible; }
-            set { _IsVisible = value; }
+            set { VisibilityChangeInvoke(value); }
         }
         /// <summary>
         /// If the item has focus.

@@ -36,7 +36,7 @@ namespace Library.GUI.Basic
 
         #region Constructor
         /// <summary>
-        /// Create a field.
+        /// Constructor for a field.
         /// </summary>
         /// <param name="gui">The GUI that this field will be a part of.</param>
         /// <param name="position">The position of this field.</param>
@@ -44,8 +44,17 @@ namespace Library.GUI.Basic
         /// <param name="width">The width of this field.</param>
         public Field(GraphicalUserInterface gui, Vector2 position, float width, float height)
         {
-            //Initialize some variables.
             Initialize(gui, position, width, height);
+        }
+        /// <summary>
+        /// Constructor for a field.
+        /// </summary>
+        /// <param name="gui">The GUI that this field will be a part of.</param>
+        /// <param name="height">The height of this field.</param>
+        /// <param name="width">The width of this field.</param>
+        public Field(GraphicalUserInterface gui, float width, float height)
+        {
+            Initialize(gui, Vector2.Zero, width, height);
         }
         #endregion
 
@@ -63,126 +72,29 @@ namespace Library.GUI.Basic
             base.Initialize(gui, position, width, height);
 
             //Intialize some variables.
-            _Ratio = .5f;
-            _Label = new Label(GUI, Position, (Width * _Ratio), Height);
-            _Textbox = new Textbox(GUI, new Vector2(Position.X + (Width * _Ratio), Position.Y), (Width * (1 - _Ratio)), Height);
+            _Ratio = .4f;
+            _Label = new Label(GUI, Position, Width * _Ratio, Height);
+            _Textbox = new Textbox(GUI, new Vector2(Position.X + Width * _Ratio, Position.Y), Width * (1 - _Ratio), Height);
             _IsFixed = false;
             _Label.Text = "";
             _Textbox.Text = "";
 
-            //Hook up some events.
-        }
-        /// <summary>
-        /// Load the content of this field.
-        /// </summary>
-        public override void LoadContent()
-        {
-            //The inherited method.
-            base.LoadContent();
-
-            //Load the label's and button's content.
-            _Label.LoadContent();
-            _Textbox.LoadContent();
-        }
-        /// <summary>
-        /// Update the field.
-        /// </summary>
-        /// <param name="gameTime">The time to adhere to.</param>
-        public override void Update(GameTime gameTime)
-        {
-            //The inherited method.
-            base.Update(gameTime);
-
-            //Update the components.
-            _Label.Update(gameTime);
-            _Textbox.Update(gameTime);
-        }
-        /// <summary>
-        /// Handle user input.
-        /// </summary>
-        /// <param name="input">The helper for reading input from the user.</param>
-        public override void HandleInput(InputState input)
-        {
-            //The inherited method.
-            base.HandleInput(input);
-
-            //If the item is active.
-            if (IsActive)
-            {
-                //If the item is visible.
-                if (IsVisible)
-                {
-                    //If the item has focus.
-                    if (HasFocus)
-                    {
-                        //If the left mouse button has been pressed.
-                        if (input.IsNewLeftMouseClick())
-                        {
-                            //If the user clicks somewhere else, defocus the item.
-                            if (!Helper.IsPointWithinBox(new Vector2(Mouse.GetState().X, Mouse.GetState().Y), Position, Width, Height))
-                            {
-                                //Defocus this item.
-                                HasFocus = false;
-                            }
-                        }
-                    }
-
-                    //Handle the components' input.
-                    _Label.HandleInput(input);
-                    _Textbox.HandleInput(input);
-                }
-            }
-        }
-        /// <summary>
-        /// Draw the field.
-        /// </summary>
-        /// <param name="spriteBatch">The sprite batch to use.</param>
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            //The inherited method.
-            base.Draw(spriteBatch);
-
-            //Draw the components.
-            _Label.Draw(spriteBatch);
-            _Textbox.Draw(spriteBatch);
+            //Add the items.
+            Add(_Label);
+            Add(_Textbox);
         }
 
-        /// <summary>
-        /// Tell the world that the bounds of this item has changed.
-        /// </summary>
-        /// <param name="width">The new width of the item.</param>
-        /// <param name="height">The new height of the item.</param>
-        protected override void BoundsChangeInvoke(float width, float height)
-        {
-            //Call the base method.
-            base.BoundsChangeInvoke(width, height);
-
-            //Update the components' positions and bounds.
-            UpdateComponents();
-        }
-        /// <summary>
-        /// Tell the world that the position of this item has changed.
-        /// </summary>
-        /// <param name="position">The new position of the item.</param>
-        protected override void PositionChangeInvoke(Vector2 position)
-        {
-            //Call the base method.
-            base.PositionChangeInvoke(position);
-
-            //Update the components' positions and bounds.
-            UpdateComponents();
-        }
         /// <summary>
         /// Update the components' position and bounds when the bounds or position of this item changes.
         /// </summary>
-        private void UpdateComponents()
+        protected override void UpdateComponents()
         {
             //If the item has been recently modified update the components' position, width and height.
             _Label.Position = Position;
-            _Label.Width = (Width * _Ratio);
+            _Label.Width = Width * _Ratio;
             _Label.Height = Height;
-            _Textbox.Position = new Vector2(Position.X + (Width * _Ratio), Position.Y);
-            _Textbox.Width = (Width * (1 - _Ratio));
+            _Textbox.Position = new Vector2(Position.X + Width * _Ratio, Position.Y);
+            _Textbox.Width = Width * (1 - _Ratio);
             _Textbox.Height = Height;
         }
         #endregion

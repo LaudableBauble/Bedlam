@@ -21,6 +21,7 @@ using Library.GUI;
 using Library.GUI.Basic;
 using Library.Imagery;
 using Library.Infrastructure;
+using Library.Tools;
 
 namespace Library.Core
 {
@@ -32,9 +33,7 @@ namespace Library.Core
         #region Fields
         private Level _Level;
         private string _Name;
-        private List<Item> _Items;
-        private List<Item> _ItemsToAdd;
-        private List<Item> _ItemsToRemove;
+        private RobustList<Item> _Items;
         private bool _IsVisible;
         private Vector2 _ScrollSpeed;
         private Matrix _CameraMatrix;
@@ -82,15 +81,12 @@ namespace Library.Core
             //Initialize some variables.
             _Level = level;
             _Name = name;
-            _Items = new List<Item>();
-            _ItemsToAdd = new List<Item>();
-            _ItemsToRemove = new List<Item>();
+            _Items = new RobustList<Item>();
             _IsVisible = true;
             _ScrollSpeed = scrollSpeed;
             _CameraMatrix = Matrix.Identity;
 
             //Manage all items, ie. add and remove them from the layer.
-            //TODO: Launch these methods from an event invoker instead.
             ManageItems();
         }
         /// <summary>
@@ -99,6 +95,9 @@ namespace Library.Core
         /// <param name="contentManager">The manager that handles all graphical content.</param>
         public void LoadContent(ContentManager contentManager)
         {
+            //Manage all items, ie. add and remove them from the layer.
+            ManageItems();
+
             //Load all layer's content.
             foreach (Item item in _Items) { item.LoadContent(contentManager); }
         }
@@ -109,7 +108,6 @@ namespace Library.Core
         public void Update(GameTime gameTime)
         {
             //Manage all items, ie. add and remove them from the layer.
-            //TODO: Launch these methods from an event invoker instead.
             ManageItems();
 
             //Update the layers.
@@ -141,7 +139,7 @@ namespace Library.Core
         public Item AddItem(Item item)
         {
             //Add the item.
-            _ItemsToAdd.Add(item);
+            _Items.Add(item);
             //Return the item.
             return item;
         }
@@ -151,34 +149,14 @@ namespace Library.Core
         /// <param name="item">The item to remove.</param>
         public void RemoveItem(Item item)
         {
-            //Remove the item.
-            _ItemsToRemove.Add(item);
+            _Items.Remove(item);
         }
         /// <summary>
         /// Add and remove items to and from the layer.
         /// </summary>
         public void ManageItems()
         {
-            //If there is items to add to a layer, add them.
-            if (_ItemsToAdd.Count != 0)
-            {
-                foreach (Item item in _ItemsToAdd)
-                {
-                    //Add the item.
-                    _Items.Add(item);
-                    //If the content manager has been set, load the layer's conent.
-                    if (_Level.ContentManager != null) { item.LoadContent(_Level.ContentManager); }
-                }
-
-                //Invoke the event.
-                ItemChangedInvoke();
-            }
-            //If there is items to remove from a layer, remove them.
-            if (_ItemsToRemove.Count != 0) { foreach (Item item in _ItemsToRemove) { _Items.Remove(item); } ItemChangedInvoke(); }
-
-            //Clear the lists.
-            _ItemsToAdd.Clear();
-            _ItemsToRemove.Clear();
+            _Items.Update();
         }
         /// <summary>
         /// Get the index of an item.
@@ -195,9 +173,7 @@ namespace Library.Core
         /// </summary>
         public Item GetLastItem()
         {
-            //Return the last item in the list.            
-            if (_ItemsToAdd.Count == 0) { return _Items[_Items.Count - 1]; }
-            else { return _ItemsToAdd[_ItemsToAdd.Count - 1]; }
+            return _Items.GetLastItem();
         }
         /// <summary>
         /// Get the item closest to the given position.
@@ -264,8 +240,7 @@ namespace Library.Core
         /// </summary>
         public List<Item> Items
         {
-            get { return _Items; }
-            set { _Items = value; }
+            get { return _Items.ToList(); }
         }
         /// <summary>
         /// Whether the level is visible.

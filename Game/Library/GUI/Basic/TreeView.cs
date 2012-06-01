@@ -223,7 +223,7 @@ namespace Library.GUI.Basic
                 Texture2D texture = DrawingHelper.CreateRectangleTexture(GUI.GraphicsDevice, (int)Width, (int)Height, new Color(0, 0, 0, 155));
 
                 //If there already exists a sprite, just switch a new texture to it.
-                if (_Sprite.GetLastSprite() != null) { _Sprite.GetLastSprite().Texture = texture; }
+                if (_Sprite.LastSprite() != null) { _Sprite.LastSprite().Texture = texture; }
                 //Otherwise create a new sprite.
                 else { AddSprite(texture); }
             }

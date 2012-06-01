@@ -35,6 +35,20 @@ namespace Library.Enums
     #endregion
 
     /// <summary>
+    /// The orientation of a sprite; namely none, left or right.
+    /// </summary>
+    public enum Orientation
+    {
+        None, Left, Right
+    }
+    /// <summary>
+    /// The visibility of the sprite.
+    /// </summary>
+    public enum Visibility
+    {
+        Invisible, Visible
+    }
+    /// <summary>
     /// The direction an object is facing.
     /// </summary>
     public enum FacingDirection

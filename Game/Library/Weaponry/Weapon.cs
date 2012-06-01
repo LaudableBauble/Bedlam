@@ -283,13 +283,13 @@ namespace Library.Weaponry
             if (input.CurrentKeyboardStates[i].IsKeyDown(Keys.F))
             {
                 //Make the weapon invisible.
-                SpriteCollection["Weapon"].Visibility = Visibility.Invisible;
+                SpriteManager["Weapon"].Visibility = Visibility.Invisible;
             }
             //The G key.
             if (input.CurrentKeyboardStates[i].IsKeyDown(Keys.G))
             {
                 //Make the weapon visible.
-                SpriteCollection["Weapon"].Visibility = Visibility.Visible;
+                SpriteManager["Weapon"].Visibility = Visibility.Visible;
             }
             #endregion
         }
@@ -319,7 +319,7 @@ namespace Library.Weaponry
             //The second tag.
             SecondTag = "True";
             //Make the sprite invisible.
-            SpriteCollection["Weapon"].Visibility = Visibility.Invisible;
+            SpriteManager["Weapon"].Visibility = Visibility.Invisible;
             //Make the weapon ignore gravity.
             Bodies[0].IgnoreGravity = true;
 
@@ -347,7 +347,7 @@ namespace Library.Weaponry
             SecondTag = "False";
 
             //Make the weapon visible.
-            SpriteCollection["Weapon"].Visibility = Visibility.Visible;
+            SpriteManager["Weapon"].Visibility = Visibility.Visible;
             //Make the weapon adhere to the common laws of gravity.
             Bodies[0].IgnoreGravity = false;
             //Dispose of the angle joint.
@@ -367,10 +367,10 @@ namespace Library.Weaponry
                 case (FacingDirection.Left):
                     {
                         //Set the orientation of the weapon sprite to left.
-                        SpriteCollection["Weapon"].Orientation = Orientation.Left;
+                        SpriteManager["Weapon"].Orientation = Orientation.Left;
 
                         //Set the rotation to that of the weapon's owner's arm rotation.
-                        AngleJoint.TargetAngle = -Owner.SpriteCollection["Back Arm"].Rotation;
+                        AngleJoint.TargetAngle = -Owner.SpriteManager["Back Arm"].Rotation;
 
                         //The wield type.
                         switch (WieldMode)
@@ -394,10 +394,10 @@ namespace Library.Weaponry
                 case (FacingDirection.Right):
                     {
                         //Set the orientation of the weapon sprite to right.
-                        SpriteCollection["Weapon"].Orientation = Orientation.Right;
+                        SpriteManager["Weapon"].Orientation = Orientation.Right;
 
                         //Set the rotation to that of the weapon's owner's arm rotation.
-                        AngleJoint.TargetAngle = -Owner.SpriteCollection["Back Arm"].Rotation;
+                        AngleJoint.TargetAngle = -Owner.SpriteManager["Back Arm"].Rotation;
 
                         //The wield type.
                         switch (WieldMode)
@@ -440,10 +440,10 @@ namespace Library.Weaponry
             }
 
             //Alter the position.
-            Vector2 v = Vector2.Add(Owner.SpriteCollection[tag].Position, new Vector2(8, 1));
+            Vector2 v = Vector2.Add(Owner.SpriteManager[tag].Position, new Vector2(8, 1));
             //The weapon position, an orbiting one.
             return (Helper.CalculateOrbitPosition(v,
-                SpriteCollection.AddAngles(Owner.SpriteCollection[tag].Rotation, addRotation), offset));
+                SpriteManager.AddAngles(Owner.SpriteManager[tag].Rotation, addRotation), offset));
         }
         /// <summary>
         /// Fire the weapon.
@@ -461,7 +461,7 @@ namespace Library.Weaponry
 
             //Create the projectile.
             Projectile tempProjectile = new Projectile("Weapon/Textures/M90ShotgunBulletV1", 1f, 1f, 0.1f, 0.5f,
-                tempRotation, Bodies[0].Position, 30f, System, SpriteCollection.ContentManager, null/*SpriteCollection.SpriteBatch*//*);
+                tempRotation, Bodies[0].Position, 30f, System, SpriteManager.ContentManager, null/*SpriteManager.SpriteBatch*//*);
             //Add the projectile's OnDispose event.
             tempProjectile.OnDispose += new Projectile.DisposeHandler(OnDispose);
             //Add the projectile to the list.

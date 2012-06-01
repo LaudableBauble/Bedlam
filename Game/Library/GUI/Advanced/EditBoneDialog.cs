@@ -339,7 +339,7 @@ namespace Library.GUI
         private void OnSpritePicked(object obj, SpritePickedEventArgs e)
         {
             //Write down the sprite information.
-            _BoneSprite[0].Name = e.Name;
+            _BoneSprite[0].Path = e.Name;
             _BoneSprite[0].Origin = e.Origin;
             _BoneSprite.RotationOffset = Helper.CalculateAngleFromOrbitPositionBone(e.Origin, e.EndPosition);
             _Bone.Length = Vector2.Distance(e.Origin, e.EndPosition);

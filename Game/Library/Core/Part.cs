@@ -59,7 +59,9 @@ namespace Library.Core
             foreach (Sprite sprite in _Sprites)
             {
                 //Update the sprite according to the state of the body.
-                sprite.Update(gameTime, ConvertUnits.ToDisplayUnits(_Body.Position), _Body.Rotation);
+                sprite.Position = ConvertUnits.ToDisplayUnits(_Body.Position);
+                sprite.Rotation = _Body.Rotation;
+                sprite.Update(gameTime);
             }
         }
 

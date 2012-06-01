@@ -37,7 +37,7 @@ namespace ContentPipelineExtension
         /// <summary>
         /// The sprites of the skeleton.
         /// </summary>
-        //public SpriteCollection _Sprites;
+        //public SpriteManager _Sprites;
         #endregion
 
         #region Constructor

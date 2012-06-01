@@ -1,9 +1,9 @@
 ﻿/// SYSTEM
 /// GetID method: The GetId method adds the object which it shouldn't.
 ///
-/// SPRITECOLLECTION
+/// SpriteManager
 /// Main Methods: Discard the "Sprite" suffix to avoid confusion. - DONE!
-/// Why's there math functions in the SpriteCollection class?
+/// Why's there math functions in the SpriteManager class?
 /// The SpriteCount variable may be obsolete. Use the List's Count function instead. - DONE!
 /// Instead of using a fixed depth value when drawing use a dynamic one instead.
 /// Ponder either introducing a body system or a go-by-name system to find sprites. - DONE!

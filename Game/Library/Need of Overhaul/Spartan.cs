@@ -164,63 +164,63 @@ namespace Library
             Torso = AddBody("Spartan/Textures/SpartanTorsoV1", _BasePosition, 1, 1, 12, 8, 1, 5, 0, 0, "Torso");
             Geoms[Torso].CollisionGroup = 1;
             Bodies[Torso].MomentOfInertia = float.PositiveInfinity;
-            SpriteCollection[Torso].Visibility = Visibility.Invisible;
+            SpriteManager[Torso].Visibility = Visibility.Invisible;
 
             //Arms. Sprite Origin and visibility.
-            Factory.Instance.AddSprite(SpriteCollection, "Spartan/Textures/SpartanRightArmV2", Bodies[Torso].Position, Calculator.DegreesToRadians(60), 1, 1, 4, 0,
+            Factory.Instance.AddSprite(SpriteManager, "Spartan/Textures/SpartanRightArmV2", Bodies[Torso].Position, Calculator.DegreesToRadians(60), 1, 1, 4, 0,
                 "Front Arm", 8);
-            Factory.Instance.AddSprite(SpriteCollection, "Spartan/Textures/SpartanBackArmV1", Bodies[Torso].Position, Calculator.DegreesToRadians(290), 1, 1, 0, 0,
+            Factory.Instance.AddSprite(SpriteManager, "Spartan/Textures/SpartanBackArmV1", Bodies[Torso].Position, Calculator.DegreesToRadians(290), 1, 1, 0, 0,
                 "Back Arm", 3);
-            SpriteCollection["Front Arm"][0].Origin = new Vector2(7, 0);
-            SpriteCollection["Back Arm"][0].Origin = new Vector2(0, 0);
+            SpriteManager["Front Arm"][0].Origin = new Vector2(7, 0);
+            SpriteManager["Back Arm"][0].Origin = new Vector2(0, 0);
             //Sprite.SpriteVisibility[Torso, 1] = false;
             //Sprite.SpriteVisibility[Torso, 2] = false;
 
             //Legs. Visibility and Sprite animation.
             Legs = AddBody("Spartan/Textures/Legs/Running/Right/SpartanRightLegsIdleV2", new Vector2(_BasePosition.X, _BasePosition.Y + 15), 0.5f, 1, 20, 25, 2, 5, "Legs");
-            SpriteCollection["Legs"].Visibility = Visibility.Invisible;
-            SpriteCollection["Legs"].EnableAnimation = false;
+            SpriteManager["Legs"].Visibility = Visibility.Invisible;
+            SpriteManager["Legs"].EnableAnimation = false;
 
             #region Minimize
             //Running.
-            SpriteCollection["Legs"].AddFrame("Spartan/Textures/Legs/Running/Right/SpartanRightLegsV1[1]");
-            SpriteCollection["Legs"].AddFrame("Spartan/Textures/Legs/Running/Right/SpartanRightLegsV1[2]");
-            SpriteCollection["Legs"].AddFrame("Spartan/Textures/Legs/Running/Right/SpartanRightLegsV1[3]");
-            SpriteCollection["Legs"].AddFrame("Spartan/Textures/Legs/Running/Right/SpartanRightLegsV1[4]");
-            SpriteCollection["Legs"].AddFrame("Spartan/Textures/Legs/Running/Right/SpartanRightLegsV1[5]");
-            SpriteCollection["Legs"].AddFrame("Spartan/Textures/Legs/Running/Right/SpartanRightLegsV1[6]");
-            SpriteCollection["Legs"].AddFrame("Spartan/Textures/Legs/Running/Right/SpartanRightLegsV1[7]");
-            SpriteCollection["Legs"].AddFrame("Spartan/Textures/Legs/Running/Right/SpartanRightLegsV1[8]");
-            SpriteCollection["Legs"].AddFrame("Spartan/Textures/Legs/Running/Right/SpartanRightLegsV1[9]");
-            SpriteCollection["Legs"].AddFrame("Spartan/Textures/Legs/Running/Right/SpartanRightLegsV1[10]");
-            SpriteCollection["Legs"].AddFrame("Spartan/Textures/Legs/Running/Right/SpartanRightLegsV1[11]");
+            SpriteManager["Legs"].AddFrame("Spartan/Textures/Legs/Running/Right/SpartanRightLegsV1[1]");
+            SpriteManager["Legs"].AddFrame("Spartan/Textures/Legs/Running/Right/SpartanRightLegsV1[2]");
+            SpriteManager["Legs"].AddFrame("Spartan/Textures/Legs/Running/Right/SpartanRightLegsV1[3]");
+            SpriteManager["Legs"].AddFrame("Spartan/Textures/Legs/Running/Right/SpartanRightLegsV1[4]");
+            SpriteManager["Legs"].AddFrame("Spartan/Textures/Legs/Running/Right/SpartanRightLegsV1[5]");
+            SpriteManager["Legs"].AddFrame("Spartan/Textures/Legs/Running/Right/SpartanRightLegsV1[6]");
+            SpriteManager["Legs"].AddFrame("Spartan/Textures/Legs/Running/Right/SpartanRightLegsV1[7]");
+            SpriteManager["Legs"].AddFrame("Spartan/Textures/Legs/Running/Right/SpartanRightLegsV1[8]");
+            SpriteManager["Legs"].AddFrame("Spartan/Textures/Legs/Running/Right/SpartanRightLegsV1[9]");
+            SpriteManager["Legs"].AddFrame("Spartan/Textures/Legs/Running/Right/SpartanRightLegsV1[10]");
+            SpriteManager["Legs"].AddFrame("Spartan/Textures/Legs/Running/Right/SpartanRightLegsV1[11]");
 
             //Jumping.
-            SpriteCollection["Legs"].AddFrame("Spartan/Textures/Legs/Jumping/Right/SpartanRightLegsJumpV1[1]");
-            SpriteCollection["Legs"].AddFrame("Spartan/Textures/Legs/Jumping/Right/SpartanRightLegsJumpV1[2]");
-            SpriteCollection["Legs"].AddFrame("Spartan/Textures/Legs/Jumping/Right/SpartanRightLegsJumpV1[3]");
-            SpriteCollection["Legs"].AddFrame("Spartan/Textures/Legs/Jumping/Right/SpartanRightLegsJumpV1[4]");
-            SpriteCollection["Legs"].AddFrame("Spartan/Textures/Legs/Jumping/Right/SpartanRightLegsJumpV1[5]");
-            SpriteCollection["Legs"].AddFrame("Spartan/Textures/Legs/Jumping/Right/SpartanRightLegsJumpV1[6]");
-            SpriteCollection["Legs"].AddFrame("Spartan/Textures/Legs/Jumping/Right/SpartanRightLegsJumpV1[7]");
+            SpriteManager["Legs"].AddFrame("Spartan/Textures/Legs/Jumping/Right/SpartanRightLegsJumpV1[1]");
+            SpriteManager["Legs"].AddFrame("Spartan/Textures/Legs/Jumping/Right/SpartanRightLegsJumpV1[2]");
+            SpriteManager["Legs"].AddFrame("Spartan/Textures/Legs/Jumping/Right/SpartanRightLegsJumpV1[3]");
+            SpriteManager["Legs"].AddFrame("Spartan/Textures/Legs/Jumping/Right/SpartanRightLegsJumpV1[4]");
+            SpriteManager["Legs"].AddFrame("Spartan/Textures/Legs/Jumping/Right/SpartanRightLegsJumpV1[5]");
+            SpriteManager["Legs"].AddFrame("Spartan/Textures/Legs/Jumping/Right/SpartanRightLegsJumpV1[6]");
+            SpriteManager["Legs"].AddFrame("Spartan/Textures/Legs/Jumping/Right/SpartanRightLegsJumpV1[7]");
 
             //Correct the Origin.
-            SpriteCollection["Legs"][0].Width = 41;
-            SpriteCollection["Legs"][0].OriginX = (SpriteCollection["Legs"][0].Width / 2);
-            SpriteCollection["Legs"][1].OriginX = (SpriteCollection["Legs"][0].OriginX + 3);
-            SpriteCollection["Legs"][1].OriginY = SpriteCollection["Legs"][0].OriginY;
-            SpriteCollection["Legs"][2].OriginX = (SpriteCollection["Legs"][2].OriginX - 1);
-            SpriteCollection["Legs"][2].OriginY = SpriteCollection["Legs"][0].OriginY;
-            SpriteCollection["Legs"][3].OriginY = (SpriteCollection["Legs"][0].OriginY + 3);
-            SpriteCollection["Legs"][4].OriginY = SpriteCollection["Legs"][0].OriginY;
-            SpriteCollection["Legs"][5].OriginX = (SpriteCollection["Legs"][5].OriginX - 2);
-            SpriteCollection["Legs"][5].OriginY = SpriteCollection["Legs"][0].OriginY;
-            SpriteCollection["Legs"][6].OriginY = (SpriteCollection["Legs"][0].OriginY + 3);
-            SpriteCollection["Legs"][7].OriginY = (SpriteCollection["Legs"][0].OriginY + 2);
-            SpriteCollection["Legs"][8].OriginY = (SpriteCollection["Legs"][0].Origin.Y + 2);
-            SpriteCollection["Legs"][9].OriginY = SpriteCollection["Legs"][0].OriginY;
-            SpriteCollection["Legs"][10].OriginY = SpriteCollection["Legs"][0].OriginY;
-            SpriteCollection["Legs"][11].OriginY = SpriteCollection["Legs"][0].OriginY;
+            SpriteManager["Legs"][0].Width = 41;
+            SpriteManager["Legs"][0].OriginX = (SpriteManager["Legs"][0].Width / 2);
+            SpriteManager["Legs"][1].OriginX = (SpriteManager["Legs"][0].OriginX + 3);
+            SpriteManager["Legs"][1].OriginY = SpriteManager["Legs"][0].OriginY;
+            SpriteManager["Legs"][2].OriginX = (SpriteManager["Legs"][2].OriginX - 1);
+            SpriteManager["Legs"][2].OriginY = SpriteManager["Legs"][0].OriginY;
+            SpriteManager["Legs"][3].OriginY = (SpriteManager["Legs"][0].OriginY + 3);
+            SpriteManager["Legs"][4].OriginY = SpriteManager["Legs"][0].OriginY;
+            SpriteManager["Legs"][5].OriginX = (SpriteManager["Legs"][5].OriginX - 2);
+            SpriteManager["Legs"][5].OriginY = SpriteManager["Legs"][0].OriginY;
+            SpriteManager["Legs"][6].OriginY = (SpriteManager["Legs"][0].OriginY + 3);
+            SpriteManager["Legs"][7].OriginY = (SpriteManager["Legs"][0].OriginY + 2);
+            SpriteManager["Legs"][8].OriginY = (SpriteManager["Legs"][0].Origin.Y + 2);
+            SpriteManager["Legs"][9].OriginY = SpriteManager["Legs"][0].OriginY;
+            SpriteManager["Legs"][10].OriginY = SpriteManager["Legs"][0].OriginY;
+            SpriteManager["Legs"][11].OriginY = SpriteManager["Legs"][0].OriginY;
 
             //Legs. Collision Group, friction coefficient and OnCollision event.
             Geoms[Legs].CollisionGroup = 1;
@@ -255,7 +255,7 @@ namespace Library
             if (_CanMove == true)
             {
                 //The TimePerFrame.
-                SpriteCollection["Legs"].TimePerFrame =
+                SpriteManager["Legs"].TimePerFrame =
                     ((100 * System.UpdateSpeed) / Math.Abs(Bodies[Legs].LinearVelocity.X));
 
                 //Change the facing direction, the horizontal moving direction and the sprite.
@@ -279,8 +279,8 @@ namespace Library
             System.AddDebugText(debugIndexBody, "Body: " + Bodies[Torso].Position.ToString());
             System.AddDebugText(debugIndex_HeadRotation, "Head Rotation: " + Bodies[Head].Rotation);
             //System.AddDebugText(debugIndex_Arms, "Neck Rotation: " + AngleNeckJoint.TargetAngle);
-            System.AddDebugText(debugIndex_Arms, "Arm: " + SpriteCollection["Front Arm"].Position.ToString() + " | " +
-                SpriteCollection["Back Arm"].Position.ToString());
+            System.AddDebugText(debugIndex_Arms, "Arm: " + SpriteManager["Front Arm"].Position.ToString() + " | " +
+                SpriteManager["Back Arm"].Position.ToString());
         }
         /// <summary>
         /// Draw the Spartan.
@@ -697,7 +697,7 @@ namespace Library
                             //Unequip it.
                             _WeaponWield1.UnEquipedWeapon();
                             _WeaponWield1 = null;
-                            SpriteCollection.DeleteSprite("Main Weapon");
+                            SpriteManager.DeleteSprite("Main Weapon");
 
                             //Check if there's a secondary weapon.
                             if (_WeaponWield2 != null)
@@ -708,7 +708,7 @@ namespace Library
                                 _WeaponWield2.UnEquipedWeapon();
                                 Weapon weapon = _WeaponWield2;
                                 _WeaponWield2 = null;
-                                SpriteCollection.DeleteSprite("Secondary Weapon");
+                                SpriteManager.DeleteSprite("Secondary Weapon");
                                 //Equip the weapon as a main weapon.
                                 EquipMainWeapon(weapon);
 
@@ -726,7 +726,7 @@ namespace Library
                             //Unequip it.
                             _WeaponWield2.UnEquipedWeapon();
                             _WeaponWield2 = null;
-                            SpriteCollection.DeleteSprite("Secondary Weapon");
+                            SpriteManager.DeleteSprite("Secondary Weapon");
                         }
 
                         break;
@@ -756,22 +756,22 @@ namespace Library
                 case (Weapon.WeaponWieldMode.Main):
                     {
                         //Add the weapon Sprite.
-                        Factory.Instance.AddSprite(SpriteCollection, _WeaponWield1.SpritePath, Bodies[Torso].Position, 1, 1, depth, 0, 0, "Main Weapon");
+                        Factory.Instance.AddSprite(SpriteManager, _WeaponWield1.SpritePath, Bodies[Torso].Position, 1, 1, depth, 0, 0, "Main Weapon");
                         //Get the Sprite id.
-                        MainWeapon = (SpriteCollection.SpriteCount - 1);
+                        MainWeapon = (SpriteManager.SpriteCount - 1);
                         //Set the Sprite orientation.
-                        SpriteCollection["Main Weapon"].Orientation = SpriteCollection["Torso"].Orientation;
+                        SpriteManager["Main Weapon"].Orientation = SpriteManager["Torso"].Orientation;
 
                         break;
                     }
                 case (Weapon.WeaponWieldMode.Secondary):
                     {
                         //Add the weapon Sprite.
-                        Factory.Instance.AddSprite(SpriteCollection, _WeaponWield2.SpritePath, Bodies[Torso].Position, 1, 1, 3, 0, 0, "Secondary Weapon");
+                        Factory.Instance.AddSprite(SpriteManager, _WeaponWield2.SpritePath, Bodies[Torso].Position, 1, 1, 3, 0, 0, "Secondary Weapon");
                         //Get the Sprite id.
-                        SecondaryWeapon = (SpriteCollection.SpriteCount - 1);
+                        SecondaryWeapon = (SpriteManager.SpriteCount - 1);
                         //Set the Sprite orientation.
-                        SpriteCollection["Secondary Weapon"].Orientation = SpriteCollection["Torso"].Orientation;
+                        SpriteManager["Secondary Weapon"].Orientation = SpriteManager["Torso"].Orientation;
 
                         break;
                     }
@@ -788,18 +788,18 @@ namespace Library
             if (_WeaponWield1 != null)
             {
                 //Update the position of the weapon.
-                SpriteCollection["Main Weapon"].Position = _WeaponWield1.Bodies[0].Position;
+                SpriteManager["Main Weapon"].Position = _WeaponWield1.Bodies[0].Position;
                 //Update the rotation of the weapon.
-                SpriteCollection["Main Weapon"].Rotation = _WeaponWield1.Bodies[0].Rotation;
+                SpriteManager["Main Weapon"].Rotation = _WeaponWield1.Bodies[0].Rotation;
             }
 
             //The Secondary Weapon.
             if (_WeaponWield2 != null)
             {
                 //Update the position of the weapon.
-                SpriteCollection["Secondary Weapon"].Position = _WeaponWield2.Bodies[0].Position;
+                SpriteManager["Secondary Weapon"].Position = _WeaponWield2.Bodies[0].Position;
                 //Update the rotation of the weapon.
-                SpriteCollection["Secondary Weapon"].Rotation = _WeaponWield2.Bodies[0].Rotation;
+                SpriteManager["Secondary Weapon"].Rotation = _WeaponWield2.Bodies[0].Rotation;
             }
         }
         /// <summary>
@@ -995,26 +995,26 @@ namespace Library
             //Sprite Invisibility.
             if (input.CurrentKeyboardStates[i].IsKeyDown(Keys.S))
             {
-                SpriteCollection["Head"].Visibility = Visibility.Invisible;
-                SpriteCollection["Torso"].Visibility = Visibility.Invisible;
-                SpriteCollection["Front Arm"].Visibility = Visibility.Invisible;
-                SpriteCollection["Back Arm"].Visibility = Visibility.Invisible;
-                SpriteCollection["Legs"].Visibility = Visibility.Invisible;
+                SpriteManager["Head"].Visibility = Visibility.Invisible;
+                SpriteManager["Torso"].Visibility = Visibility.Invisible;
+                SpriteManager["Front Arm"].Visibility = Visibility.Invisible;
+                SpriteManager["Back Arm"].Visibility = Visibility.Invisible;
+                SpriteManager["Legs"].Visibility = Visibility.Invisible;
 
                 //If the Spartan is wielding a main weapon.
-                if (_WeaponWield1 != null) { SpriteCollection["Main Weapon"].Visibility = Visibility.Invisible; }
+                if (_WeaponWield1 != null) { SpriteManager["Main Weapon"].Visibility = Visibility.Invisible; }
             }
             //Sprite Visibility.
             if (input.CurrentKeyboardStates[i].IsKeyDown(Keys.D))
             {
-                SpriteCollection["Head"].Visibility = Visibility.Visible;
-                SpriteCollection["Torso"].Visibility = Visibility.Visible;
-                SpriteCollection["Front Arm"].Visibility = Visibility.Visible;
-                SpriteCollection["Back Arm"].Visibility = Visibility.Visible;
-                SpriteCollection["Legs"].Visibility = Visibility.Visible;
+                SpriteManager["Head"].Visibility = Visibility.Visible;
+                SpriteManager["Torso"].Visibility = Visibility.Visible;
+                SpriteManager["Front Arm"].Visibility = Visibility.Visible;
+                SpriteManager["Back Arm"].Visibility = Visibility.Visible;
+                SpriteManager["Legs"].Visibility = Visibility.Visible;
 
                 //If the Spartan is wielding a main weapon.
-                if (_WeaponWield1 != null) { SpriteCollection["Main Weapon"].Visibility = Visibility.Visible; }
+                if (_WeaponWield1 != null) { SpriteManager["Main Weapon"].Visibility = Visibility.Visible; }
             }
             //Rotate the Neck Joint.
             if (input.CurrentKeyboardStates[i].IsKeyDown(Keys.NumPad1))
@@ -1103,14 +1103,14 @@ namespace Library
             //The head rotation. Erratic head rotation might be solved by using another currentRotation factor.
             float headRotation = Helper.TurnToFace(Bodies[Head].Position,
                 new Vector2(Mouse.GetState().X, Mouse.GetState().Y),
-                    SpriteCollection["Back Arm"].Rotation, 1, facingDirection);
+                    SpriteManager["Back Arm"].Rotation, 1, facingDirection);
             //Limit the Head angle.
             _AngleNeckJoint.TargetAngle = LimitHeadAngle(headRotation);
 
             //The Arm rotation.
-            float armRotation = Helper.TurnToFace(SpriteCollection["Torso"].Position,
+            float armRotation = Helper.TurnToFace(SpriteManager["Torso"].Position,
                 new Vector2(Mouse.GetState().X, Mouse.GetState().Y),
-                SpriteCollection["Back Arm"].Rotation, 1, facingDirection);
+                SpriteManager["Back Arm"].Rotation, 1, facingDirection);
             //Rotate the arms.
             RotateArms(armRotation);
         }
@@ -1131,8 +1131,8 @@ namespace Library
         public void RotateArms(float rotation)
         {
             //Sprite.SpriteRotation[Torso, 1] = Sprite.AddAngles(rotation, -Calculator.DegreesToRadians(20));
-            SpriteCollection["Front Arm"].Rotation = ((rotation - 0.1f) / 2);
-            SpriteCollection["Back Arm"].Rotation = rotation;
+            SpriteManager["Front Arm"].Rotation = ((rotation - 0.1f) / 2);
+            SpriteManager["Back Arm"].Rotation = rotation;
 
             //Check if the character is wielding a weapon.
             if (_WeaponWield1 != null)
@@ -1143,7 +1143,7 @@ namespace Library
                         {
                             //The back of the weapon.
                             Vector2 weaponBack = Helper.CalculateOrbitPosition(_WeaponWield1.Bodies[0].Position,
-                                SpriteCollection.SubtractAngles(_WeaponWield1.Bodies[0].Rotation, (float)Math.PI), 15);
+                                SpriteManager.SubtractAngles(_WeaponWield1.Bodies[0].Rotation, (float)Math.PI), 15);
 
                             /*Sprite.SpriteRotation[Torso, 1] =
                                 -Sprite.CalculateAngleFromOrbitPosition(Sprite.SpritePosition[Torso, 1], 25,
@@ -1189,9 +1189,9 @@ namespace Library
                 //Facing Left.
                 if (facingDirection == FacingDirection.Left)
                 {
-                    SpriteCollection["Legs"].AnimationDirection = true;
+                    SpriteManager["Legs"].AnimationDirection = true;
                 }
-                else { SpriteCollection["Legs"].AnimationDirection = false; }
+                else { SpriteManager["Legs"].AnimationDirection = false; }
             }
             //Moving Right.
             else if (horizontalMovingDirection == HorizontalMovingDirections.Right)
@@ -1199,9 +1199,9 @@ namespace Library
                 //Facing Left.
                 if (facingDirection == FacingDirection.Left)
                 {
-                    SpriteCollection["Legs"].AnimationDirection = false;
+                    SpriteManager["Legs"].AnimationDirection = false;
                 }
-                else { SpriteCollection["Legs"].AnimationDirection = true; }
+                else { SpriteManager["Legs"].AnimationDirection = true; }
             }
         }
         /// <summary>
@@ -1257,31 +1257,31 @@ namespace Library
                 //If moving horizontal but not vertical.
                 if (_IsMovingHorizontally == true)
                 {
-                    SpriteCollection["Legs"].EnableAnimation = true;
-                    SpriteCollection["Legs"].FrameStartIndex = 1;
-                    SpriteCollection["Legs"].FrameEndIndex = 11;
+                    SpriteManager["Legs"].EnableAnimation = true;
+                    SpriteManager["Legs"].FrameStartIndex = 1;
+                    SpriteManager["Legs"].FrameEndIndex = 11;
 
                     //Change the sprite to running if another sprite is loaded.
-                    if (SpriteCollection["Legs"].CurrentFrameIndex > SpriteCollection["Legs"].FrameEndIndex)
+                    if (SpriteManager["Legs"].CurrentFrameIndex > SpriteManager["Legs"].FrameEndIndex)
                     {
-                        SpriteCollection["Legs"].CurrentFrameIndex = 1;
-                        SpriteCollection["Legs"].LoadFrame();
+                        SpriteManager["Legs"].CurrentFrameIndex = 1;
+                        SpriteManager["Legs"].LoadFrame();
                     }
                 }
                 //If not moving at all.
                 else
                 {
-                    SpriteCollection["Legs"].EnableAnimation = false;
-                    SpriteCollection["Legs"].CurrentFrameIndex = 0;
-                    SpriteCollection["Legs"].LoadFrame();
+                    SpriteManager["Legs"].EnableAnimation = false;
+                    SpriteManager["Legs"].CurrentFrameIndex = 0;
+                    SpriteManager["Legs"].LoadFrame();
                 }
             }
             //If moving vertical.
             else
             {
-                SpriteCollection["Legs"].CurrentFrameIndex = 16;
-                SpriteCollection["Legs"].LoadFrame();
-                SpriteCollection["Legs"].EnableAnimation = false;
+                SpriteManager["Legs"].CurrentFrameIndex = 16;
+                SpriteManager["Legs"].LoadFrame();
+                SpriteManager["Legs"].EnableAnimation = false;
                 //Sprite.SpriteFrameStartIndex[Legs, 0] = 12;
                 //Sprite.SpriteFrameEndIndex[Legs, 0] = 18;               
             }
@@ -1304,10 +1304,10 @@ namespace Library
             if (direction == FacingDirection.Right)
             {
                 //Loop through all sprites.
-                for (int sprite = 0; sprite < SpriteCollection.SpriteCount; sprite++)
+                for (int sprite = 0; sprite < SpriteManager.SpriteCount; sprite++)
                 {
                     //Flip the sprite.
-                    SpriteCollection[sprite].Orientation = Orientation.Left;
+                    SpriteManager[sprite].Orientation = Orientation.Left;
                 }
 
                 //Flip to the Left.
@@ -1327,12 +1327,12 @@ namespace Library
                     Bodies[Head], Bodies[Torso], new Vector2(Bodies[Torso].Position.X, Bodies[Torso].Position.Y - 5));
 
                 //Set the new rotation offset and sprite origin points.
-                SpriteCollection["Front Arm"].RotationOffset = SpriteCollection.AddAngles(Bodies[Torso].Rotation,
+                SpriteManager["Front Arm"].RotationOffset = SpriteManager.AddAngles(Bodies[Torso].Rotation,
                     Calculator.DegreesToRadians(60));
-                SpriteCollection["Back Arm"].RotationOffset = SpriteCollection.AddAngles(Bodies[Torso].Rotation,
+                SpriteManager["Back Arm"].RotationOffset = SpriteManager.AddAngles(Bodies[Torso].Rotation,
                     Calculator.DegreesToRadians(290));
-                SpriteCollection["Front Arm"][0].OriginX = (SpriteCollection["Front Arm"][0].Width - 7);
-                SpriteCollection["Back Arm"][0].OriginX = SpriteCollection["Back Arm"][0].Width;
+                SpriteManager["Front Arm"][0].OriginX = (SpriteManager["Front Arm"][0].Width - 7);
+                SpriteManager["Back Arm"][0].OriginX = SpriteManager["Back Arm"][0].Width;
 
                 //Change the facing direction.
                 FacingDirection = FacingDirection.Left;
@@ -1340,10 +1340,10 @@ namespace Library
             else
             {
                 //Loop through all sprites.
-                for (int sprite = 0; sprite < SpriteCollection.SpriteCount; sprite++)
+                for (int sprite = 0; sprite < SpriteManager.SpriteCount; sprite++)
                 {
                     //Flip the sprite.
-                    SpriteCollection[sprite].Orientation = Orientation.Right;
+                    SpriteManager[sprite].Orientation = Orientation.Right;
                 }
 
                 //Flip to the Right.
@@ -1363,12 +1363,12 @@ namespace Library
                 _RevoluteNeckJoint = JointFactory.Instance.CreateRevoluteJoint(System.PhysicsSimulator,
                     Bodies[Head], Bodies[Torso], new Vector2(Bodies[Torso].Position.X, Bodies[Torso].Position.Y - 5));
                 //Set the Sprite rotation offset and sprite origin.
-                SpriteCollection["Front Arm"].RotationOffset =
-                    SpriteCollection.SubtractAngles(Bodies[Torso].Rotation, Calculator.DegreesToRadians(60));
-                SpriteCollection["Back Arm"].RotationOffset =
-                    SpriteCollection.SubtractAngles(Bodies[Torso].Rotation, Calculator.DegreesToRadians(290));
-                SpriteCollection["Front Arm"][0].OriginX = 7;
-                SpriteCollection["Back Arm"][0].OriginX = 0;
+                SpriteManager["Front Arm"].RotationOffset =
+                    SpriteManager.SubtractAngles(Bodies[Torso].Rotation, Calculator.DegreesToRadians(60));
+                SpriteManager["Back Arm"].RotationOffset =
+                    SpriteManager.SubtractAngles(Bodies[Torso].Rotation, Calculator.DegreesToRadians(290));
+                SpriteManager["Front Arm"][0].OriginX = 7;
+                SpriteManager["Back Arm"][0].OriginX = 0;
 
                 //Change the facing direction.
                 FacingDirection = FacingDirection.Right;

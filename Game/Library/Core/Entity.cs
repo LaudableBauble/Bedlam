@@ -18,6 +18,7 @@ using FarseerPhysics.Dynamics;
 using FarseerPhysics.Dynamics.Joints;
 using FarseerPhysics.Factories;
 
+using Library.Enums;
 using Library.Factories;
 using Library.Imagery;
 
@@ -30,7 +31,7 @@ namespace Library.Core
     {
         #region Fields
         private List<Part> _Parts;
-        private SpriteCollection _Sprites;
+        private SpriteManager _Sprites;
         #endregion
 
         #region Methods
@@ -51,7 +52,7 @@ namespace Library.Core
 
             //Initialize a few variables.
             _Parts = new List<Part>();
-            _Sprites = new SpriteCollection();
+            _Sprites = new SpriteManager();
             _Type = Enums.ItemType.Entity;
         }
         /// <summary>
@@ -102,7 +103,6 @@ namespace Library.Core
         {
             //Add the part to the list.
             _Parts.Add(part);
-            //Subscribe to any events.
 
             //Return the part.
             return part;
@@ -134,7 +134,7 @@ namespace Library.Core
         /// <summary>
         /// The sprites of the entity.
         /// </summary>
-        public SpriteCollection Sprites
+        public SpriteManager Sprites
         {
             get { return _Sprites; }
             set { _Sprites = value; }

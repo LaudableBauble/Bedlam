@@ -153,7 +153,7 @@ namespace Library.Core
         /// <param name="texture">The texture of the asset to use.</param>
         /// <param name="boneIndex">The index of the bone.</param>
         /// <param name="origin">The origin of the sprite relative to the bone.</param>
-        public virtual void AddSprite(Texture2D texture, int boneIndex, Vector2 origin)
+        public virtual void AddSprites(Texture2D texture, int boneIndex, Vector2 origin)
         {
             //Add a sprite.
             _Skeleton.AddSprite(texture, boneIndex, origin);

@@ -30,6 +30,8 @@ namespace Library.GUI
     {
         #region Fields
         private Item _Item;
+        private Field fldWidth;
+        private Field fldHeight;
         #endregion
 
         #region Constructor
@@ -59,89 +61,74 @@ namespace Library.GUI
 
             //Intialize some variables.
             _Item = null;
-            Expander expander1 = new Expander(GUI, Position + new Vector2(5, 5), Width - 10, 15);
-            Textbox textbox1 = new Textbox(GUI, Position + new Vector2(5, 25), Width - 10, 15);
-            Label label1 = new Label(GUI, Position + new Vector2(5, 45), Width - 10, 15);
+            Expander expGeneral = new Expander(GUI, Position + new Vector2(5, 5), Width - 10, 15);
+            fldWidth = new Field(GUI, Width - 10, 15);
+            fldHeight = new Field(GUI, Width - 10, 15);
             Expander expander2 = new Expander(GUI, Position + new Vector2(5, 65), Width - 10, 15);
             Textbox textbox2 = new Textbox(GUI, Position + new Vector2(5, 85), Width - 10, 15);
             Label label2 = new Label(GUI, Position + new Vector2(5, 105), Width - 10, 15);
 
-            //Edit the components.
-            label1.Text = "Label Test 1";
-            label2.Text = "Label Test 2";
+            //Set up the components.
+            SetUpComponents();
 
             //Add controls to the expander.
-            expander1.AddItem(textbox1);
-            expander1.AddItem(label1);
+            expGeneral.AddItem(fldWidth);
+            expGeneral.AddItem(fldHeight);
             expander2.AddItem(textbox2);
             expander2.AddItem(label2);
 
             //Add the controls.
-            AddItem(expander1);
+            AddItem(expGeneral);
             AddItem(expander2);
-
-            //Hook up to some events.
-        }
-        /// <summary>
-        /// Load the content of this item form.
-        /// </summary>
-        public override void LoadContent()
-        {
-            //The inherited method.
-            base.LoadContent();
-        }
-        /// <summary>
-        /// Update the item form.
-        /// </summary>
-        /// <param name="gametime">The time to adhere to.</param>
-        public override void Update(GameTime gametime)
-        {
-            //The inherited method.
-            base.Update(gametime);
-        }
-        /// <summary>
-        /// Handle user input.
-        /// </summary>
-        /// <param name="input">The helper for reading input from the user.</param>
-        public override void HandleInput(InputState input)
-        {
-            //The inherited method.
-            base.HandleInput(input);
-
-            //If the item is active.
-            if (IsActive)
-            {
-                //If the item is visible.
-                if (IsVisible)
-                {
-                    //If the item has focus.
-                    if (HasFocus) { }
-                }
-            }
-        }
-        /// <summary>
-        /// Draw the item form.
-        /// </summary>
-        /// <param name="spriteBatch">The sprite batch to use.</param>
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            //The inherited method.
-            base.Draw(spriteBatch);
         }
 
+        /// <summary>
+        /// Set up the components.
+        /// </summary>
+        private void SetUpComponents()
+        {
+            //Edit the components.
+            fldWidth.Title = "Width:";
+            fldHeight.Title = "Height:";
+
+            //If no item has been selected, stop here.
+            if (_Item == null) { return; }
+
+            //Display the item's data.
+            fldWidth.Text = _Item.Width.ToString();
+            fldHeight.Text = _Item.Height.ToString();
+        }
         /// <summary>
         /// Update the inner components when an item type has been selected.
         /// </summary>
         /// <param name="o">The object to fire the event.</param>
-        /// <param name="e">The evebt arguments.</param>
+        /// <param name="e">The event arguments.</param>
         protected void OnItemTypeSelect(object o, ItemSelectEventArgs e)
         {
-            //Update the inner components.
             UpdateComponents();
+        }
+        protected void ItemChangeInvoke(Item item)
+        {
+            //If the item is already selected, end here.
+            if (_Item == item) { return; }
+
+            //Switch to the new item.
+            _Item = item;
+
+            //Reset the component data.
+            SetUpComponents();
         }
         #endregion
 
         #region Properties
+        /// <summary>
+        /// The item this form will be modifying.
+        /// </summary>
+        public Item Item
+        {
+            get { return _Item; }
+            set { ItemChangeInvoke(value); }
+        }
         #endregion
     }
 }

@@ -15,7 +15,7 @@ using Microsoft.Xna.Framework.Storage;
 namespace Library.Animate
 {
     /// <summary>
-    /// The bone that, when linked together with other bones and become a skeleton, stands as the primary means of character animation in this game.
+    /// A bone can be linked together with other bones to become a skeleton and choreographed to perform various animations.
     /// </summary>
     public class Bone
     {
@@ -35,13 +35,12 @@ namespace Library.Animate
         private float _Length;
         #endregion
 
-        #region Constructor
+        #region Constructors
         /// <summary>
         /// Create a bone.
         /// </summary>
         public Bone()
         {
-            //Initialize the bone.
             Initialize(null, "", -1, -1, Vector2.Zero, Vector2.One, 0, 1);
         }
         /// <summary>
@@ -57,7 +56,6 @@ namespace Library.Animate
         /// <param name="length">The length of the bone.</param>
         public Bone(Skeleton skeleton, string name, int index, int parentIndex, Vector2 position, Vector2 scale, float rotation, float length)
         {
-            //Save the given index for future use, along with initializing a few things.
             Initialize(skeleton, name, index, parentIndex, position, scale, rotation, length);
         }
         #endregion
@@ -74,7 +72,7 @@ namespace Library.Animate
         /// <param name="scale">The scale of the bone.</param>
         /// <param name="rotation">The absolute rotation of the bone.</param>
         /// <param name="length">The length of the bone.</param>
-        public void Initialize(Skeleton skeleton, string name, int index, int parentIndex, Vector2 position, Vector2 scale, float rotation, float length)
+        private void Initialize(Skeleton skeleton, string name, int index, int parentIndex, Vector2 position, Vector2 scale, float rotation, float length)
         {
             //Save the given index for future use, along with initializing a few things.
             _Skeleton = skeleton;

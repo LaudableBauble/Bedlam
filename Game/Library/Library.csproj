@@ -128,6 +128,7 @@
     <Compile Include="GUI\Basic\Propertylist.cs" />
     <Compile Include="GUI\Basic\Field.cs" />
     <Compile Include="GUI\ComponentComparer.cs" />
+    <Compile Include="Imagery\SpriteManager.cs" />
     <Compile Include="Infrastructure\FrameRateCounter.cs" />
     <Compile Include="Need of Overhaul\Enums.cs" />
     <Compile Include="Need of Overhaul\FarseerCamera2D.cs" />
@@ -160,7 +161,6 @@
     <Compile Include="GUI\GraphicalUserInterface.cs" />
     <Compile Include="Imagery\Frame.cs" />
     <Compile Include="Imagery\Sprite.cs" />
-    <Compile Include="Imagery\SpriteCollection.cs" />
     <Compile Include="Need of Overhaul\Camera2D.cs" />
     <Compile Include="Need of Overhaul\Helper.cs" />
     <Compile Include="Need of Overhaul\Object.cs" />

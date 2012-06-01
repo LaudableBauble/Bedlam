@@ -11,25 +11,17 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Net;
 using Microsoft.Xna.Framework.Storage;
 
-using FarseerPhysics;
-using FarseerPhysics.Collision;
-using FarseerPhysics.Common;
-using FarseerPhysics.Controllers;
-using FarseerPhysics.Dynamics;
-using FarseerPhysics.Dynamics.Joints;
-using FarseerPhysics.Factories;
-
-using Library;
+using Library.Enums;
 
 namespace Library.Imagery
 {
     /// <summary>
-    /// The sprite handles all image displaying.
+    /// A sprite is a collection of frames grouped together to form an animation.
     /// </summary>
-    public class Sprite : IDisposable
+    public class Sprite
     {
         #region Fields
-        private SpriteCollection _SpriteCollection;
+        private SpriteManager _Manager;
         private Texture2D _Texture;
         private Vector2 _Position;
         private string _Name;
@@ -71,42 +63,15 @@ namespace Library.Imagery
         }
         #endregion
 
-        #region Constructor
+        #region Constructors
         /// <summary>
-        /// Create a sprite.
+        /// Constructor a sprite.
         /// </summary>
-        /// <param name="spriteCollection">The collection of sprites this sprite is a part of.</param>
-        /// <param name="name">The name of the frame.</param>
-        /// <param name="position">The position of the sprite.</param>
-        /// <param name="timePerFrame">The time each frame gets on the screen.</param>
-        /// <param name="scale">The scale of the sprite.</param>
-        /// <param name="depth">The depth of the sprite.</param>
-        /// <param name="rotation">The rotation of the sprite.</param>
-        /// <param name="offset">The offset of the sprite.</param>
-        /// <param name="tag">The tag of the sprite, that is something to link it with.</param>
-        public Sprite(SpriteCollection spriteCollection, string name, Vector2 position, float timePerFrame, float scale, int depth, float rotation, float offset, string tag)
+        /// <param name="manager">The manager this sprite is a part of.</param>
+        /// <param name="name">The name of the sprite. Has nothing to do with the path of any sprite.</param>
+        public Sprite(SpriteManager manager, string name)
         {
-            //Intialize the sprite.
-            Initialize(spriteCollection, name, position, timePerFrame, scale, depth, rotation, offset, tag, null);
-        }
-        /// <summary>
-        /// Create a sprite.
-        /// </summary>
-        /// <param name="spriteCollection">The collection of sprites this sprite is a part of.</param>
-        /// <param name="name">The name of the frame.</param>
-        /// <param name="position">The position of the sprite.</param>
-        /// <param name="timePerFrame">The time each frame gets on the screen.</param>
-        /// <param name="scale">The scale of the sprite.</param>
-        /// <param name="depth">The depth of the sprite.</param>
-        /// <param name="rotation">The rotation of the sprite.</param>
-        /// <param name="offset">The offset of the sprite.</param>
-        /// <param name="tag">The tag of the sprite, that is something to link it with.</param>
-        /// <param name="origin">The origin of the sprite.</param>
-        public Sprite(SpriteCollection spriteCollection, string name, Vector2 position, float timePerFrame, float scale, int depth, float rotation, float offset, string tag,
-            Vector2 origin)
-        {
-            //Intialize the sprite.
-            Initialize(spriteCollection, name, position, timePerFrame, scale, depth, rotation, offset, tag, origin);
+            Initialize(manager, name);
         }
         #endregion
 
@@ -114,52 +79,38 @@ namespace Library.Imagery
         /// <summary>
         /// Initialize the sprite.
         /// </summary>
-        /// <param name="spriteCollection">The collection of sprites this sprite is a part of.</param>
+        /// <param name="manager">The manager this sprite is a part of.</param>
         /// <param name="name">The name of the frame.</param>
-        /// <param name="position">The position of the sprite.</param>
-        /// <param name="timePerFrame">The time each frame gets on the screen.</param>
-        /// <param name="scale">The scale of the sprite.</param>
-        /// <param name="depth">The depth of the sprite.</param>
-        /// <param name="rotation">The rotation of the sprite.</param>
-        /// <param name="offset">The offset of the sprite.</param>
-        /// <param name="tag">The tag of the sprite, that is something to link it with.</param>
-        /// <param name="origin">The origin of the sprite.</param>
-        public void Initialize(SpriteCollection spriteCollection, string name, Vector2 position, float timePerFrame, float scale, int depth, float rotation, float offset,
-            string tag, Vector2? origin)
+        private void Initialize(SpriteManager manager, string name)
         {
             //Initialize some variables.
-            _SpriteCollection = spriteCollection;
+            _Manager = manager;
             _Name = name;
-            _Position = position;
-            _TimePerFrame = timePerFrame;
-            _Scale = scale;
-            _Depth = depth;
-            _Rotation = rotation;
-            _PositionOffset = offset;
+            _Position = Vector2.Zero;
+            _TimePerFrame = 1;
+            _Scale = 1;
+            _Depth = 0;
+            _Rotation = 0;
+            _PositionOffset = 0;
             _OrbitOffset = 0;
             _RotationOffset = 0;
-            _Tag = tag;
+            _Tag = "";
             _Transparence = 1;
             _Visibility = Visibility.Visible;
             _Orientation = Orientation.Right;
-
-            //Initialize some variables.
-            if (_Frames == null) { _Frames = new List<Frame>(); }
-            //Create the first frame. If an origin wasn't passed along, let the frame come up with one.
-            if (!origin.HasValue) { AddFrame(_Name); }
-            else { AddFrame(_Name, origin.Value); }
+            _Frames = new List<Frame>();
         }
         /// <summary>
         /// Load the texture for the sprite using the Content Pipeline.
         /// </summary>
         public void LoadContent()
         {
-            //Update the bounds of all frames in the sprite. They may have been distorted due to the lack of a content manager.
+            //Update the bounds of all frames in the sprite. They may have been distorted due to the lack of a valid content manager.
             foreach (Frame frame in _Frames)
             {
                 //The width and the height.
-                frame.Width = _SpriteCollection.GetTextureBounds(frame.Name).Width;
-                frame.Height = _SpriteCollection.GetTextureBounds(frame.Name).Height;
+                frame.Width = _Manager.GetTextureBounds(frame.Path).Width;
+                frame.Height = _Manager.GetTextureBounds(frame.Path).Height;
             }
 
             //Load the first frame.
@@ -175,125 +126,37 @@ namespace Library.Imagery
             if (_EnableAnimation) { UpdateFrame(gameTime); }
         }
         /// <summary>
-        /// Update the sprite and all its frames.
-        /// </summary>
-        /// <param name="gameTime">The Game Time.</param>
-        /// <param name="position">The position of the sprite.</param>
-        /// <param name="rotation">The rotation of the sprite.</param>
-        public void Update(GameTime gameTime, Vector2 position, float rotation)
-        {
-            //Update the Frames.
-            if (_EnableAnimation) { UpdateFrame(gameTime); }
-            //Update the sprite's position.
-            _Position = Helper.CalculateOrbitPosition(position, AddAngles(rotation, _OrbitOffset), _PositionOffset);
-            //Update the sprite's rotation.
-            _Rotation = AddAngles(rotation, _RotationOffset);
-        }
-        /// <summary>
         /// Draw the sprite and its current frame to the screen.
         /// </summary>
         /// <param name="spriteBatch">The sprite batch to use.</param>
         public void Draw(SpriteBatch spriteBatch)
         {
-            //If the Sprite is visible.
-            if (_Visibility == Visibility.Visible)
-            {
-                //The Sprite Effect, facing right.
-                SpriteEffects spriteEffects = SpriteEffects.None;
+            //If there is no texture loaded or if the sprite is invisible, stop here.
+            if (_Texture == null || _Visibility == Visibility.Invisible) { return; }
 
-                //The sprite faces left.
-                if (_Orientation == Orientation.Left) { spriteEffects = SpriteEffects.FlipHorizontally; }
+            //The Sprite Effect, facing right.
+            SpriteEffects spriteEffects = SpriteEffects.None;
 
-                //Draw the sprite.
-                spriteBatch.Draw(_Texture, _Position, null, Color.White * _Transparence, AddAngles(_Rotation, _RotationOffset), _Frames[_FrameIndex].Origin,
-                    _Scale, spriteEffects, 0);
-            }
-        }
+            //The sprite faces left.
+            if (_Orientation == Orientation.Left) { spriteEffects = SpriteEffects.FlipHorizontally; }
 
-        /// <summary>
-        /// Increment the selected frame index and change the currently drawn frame.
-        /// </summary>
-        public void IncrementFrameIndex()
-        {
-            //Increment the frame index.
-            FrameChangedInvoke(_FrameIndex + 1);
-        }
-        /// <summary>
-        /// Decrement the selected frame index and change the currently drawn frame.
-        /// </summary>
-        public void DecrementFrameIndex()
-        {
-            //Increment the frame index.
-            FrameChangedInvoke(_FrameIndex - 1);
+            //Draw the sprite.
+            spriteBatch.Draw(_Texture, _Position, null, Color.White * _Transparence, Helper.AddAngles(_Rotation, _RotationOffset), _Frames[_FrameIndex].Origin,
+                _Scale, spriteEffects, 0);
         }
 
-        /// <summary>
-        /// Add a frame to the sprite.
-        /// </summary>
-        /// <param name="frameName">The name of the frame.</param>
-        public void AddFrame(string frameName)
-        {
-            //Get the bounds of the frame.
-            Rectangle rectangle = _SpriteCollection.GetTextureBounds(frameName);
-            //Add the frame to the list of frames.
-            _Frames.Add(new Frame(frameName, rectangle.Width, rectangle.Height));
-        }
-        /// <summary>
-        /// Add a frame to the sprite.
-        /// </summary>
-        /// <param name="texture">The texture of the frame.</param>
-        public void AddFrame(Texture2D texture)
-        {
-            //Get the bounds of the frame.
-            Rectangle rectangle = _SpriteCollection.GetTextureBounds(texture);
-            //Add the frame to the list of frames.
-            _Frames.Add(new Frame(texture, rectangle.Width, rectangle.Height));
-        }
-        /// <summary>
-        /// Add a frame to the sprite.
-        /// </summary>
-        /// <param name="frameName">The name of the frame.</param>
-        /// <param name="origin">The origin of the frame.</param>
-        public void AddFrame(string frameName, Vector2 origin)
-        {
-            //Get the bounds of the frame.
-            Rectangle rectangle = _SpriteCollection.GetTextureBounds(frameName);
-            //Add the frame to the list of frames.
-            _Frames.Add(new Frame(frameName, rectangle.Width, rectangle.Height, origin));
-        }
-        /// <summary>
-        /// Find a frame's index.
-        /// </summary>
-        /// <param name="frameName">The name of the frame.</param>
-        /// <returns>The index of the frame.</returns>
-        public int FindFrameIndex(string frameName)
-        {
-            //The frame to return.
-            Frame frame = null;
-            //Loop through the list of frames and find the one with the right name.
-            foreach (Frame f in _Frames) { if (f.Name == frameName) { frame = f; } }
-
-            //Return it.
-            return (_Frames.IndexOf(frame));
-        }
-        /// <summary>
-        /// Delete a frame from the sprite.
-        /// </summary>
-        /// <param name="frameName">The name of the frame.</param>
-        public void DeleteFrame(string frameName)
-        {
-            //Delete the frame at the correct location.
-            _Frames.RemoveAt(FindFrameIndex(frameName));
-        }
         /// <summary>
         /// Load a frame's texture.
         /// </summary>
         public void LoadFrame()
         {
+            //If ths sprite has no frames, stop here.
+            if (_Frames.Count == 0) { return; }
+
             //If a frame has a texture already stored on its premises, load that texture.
             if (_Frames[_FrameIndex].Texture != null) { _Texture = _Frames[_FrameIndex].Texture; }
             //Otherwise load one by using the name of the frame.
-            else { _Texture = _SpriteCollection.ContentManager.Load<Texture2D>(_Frames[_FrameIndex].Name); }
+            else { _Texture = _Manager.ContentManager.Load<Texture2D>(_Frames[_FrameIndex].Path); }
 
             //The bounds of the sprite has changed, invoke the appropriate event.
             BoundsChangedInvoke();
@@ -331,7 +194,134 @@ namespace Library.Imagery
                 _TotalElapsedTime -= _TimePerFrame;
             }
         }
+        /// <summary>
+        /// Update the sprite's position and rotation.
+        /// </summary>
+        /// <param name="position">The new position of the sprite.</param>
+        /// <param name="rotation">The new rotation of the sprite.</param>
+        public void UpdateSprite(Vector2 position, float rotation)
+        {
+            //Update the sprite's position and rotation
+            _Position = Helper.CalculateOrbitPosition(position, Helper.AddAngles(rotation, _OrbitOffset), _PositionOffset);
+            _Rotation = Helper.AddAngles(rotation, _RotationOffset);
+        }
 
+        /// <summary>
+        /// Increment the selected frame index and change the currently drawn frame.
+        /// </summary>
+        public void IncrementFrameIndex()
+        {
+            //Increment the frame index.
+            FrameChangedInvoke(_FrameIndex + 1);
+        }
+        /// <summary>
+        /// Decrement the selected frame index and change the currently drawn frame.
+        /// </summary>
+        public void DecrementFrameIndex()
+        {
+            //Increment the frame index.
+            FrameChangedInvoke(_FrameIndex - 1);
+        }
+        /// <summary>
+        /// Add a frame to the sprite.
+        /// </summary>
+        /// <param name="frame">The frame to add.</param>
+        public void AddFrame(Frame frame)
+        {
+            //Add the frame to the list of frames.
+            _Frames.Add(frame);
+
+            //Increment the animation end index.
+            _FrameEndIndex++;
+        }
+        /// <summary>
+        /// Add a frame to the sprite.
+        /// </summary>
+        /// <param name="path">The path of the frame.</param>
+        public void AddFrame(string path)
+        {
+            //Get the bounds of the frame.
+            Rectangle rectangle = _Manager.GetTextureBounds(path);
+
+            //Add the frame.
+            AddFrame(new Frame(path, rectangle.Width, rectangle.Height));
+        }
+        /// <summary>
+        /// Add a frame to the sprite.
+        /// </summary>
+        /// <param name="path">The path of the frame.</param>
+        /// <param name="origin">The origin of the frame.</param>
+        public void AddFrame(string path, Vector2 origin)
+        {
+            //Get the bounds of the frame.
+            Rectangle rectangle = _Manager.GetTextureBounds(path);
+
+            //Add the frame.
+            AddFrame(new Frame(path, rectangle.Width, rectangle.Height));
+        }
+        /// <summary>
+        /// Add a frame to the sprite.
+        /// </summary>
+        /// <param name="texture">The texture of the frame.</param>
+        public void AddFrame(Texture2D texture)
+        {
+            //Get the bounds of the frame.
+            Rectangle rectangle = _Manager.GetTextureBounds(texture);
+
+            //Add the frame.
+            AddFrame(new Frame(texture, rectangle.Width, rectangle.Height));
+        }
+        /// <summary>
+        /// Add a frame to the sprite.
+        /// </summary>
+        /// <param name="texture">The texture of the frame.</param>
+        /// <param name="origin">The origin of the frame.</param>
+        public void AddFrame(Texture2D texture, Vector2 origin)
+        {
+            //Get the bounds of the frame.
+            Rectangle rectangle = _Manager.GetTextureBounds(texture);
+
+            //Add the frame.
+            AddFrame(new Frame(texture, rectangle.Width, rectangle.Height, origin));
+        }
+        /// <summary>
+        /// Find a frame's index.
+        /// </summary>
+        /// <param name="frameName">The name of the frame.</param>
+        /// <returns>The index of the frame.</returns>
+        public int IndexOf(string frameName)
+        {
+            //The frame to return.
+            Frame frame = null;
+
+            //Loop through the list of frames and find the one with the right name.
+            _Frames.ForEach(item => { if (item.Path == frameName) { frame = item; } });
+
+            //Return it.
+            return _Frames.IndexOf(frame);
+        }
+        /// <summary>
+        /// Remove a frame from the sprite.
+        /// </summary>
+        /// <param name="frameName">The name of the frame to remove.</param>
+        public void RemoveFrame(string frameName)
+        {
+            _Frames.RemoveAt(IndexOf(frameName));
+
+            //Decrement the animation end index.
+            _FrameEndIndex--;
+        }
+        /// <summary>
+        /// Remove a frame from the sprite.
+        /// </summary>
+        /// <param name="index">The index of the frame to remove.</param>
+        public void RemoveFrame(int index)
+        {
+            _Frames.RemoveAt(index);
+
+            //Decrement the animation end index.
+            _FrameEndIndex--;
+        }
         /// <summary>
         /// The bounds of sprite has changed.
         /// </summary>
@@ -354,60 +344,24 @@ namespace Library.Imagery
             //If someone has hooked up a delegate to the event, fire it.
             if (FrameChanged != null) { FrameChanged(this, new EventArgs()); }
         }
-
-        /// <summary>
-        /// Add two angles.
-        /// </summary>
-        /// <param name="radian1">The first angle to add.</param>
-        /// <param name="radian2">The second angle to add.</param>
-        /// <returns>The angle sum.</returns>
-        public float AddAngles(float radian1, float radian2)
-        {
-            //Add the angles together.
-            float addResult = radian1 + radian2;
-            //Check if the sum of the angles has overreached a full lap, aka two PI, and if so fix it.
-            if (addResult > (Math.PI * 2)) { return (addResult - ((float)Math.PI * 2)); }
-            else { return addResult; }
-        }
-        /// <summary>
-        /// Subtracts an angle from an angle.
-        /// </summary>
-        /// <param name="radian1">The angle to subtract from.</param>
-        /// <param name="radian2">The angle to subtract.</param>
-        /// <returns>The subtracted angle.</returns>
-        public float SubtractAngles(float radian1, float radian2)
-        {
-            //Subtract the angles from eachother.
-            float subtractResult = radian1 - radian2;
-            //If the difference has exceeded a full lap, aka 0, fix that.
-            if (subtractResult < 0) { return (subtractResult + ((float)Math.PI * 2)); }
-            else { return subtractResult; }
-        }
-
-        #region IDisposable Members
-        /// <summary>
-        /// Dispose of the sprite instance.
-        /// </summary>
-        public void Dispose() { }
-        #endregion
         #endregion
 
         #region Properties
         /// <summary>
-        /// The Sprite Collection.
+        /// The sprite's manager.
         /// </summary>
-        public SpriteCollection SpriteCollection
+        public SpriteManager Manager
         {
-            get { return (_SpriteCollection); }
-            set { _SpriteCollection = value; }
+            get { return _Manager; }
+            set { _Manager = value; }
         }
         /// <summary>
-        /// The Content Manager.
+        /// The sprite's content manager.
         /// </summary>
         public ContentManager ContentManager
         {
-            get { return (_SpriteCollection.ContentManager); }
-            set { _SpriteCollection.ContentManager = value; }
+            get { return _Manager.ContentManager; }
+            set { _Manager.ContentManager = value; }
         }
         /// <summary>
         /// The sprite texture.

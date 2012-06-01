@@ -208,9 +208,6 @@ namespace Game.Editors
                 box2.Parts[0].Body.Restitution = .1f * i;
                 //box2.Parts[0].Body.Mass = 1 + 1 * i;
             }
-
-            //Update the tree view.
-            SetUpTreeView();
             #endregion
         }
         /// <summary>
@@ -762,6 +759,9 @@ namespace Game.Editors
             Selectlayer((item == null) ? null : _Level.Layers[GetLayerIndex(_SelectedItem)]);
             //Update the property list.
             UpdatePropertyList();
+
+            //Let the modification form know of the selection.
+            _ModifyItemForm.Item = _SelectedItem;
         }
         /// <summary>
         /// Move the selected item.
@@ -970,7 +970,7 @@ namespace Game.Editors
             //Update the tree view.
             _TreeView.UpdateTree();
             //Tick all the nodes in the tree.
-            _TreeView.Nodes[0].NodeTickedInvoke(true);
+            _TreeView.Nodes[0].IsTicked = true;
         }
         /// <summary>
         /// Update the list with information about the current item.

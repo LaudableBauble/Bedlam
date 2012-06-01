@@ -133,7 +133,7 @@ namespace Library.GUI.Basic
         /// Change the state of hiding for this tabpage.
         /// </summary>
         /// <param name="isHiding">Whether the tabpage should be in hiding or not.</param>
-        public void HidingChangeInvoke(bool isHiding)
+        private void HidingChangeInvoke(bool isHiding)
         {
             //If the new value is not different from the previous, stop here.
             if (_IsHiding == isHiding) { return; }
@@ -142,11 +142,7 @@ namespace Library.GUI.Basic
             _IsHiding = isHiding;
 
             //Change hiding state.
-            switch (_IsHiding)
-            {
-                case true: { _Items.FindAll(item => item != _Button).ForEach(item => item.IsActive = false); break; }
-                case false: { _Items.FindAll(item => item != _Button).ForEach(item => item.IsActive = true); break; }
-            }
+            _Items.FindAll(item => item != _Button).ForEach(item => item.IsActive = !_IsHiding);
         }
         /// <summary>
         /// This tab page's button has been clicked.
@@ -175,7 +171,7 @@ namespace Library.GUI.Basic
         public bool IsHiding
         {
             get { return _IsHiding; }
-            set { _IsHiding = value; }
+            set { HidingChangeInvoke(value); }
         }
         #endregion
     }

@@ -87,44 +87,6 @@ namespace Library.GUI.Basic
             //Add texture to the button.
             CreateButtonTexture();
         }
-        /// <summary>
-        /// Update the checkbox.
-        /// </summary>
-        /// <param name="gameTime">The time to adhere to.</param>
-        public override void Update(GameTime gameTime)
-        {
-            //The inherited method.
-            base.Update(gameTime);
-        }
-        /// <summary>
-        /// Handle user input.
-        /// </summary>
-        /// <param name="input">The helper for reading input from the user.</param>
-        public override void HandleInput(InputState input)
-        {
-            //The inherited method.
-            base.HandleInput(input);
-
-            //If the item is active.
-            if (IsActive)
-            {
-                //If the item is visible.
-                if (IsVisible)
-                {
-                    //If the item has focus.
-                    if (HasFocus) { }
-                }
-            }
-        }
-        /// <summary>
-        /// Draw the checkbox.
-        /// </summary>
-        /// <param name="spriteBatch">The sprite batch to use.</param>
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            //The inherited method.
-            base.Draw(spriteBatch);
-        }
 
         /// <summary>
         /// Create the button textures.
@@ -135,34 +97,9 @@ namespace Library.GUI.Basic
             _Button.DefaultSprite.AddFrame(DrawingHelper.CreateRectangleTexture(GUI.GraphicsDevice, (int)(Width * _Ratio), (int)Height, Color.Red, Color.Black));
         }
         /// <summary>
-        /// Tell the world that the bounds of this item has changed.
-        /// </summary>
-        /// <param name="width">The new width of the item.</param>
-        /// <param name="height">The new height of the item.</param>
-        protected override void BoundsChangeInvoke(float width, float height)
-        {
-            //Call the base method.
-            base.BoundsChangeInvoke(width, height);
-
-            //Update the components' positions and bounds.
-            UpdateComponents();
-        }
-        /// <summary>
-        /// Tell the world that the position of this item has changed.
-        /// </summary>
-        /// <param name="position">The new position of the item.</param>
-        protected override void PositionChangeInvoke(Vector2 position)
-        {
-            //Call the base method.
-            base.PositionChangeInvoke(position);
-
-            //Update the components' positions and bounds.
-            UpdateComponents();
-        }
-        /// <summary>
         /// Update the label's and button's position and bounds when the bounds or position of this item changes.
         /// </summary>
-        private void UpdateComponents()
+        protected override void UpdateComponents()
         {
             //If the item has been recently modified update the label's and button's position, width and height.
             _Label.Position = new Vector2(Position.X + (Width * _Ratio), Position.Y);
@@ -188,10 +125,14 @@ namespace Library.GUI.Basic
         /// <param name="isChecked">Whether the checkbox just got checked or not.</param>
         private void CheckboxTickedInvoke(bool isChecked)
         {
+            //If the checkbox does not change value, stop here.
+            if (_IsChecked == isChecked) { return; }
+
             //Update the variable.
             _IsChecked = isChecked;
+
             //Change the button's sprite, if possible.
-            if (_Button.Sprite.SpriteCount != 0)
+            if (_Button.Sprite.Count != 0)
             {
                 if (_IsChecked) { _Button.Sprite[0].CurrentFrameIndex = 1; }
                 else { _Button.Sprite[0].CurrentFrameIndex = 0; }

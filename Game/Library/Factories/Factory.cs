@@ -78,16 +78,16 @@ namespace Library.Factories
         /// Add a texture item to a layer.
         /// </summary>
         /// <param name="layer">The layer to add the item to.</param>
-        /// <param name="spriteName">The name of the item's sprite.</param>
+        /// <param name="spritePath">The name of the item's sprite.</param>
         /// <param name="name">The name of the item.</param>
         /// <param name="position">The position of the item.</param>
         /// <param name="rotation">The rotation of the item.</param>
         /// <param name="scale">The scale of the item.</param>
-        public TextureItem AddTextureItem(Layer layer, string spriteName, string name, Vector2 position, float rotation, Vector2 scale)
+        public TextureItem AddTextureItem(Layer layer, string spritePath, string name, Vector2 position, float rotation, Vector2 scale)
         {
             //The item.
             TextureItem item = new TextureItem(layer.Level, name, position, rotation, scale);
-            item.AddSprite(spriteName);
+            item.AddSprite(spritePath);
 
             //Add the item and return it.
             return (layer.AddItem(item) as TextureItem);
@@ -176,16 +176,16 @@ namespace Library.Factories
         /// </summary>
         /// <param name="layer">The layer that this box will belong to.</param>
         /// <param name="name">The name of the box.</param>
-        /// <param name="spriteName">The name of the sprite to attach to it.</param>
+        /// <param name="spritePath">The name of the sprite to attach to it.</param>
         /// <param name="position">The position of the box.</param>
         /// <param name="width">The width of the box.</param>
         /// <param name="height">The height of the box.</param>
         /// <returns>The recently added part.</returns>
-        public Box AddBox(Layer layer, string name, string spriteName, Vector2 position, float width, float height)
+        public Box AddBox(Layer layer, string name, string spritePath, Vector2 position, float width, float height)
         {
             //Add the part to the specified entity and return it.
             Box box = AddBox(layer, name, position, 0, Vector2.One, width, height);
-            box.SetSprite(AddSprite(box.Sprites, spriteName, new Vector2(width / 2, height / 2)));
+            box.SetSprite(AddSprite(box.Sprites, name, spritePath, new Vector2(width / 2, height / 2)));
 
             //Return the box.
             return box;
@@ -210,50 +210,74 @@ namespace Library.Factories
 
         #region Sprites
         /// <summary>
-        /// Add a sprite to a collection.
+        /// Add a sprite to a manager.
         /// </summary>
-        /// <param name="collection">The collection to add the sprite to.</param>
+        /// <param name="manager">The manager to add the sprite to.</param>
         /// <param name="name">The name of the sprite.</param>
+        /// <param name="path">The path of the texture.</param>
         /// <returns>The recently added sprite.</returns>
-        public Sprite AddSprite(SpriteCollection collection, string name)
+        public Sprite AddSprite(SpriteManager manager, string name, string path)
         {
-            //Create the sprite and add it to the list.
-            return AddSprite(collection, name, Vector2.Zero, 1, 1, 0, 0, 0, "");
+            //Create the sprite and add it to the manager.
+            Sprite sprite = manager.AddSprite(new Sprite(manager, name));
+
+            //Add a frame to the sprite.
+            sprite.AddFrame(path);
+            manager.ManageSprites();
+
+            //Return the sprite.
+            return sprite;
         }
         /// <summary>
-        /// Add a sprite to a collection.
+        /// Add a sprite to a manager.
         /// </summary>
-        /// <param name="collection">The collection to add the sprite to.</param>
+        /// <param name="manager">The manager to add the sprite to.</param>
         /// <param name="name">The name of the sprite.</param>
+        /// <param name="path">The path of the texture.</param>
         /// <param name="origin">The origin of the sprite.</param>
         /// <returns>The recently added sprite.</returns>
-        public Sprite AddSprite(SpriteCollection collection, string name, Vector2 origin)
+        public Sprite AddSprite(SpriteManager manager, string name, string path, Vector2 origin)
         {
-            //Create the sprite and add it to the list.
-            return AddSprite(collection, name, Vector2.Zero, 1, 1, 0, 0, 0, "", origin);
+            //Create the sprite and add it to the manager.
+            Sprite sprite = manager.AddSprite(new Sprite(manager, name));
+
+            //Add a frame to the sprite.
+            sprite.AddFrame(path, origin);
+            manager.ManageSprites();
+
+            //Return the sprite.
+            return sprite;
         }
         /// <summary>
-        /// Add a sprite to a collection.
+        /// Add a sprite to a manager.
         /// </summary>
-        /// <param name="collection">The collection to add the sprite to.</param>
+        /// <param name="manager">The manager to add the sprite to.</param>
         /// <param name="name">The name of the sprite.</param>
+        /// <param name="path">The path of the texture.</param>
         /// <param name="rotationOffset">The rotation offset of the sprite.</param>
         /// <param name="tag">The tag of the sprite, that is something to link it with.</param>
-        public Sprite AddSprite(SpriteCollection collection, string name, float rotationOffset, string tag)
+        public Sprite AddSprite(SpriteManager manager, string name, string path, float rotationOffset, string tag)
         {
-            //Create the sprite and add it to the list.
-            Sprite sprite = collection.AddSprite(new Sprite(collection, name, Vector2.Zero, 1, 1, 0, 0, 0, tag));
-            //Set the rotation offset.
+            //Create the sprite and add it to the manager.
+            Sprite sprite = manager.AddSprite(new Sprite(manager, name));
+
+            //Set the properties.
+            sprite.Tag = tag;
             sprite.RotationOffset = rotationOffset;
 
-            //Add the sprite and return it.
-            return collection.AddSprite(sprite);
+            //Add a frame to the sprite.
+            sprite.AddFrame(path);
+            manager.ManageSprites();
+
+            //Return the sprite.
+            return sprite;
         }
         /// <summary>
-        /// Add a sprite to a collection.
+        /// Add a sprite to a manager.
         /// </summary>
-        /// <param name="collection">The collection to add the sprite to.</param>
+        /// <param name="manager">The manager to add the sprite to.</param>
         /// <param name="name">The name of the sprite.</param>
+        /// <param name="path">The path of the texture.</param>
         /// <param name="position">The position of the sprite.</param>
         /// <param name="timePerFrame">The time per frame.</param>
         /// <param name="scale">The scale of the sprite.</param>
@@ -261,17 +285,33 @@ namespace Library.Factories
         /// <param name="rotation">The rotation of the sprite.</param>
         /// <param name="offset">The offset of the sprite.</param>
         /// <param name="tag">The tag of the sprite, that is something to link it with.</param>
-        public Sprite AddSprite(SpriteCollection collection, string name, Vector2 position, float timePerFrame, float scale, int depth, float rotation, float offset,
-            string tag)
+        public Sprite AddSprite(SpriteManager manager, string name, string path, Vector2 position, float timePerFrame, float scale, int depth, float rotation,
+            float offset, string tag)
         {
-            //Create the sprite and add it to the list.
-            return collection.AddSprite(new Sprite(collection, name, position, timePerFrame, scale, depth, rotation, offset, tag));
+            //Create the sprite and add it to the manager.
+            Sprite sprite = manager.AddSprite(new Sprite(manager, name));
+
+            //Set the properties.
+            sprite.Position = position;
+            sprite.TimePerFrame = timePerFrame;
+            sprite.Scale = scale;
+            sprite.Depth = depth;
+            sprite.Rotation = rotation;
+            sprite.PositionOffset = offset;
+
+            //Add a frame to the sprite.
+            sprite.AddFrame(path);
+            manager.ManageSprites();
+
+            //Return the sprite.
+            return sprite;
         }
         /// <summary>
-        /// Add a sprite.
+        /// Add a sprite to a manager.
         /// </summary>
-        /// <param name="collection">The collection to add the sprite to.</param>
-        /// <param name="spriteName">The name of the sprite.</param>
+        /// <param name="manager">The manager to add the sprite to.</param>
+        /// <param name="name">The name of the sprite.</param>
+        /// <param name="path">The path of the texture.</param>
         /// <param name="position">The position of the sprite.</param>
         /// <param name="orbitRotation">The orbit rotation of the sprite.</param>
         /// <param name="timePerFrame">The time per frame.</param>
@@ -280,23 +320,34 @@ namespace Library.Factories
         /// <param name="rotation">The rotation of the sprite.</param>
         /// <param name="tag">The tag of the sprite, that is something to link it with.</param>
         /// <param name="offset">The offset of the sprite.</param>
-        public Sprite AddSprite(SpriteCollection collection, string name, Vector2 position, float orbitRotation, float timePerFrame, float scale, int depth,
+        public Sprite AddSprite(SpriteManager manager, string name, string path, Vector2 position, float orbitRotation, float timePerFrame, float scale, int depth,
             float rotation, string tag, float offset)
         {
-            //Create the sprite.
-            Sprite sprite = new Sprite(collection, name, Helper.CalculateOrbitPosition(position, orbitRotation, offset), timePerFrame, scale, depth, rotation,
-                offset, tag);
-            //Set the rotation offset.
-            sprite.RotationOffset = collection.SubtractAngles(rotation, orbitRotation);
+            //Create the sprite and add it to the manager.
+            Sprite sprite = manager.AddSprite(new Sprite(manager, name));
 
-            //Add the sprite and return it.
-            return collection.AddSprite(sprite);
+            //Set the properties.
+            sprite.Position = Helper.CalculateOrbitPosition(position, orbitRotation, offset);
+            sprite.TimePerFrame = timePerFrame;
+            sprite.Scale = scale;
+            sprite.Depth = depth;
+            sprite.Rotation = rotation;
+            sprite.PositionOffset = offset;
+            sprite.RotationOffset = Helper.SubtractAngles(rotation, orbitRotation);
+
+            //Add a frame to the sprite.
+            sprite.AddFrame(path);
+            manager.ManageSprites();
+
+            //Return the sprite.
+            return sprite;
         }
         /// <summary>
         /// Add a sprite.
         /// </summary>
-        /// <param name="collection">The collection to add the sprite to.</param>
+        /// <param name="manager">The manager to add the sprite to.</param>
         /// <param name="name">The name of the sprite.</param>
+        /// <param name="path">The path of the texture.</param>
         /// <param name="position">The position of the sprite.</param>
         /// <param name="timePerFrame">The time per frame.</param>
         /// <param name="scale">The scale of the sprite.</param>
@@ -305,16 +356,32 @@ namespace Library.Factories
         /// <param name="offset">The offset of the sprite.</param>
         /// <param name="tag">The tag of the sprite, that is something to link it with.</param>
         /// <param name="origin">The origin of the sprite.</param>
-        public Sprite AddSprite(SpriteCollection collection, string name, Vector2 position, float timePerFrame, float scale, int depth, float rotation, float offset,
+        public Sprite AddSprite(SpriteManager manager, string name, string path, Vector2 position, float timePerFrame, float scale, int depth, float rotation, float offset,
             string tag, Vector2 origin)
         {
-            //Add the sprite to the collection.
-            return collection.AddSprite(new Sprite(collection, name, position, timePerFrame, scale, depth, rotation, offset, tag, origin));
+            //Create the sprite and add it to the manager.
+            Sprite sprite = manager.AddSprite(new Sprite(manager, name));
+
+            //Set the properties.
+            sprite.Position = position;
+            sprite.TimePerFrame = timePerFrame;
+            sprite.Scale = scale;
+            sprite.Depth = depth;
+            sprite.Rotation = rotation;
+            sprite.PositionOffset = offset;
+            sprite.Tag = tag;
+
+            //Add a frame to the sprite.
+            sprite.AddFrame(path);
+            manager.ManageSprites();
+
+            //Return the sprite.
+            return sprite;
         }
         /// <summary>
         /// Add a sprite.
         /// </summary>
-        /// <param name="collection">The collection to add the sprite to.</param>
+        /// <param name="manager">The manager to add the sprite to.</param>
         /// <param name="name">The name of the sprite.</param>
         /// <param name="texture">The texture of the sprite.</param>
         /// <param name="position">The position of the sprite.</param>
@@ -322,23 +389,34 @@ namespace Library.Factories
         /// <param name="scale">The scale of the sprite.</param>
         /// <param name="depth">The depth of the sprite.</param>
         /// <param name="rotation">The rotation of the sprite.</param>
-        /// <param name="offset">The offset of the sprite.</param>
+        /// <param name="offset">The positional offset of the sprite.</param>
         /// <param name="tag">The tag of the sprite, that is something to link it with.</param>
-        public Sprite AddSprite(SpriteCollection collection, string name, Texture2D texture, Vector2 position, float timePerFrame, float scale, int depth, float rotation,
+        public Sprite AddSprite(SpriteManager manager, string name, Texture2D texture, Vector2 position, float timePerFrame, float scale, int depth, float rotation,
             float offset, string tag)
         {
-            //Create the sprite.
-            Sprite sprite = new Sprite(collection, name, position, timePerFrame, scale, depth, rotation, offset, tag);
-            //Set the sprite's texture.
-            sprite[0].Texture = texture;
+            //Create the sprite and add it to the manager.
+            Sprite sprite = manager.AddSprite(new Sprite(manager, name));
 
-            //Add the sprite to the collection.
-            return collection.AddSprite(sprite);
+            //Set the properties.
+            sprite.Position = position;
+            sprite.TimePerFrame = timePerFrame;
+            sprite.Scale = scale;
+            sprite.Depth = depth;
+            sprite.Rotation = rotation;
+            sprite.PositionOffset = offset;
+            sprite.Tag = tag;
+
+            //Add a frame to the sprite.
+            sprite.AddFrame(texture);
+            manager.ManageSprites();
+
+            //Return the sprite.
+            return sprite;
         }
         /// <summary>
         /// Add a sprite.
         /// </summary>
-        /// <param name="collection">The collection to add the sprite to.</param>
+        /// <param name="manager">The manager to add the sprite to.</param>
         /// <param name="name">The name of the sprite.</param>
         /// <param name="texture">The texture of the sprite.</param>
         /// <param name="position">The position of the sprite.</param>
@@ -349,16 +427,27 @@ namespace Library.Factories
         /// <param name="offset">The offset of the sprite.</param>
         /// <param name="tag">The tag of the sprite, that is something to link it with.</param>
         /// <param name="origin">The origin of the sprite.</param>
-        public Sprite AddSprite(SpriteCollection collection, string name, Texture2D texture, Vector2 position, float timePerFrame, float scale, int depth, float rotation,
+        public Sprite AddSprite(SpriteManager manager, string name, Texture2D texture, Vector2 position, float timePerFrame, float scale, int depth, float rotation,
             float offset, string tag, Vector2 origin)
         {
-            //Create the sprite.
-            Sprite sprite = new Sprite(collection, name, position, timePerFrame, scale, depth, rotation, offset, tag, origin);
-            //Set the sprite's texture.
-            sprite[0].Texture = texture;
+            //Create the sprite and add it to the manager.
+            Sprite sprite = manager.AddSprite(new Sprite(manager, name));
 
-            //Add the sprite to the collection.
-            return collection.AddSprite(sprite);
+            //Set the properties.
+            sprite.Position = position;
+            sprite.TimePerFrame = timePerFrame;
+            sprite.Scale = scale;
+            sprite.Depth = depth;
+            sprite.Rotation = rotation;
+            sprite.PositionOffset = offset;
+            sprite.Tag = tag;
+
+            //Add a frame to the sprite.
+            sprite.AddFrame(texture, origin);
+            manager.ManageSprites();
+
+            //Return the sprite.
+            return sprite;
         }
         #endregion
 
@@ -456,185 +545,185 @@ namespace Library.Factories
         /// <summary>
         /// Add a bone to a skeleton.
         /// </summary>
-        /// <param name="spriteName">The name of the sprite to attach to the bone.</param>
+        /// <param name="spritePath">The path of the sprite to attach to the bone.</param>
         /// <param name="position">The position of the bone.</param>
         /// <param name="length">The length of the bone.</param>
         /// <param name="origin">The origin of the sprite to attach to the bone.</param>
-        public void AddBone(Skeleton skeleton, string spriteName, Vector2 position, float length, Vector2 origin)
+        public void AddBone(Skeleton skeleton, string spritePath, Vector2 position, float length, Vector2 origin)
         {
             //Add a bone to a skeleton.
-            AddBone(skeleton, spriteName, -1, position, length, origin);
+            AddBone(skeleton, spritePath, -1, position, length, origin);
         }
         /// <summary>
         /// Add a bone to a skeleton.
         /// </summary>
-        /// <param name="spriteName">The name of the sprite to attach to the bone.</param>
+        /// <param name="spritePath">The path of the sprite to attach to the bone.</param>
         /// <param name="parentIndex">The index of the parent bone.</param>
         /// <param name="length">The length of the bone.</param>
         /// <param name="origin">The origin of the sprite to attach to the bone.</param>
-        public void AddBone(Skeleton skeleton, string spriteName, int parentIndex, float length, Vector2 origin)
+        public void AddBone(Skeleton skeleton, string spritePath, int parentIndex, float length, Vector2 origin)
         {
             //Add a bone to a skeleton.
-            AddBone(skeleton, spriteName, parentIndex, length, origin, 0);
+            AddBone(skeleton, spritePath, parentIndex, length, origin, 0);
         }
         /// <summary>
         /// Add a bone to a skeleton.
         /// </summary>
-        /// <param name="spriteName">The name of the sprite to attach to the bone.</param>
+        /// <param name="spritePath">The path of the sprite to attach to the bone.</param>
         /// <param name="parentIndex">The index of the parent bone.</param>
         /// <param name="length">The length of the bone.</param>
         /// <param name="origin">The origin of the sprite to attach to the bone.</param>
         /// <param name="rotationOffset">The bone sprite's rotation offset.</param>
-        public void AddBone(Skeleton skeleton, string spriteName, int parentIndex, float length, Vector2 origin, float rotationOffset)
+        public void AddBone(Skeleton skeleton, string spritePath, int parentIndex, float length, Vector2 origin, float rotationOffset)
         {
             //Add a bone to a skeleton.
-            AddBone(skeleton, spriteName, parentIndex, skeleton.CalculatePosition(parentIndex), length, origin, rotationOffset);
+            AddBone(skeleton, spritePath, parentIndex, skeleton.CalculatePosition(parentIndex), length, origin, rotationOffset);
         }
         /// <summary>
         /// Add a bone to a skeleton.
         /// </summary>
-        /// <param name="spriteName">The name of the sprite to attach to the bone.</param>
+        /// <param name="spritePath">The path of the sprite to attach to the bone.</param>
         /// <param name="parentIndex">The index of the parent bone.</param>
         /// <param name="position">The position of the bone.</param>
         /// <param name="length">The length of the bone.</param>
         /// <param name="origin">The origin of the sprite to attach to the bone.</param>
-        public void AddBone(Skeleton skeleton, string spriteName, int parentIndex, Vector2 position, float length, Vector2 origin)
+        public void AddBone(Skeleton skeleton, string spritePath, int parentIndex, Vector2 position, float length, Vector2 origin)
         {
             //Add a bone to a skeleton.
-            AddBone(skeleton, spriteName, parentIndex, position, length, origin, 0);
+            AddBone(skeleton, spritePath, parentIndex, position, length, origin, 0);
         }
         /// <summary>
         /// Add a bone to a skeleton.
         /// </summary>
         /// <param name="name">The name of the bone.</param>
-        /// <param name="spriteName">The name of the sprite to attach to the bone.</param>
+        /// <param name="spritePath">The path of the sprite to attach to the bone.</param>
         /// <param name="parentIndex">The index of the parent bone.</param>
         /// <param name="position">The position of the bone.</param>
         /// <param name="length">The length of the bone.</param>
         /// <param name="origin">The origin of the sprite to attach to the bone.</param>
-        public void AddBone(Skeleton skeleton, string name, string spriteName, int parentIndex, Vector2 position, float length, Vector2 origin)
+        public void AddBone(Skeleton skeleton, string name, string spritePath, int parentIndex, Vector2 position, float length, Vector2 origin)
         {
             //Add a bone to a skeleton.
-            AddBone(skeleton, name, spriteName, -1, parentIndex, position, length, 0, Vector2.One, origin, 0);
+            AddBone(skeleton, name, spritePath, -1, parentIndex, position, length, 0, Vector2.One, origin, 0);
         }
         /// <summary>
         /// Add a bone to a skeleton.
         /// </summary>
-        /// <param name="spriteName">The name of the sprite to attach to the bone.</param>
+        /// <param name="spritePath">The path of the sprite to attach to the bone.</param>
         /// <param name="parentIndex">The index of the parent bone.</param>
         /// <param name="position">The position of the bone.</param>
         /// <param name="length">The length of the bone.</param>
         /// <param name="origin">The origin of the sprite to attach to the bone.</param>
         /// <param name="rotationOffset">The bone sprite's rotation offset.</param>
-        public void AddBone(Skeleton skeleton, string spriteName, int parentIndex, Vector2 position, float length, Vector2 origin, float rotationOffset)
+        public void AddBone(Skeleton skeleton, string spritePath, int parentIndex, Vector2 position, float length, Vector2 origin, float rotationOffset)
         {
             //Add a bone to a skeleton.
-            AddBone(skeleton, "", spriteName, -1, parentIndex, position, length, 0, Vector2.One, origin, rotationOffset);
+            AddBone(skeleton, "", spritePath, -1, parentIndex, position, length, 0, Vector2.One, origin, rotationOffset);
         }
         /// <summary>
         /// Add a bone to a skeleton.
         /// </summary>
         /// <param name="skeleton">The skeleton to add the bone to.</param>
         /// <param name="name">The name of the bone.</param>
-        /// <param name="spriteName">The name of the sprite to attach to the bone.</param>
+        /// <param name="spritePath">The path of the sprite to attach to the bone.</param>
         /// <param name="position">The position of the bone.</param>
         /// <param name="length">The length of the bone.</param>
         /// <param name="origin">The origin of the sprite to attach to the bone.</param>
-        public void AddBone(Skeleton skeleton, string name, string spriteName, Vector2 position, float length, Vector2 origin)
+        public void AddBone(Skeleton skeleton, string name, string spritePath, Vector2 position, float length, Vector2 origin)
         {
             //Add the bone.
-            AddBone(skeleton, name, spriteName, position, length, 0, origin);
+            AddBone(skeleton, name, spritePath, position, length, 0, origin);
         }
         /// <summary>
         /// Add a bone to a skeleton.
         /// </summary>
         /// <param name="skeleton">The skeleton to add the bone to.</param>
         /// <param name="name">The name of the bone.</param>
-        /// <param name="spriteName">The name of the sprite to attach to the bone.</param>
+        /// <param name="spritePath">The path of the sprite to attach to the bone.</param>
         /// <param name="position">The position of the bone.</param>
         /// <param name="length">The length of the bone.</param>
         /// <param name="rotation">The rotation of the bone.</param>
         /// <param name="origin">The origin of the sprite to attach to the bone.</param>
-        public void AddBone(Skeleton skeleton, string name, string spriteName, Vector2 position, float length, float rotation, Vector2 origin)
+        public void AddBone(Skeleton skeleton, string name, string spritePath, Vector2 position, float length, float rotation, Vector2 origin)
         {
             //Add the bone.
-            AddBone(skeleton, name, spriteName, position, length, rotation, origin, 0);
+            AddBone(skeleton, name, spritePath, position, length, rotation, origin, 0);
         }
         /// <summary>
         /// Add a bone to a skeleton.
         /// </summary>
         /// <param name="skeleton">The skeleton to add the bone to.</param>
         /// <param name="name">The name of the bone.</param>
-        /// <param name="spriteName">The name of the sprite to attach to the bone.</param>
+        /// <param name="spritePath">The path of the sprite to attach to the bone.</param>
         /// <param name="position">The position of the bone.</param>
         /// <param name="length">The length of the bone.</param>
         /// <param name="rotation">The rotation of the bone.</param>
         /// <param name="origin">The origin of the sprite to attach to the bone.</param>
         /// <param name="rotationOffset">The bone sprite's rotation offset.</param>
-        public void AddBone(Skeleton skeleton, string name, string spriteName, Vector2 position, float length, float rotation, Vector2 origin, float rotationOffset)
+        public void AddBone(Skeleton skeleton, string name, string spritePath, Vector2 position, float length, float rotation, Vector2 origin, float rotationOffset)
         {
             //Add the bone.
-            AddBone(skeleton, name, spriteName, -1, position, length, rotation, Vector2.One, origin, rotationOffset);
+            AddBone(skeleton, name, spritePath, -1, position, length, rotation, Vector2.One, origin, rotationOffset);
         }
         /// <summary>
         /// Add a bone to a skeleton.
         /// </summary>
         /// <param name="skeleton">The skeleton to add the bone to.</param>
         /// <param name="name">The name of the bone.</param>
-        /// <param name="spriteName">The name of the sprite to attach to the bone.</param>
+        /// <param name="spritePath">The path of the sprite to attach to the bone.</param>
         /// <param name="parentIndex">The index of the parent.</param>
         /// <param name="position">The position of the bone.</param>
         /// <param name="length">The length of the bone.</param>
         /// <param name="rotation">The rotation of the bone.</param>
         /// <param name="origin">The origin of the sprite to attach to the bone.</param>
         /// <param name="rotationOffset">The bone sprite's rotation offset.</param>
-        public void AddBone(Skeleton skeleton, string name, string spriteName, int parentIndex, Vector2 position, float length, float rotation, Vector2 origin,
+        public void AddBone(Skeleton skeleton, string name, string spritePath, int parentIndex, Vector2 position, float length, float rotation, Vector2 origin,
             float rotationOffset)
         {
             //Add the bone.
-            AddBone(skeleton, name, spriteName, -1, parentIndex, position, length, rotation, Vector2.One, origin, rotationOffset);
+            AddBone(skeleton, name, spritePath, -1, parentIndex, position, length, rotation, Vector2.One, origin, rotationOffset);
         }
         /// <summary>
         /// Add a bone to a skeleton.
         /// </summary>
         /// <param name="skeleton">The skeleton to add the bone to.</param>
         /// <param name="name">The name of the bone.</param>
-        /// <param name="spriteName">The name of the sprite to attach to the bone.</param>
+        /// <param name="spritePath">The path of the sprite to attach to the bone.</param>
         /// <param name="parentIndex">The index of the parent.</param>
         /// <param name="length">The length of the bone.</param>
         /// <param name="rotation">The rotation of the bone.</param>
         /// <param name="origin">The origin of the sprite to attach to the bone.</param>
         /// <param name="rotationOffset">The bone sprite's rotation offset.</param>
-        public void AddBone(Skeleton skeleton, string name, string spriteName, int parentIndex, float length, float rotation, Vector2 origin,
+        public void AddBone(Skeleton skeleton, string name, string spritePath, int parentIndex, float length, float rotation, Vector2 origin,
             float rotationOffset)
         {
             //Add the bone.
-            AddBone(skeleton, name, spriteName, -1, parentIndex, skeleton.CalculatePosition(parentIndex), length, rotation, Vector2.One, origin, rotationOffset);
+            AddBone(skeleton, name, spritePath, -1, parentIndex, skeleton.CalculatePosition(parentIndex), length, rotation, Vector2.One, origin, rotationOffset);
         }
         /// <summary>
         /// Add a bone to a skeleton.
         /// </summary>
         /// <param name="skeleton">The skeleton to add the bone to.</param>
         /// <param name="name">The name of the bone.</param>
-        /// <param name="spriteName">The name of the sprite to attach to the bone.</param>
+        /// <param name="spritePath">The path of the sprite to attach to the bone.</param>
         /// <param name="position">The position of the bone.</param>
         /// <param name="length">The length of the bone.</param>
         /// <param name="rotation">The rotation of the bone.</param>
         /// <param name="scale">The scale of the bone.</param>
         /// <param name="origin">The origin of the sprite to attach to the bone.</param>
         /// <param name="rotationOffset">The bone sprite's rotation offset.</param>
-        public void AddBone(Skeleton skeleton, string name, string spriteName, Vector2 position, float length, float rotation, Vector2 scale, Vector2 origin,
+        public void AddBone(Skeleton skeleton, string name, string spritePath, Vector2 position, float length, float rotation, Vector2 scale, Vector2 origin,
             float rotationOffset)
         {
             //Add the bone.
-            AddBone(skeleton, name, spriteName, -1, position, length, rotation, scale, origin, rotationOffset);
+            AddBone(skeleton, name, spritePath, -1, position, length, rotation, scale, origin, rotationOffset);
         }
         /// <summary>
         /// Add a bone to a skeleton.
         /// </summary>
         /// <param name="skeleton">The skeleton to add the bone to.</param>
         /// <param name="name">The name of the bone.</param>
-        /// <param name="spriteName">The name of the sprite to attach to the bone.</param>
+        /// <param name="spritePath">The path of the sprite to attach to the bone.</param>
         /// <param name="index">The index of the bone.</param>
         /// <param name="position">The position of the bone.</param>
         /// <param name="length">The length of the bone.</param>
@@ -642,18 +731,18 @@ namespace Library.Factories
         /// <param name="scale">The scale of the bone.</param>
         /// <param name="origin">The origin of the sprite to attach to the bone.</param>
         /// <param name="rotationOffset">The bone sprite's rotation offset.</param>
-        public void AddBone(Skeleton skeleton, string name, string spriteName, int index, Vector2 position, float length, float rotation, Vector2 scale, Vector2 origin,
+        public void AddBone(Skeleton skeleton, string name, string spritePath, int index, Vector2 position, float length, float rotation, Vector2 scale, Vector2 origin,
             float rotationOffset)
         {
             //Add the bone.
-            AddBone(skeleton, name, spriteName, index, -1, position, length, rotation, scale, origin, rotationOffset);
+            AddBone(skeleton, name, spritePath, index, -1, position, length, rotation, scale, origin, rotationOffset);
         }
         /// <summary>
         /// Add a bone to a skeleton.
         /// </summary>
         /// <param name="skeleton">The skeleton to add the bone to.</param>
         /// <param name="name">The name of the bone.</param>
-        /// <param name="spriteName">The name of the sprite to attach to the bone.</param>
+        /// <param name="spritePath">The path of the sprite to attach to the bone.</param>
         /// <param name="index">The index of the bone.</param>
         /// <param name="parentIndex">The index of the parent bone.</param>
         /// <param name="position">The position of the bone.</param>
@@ -662,17 +751,17 @@ namespace Library.Factories
         /// <param name="scale">The scale of the bone.</param>
         /// <param name="origin">The origin of the sprite to attach to the bone.</param>
         /// <param name="rotationOffset">The bone sprite's rotation offset.</param>
-        public void AddBone(Skeleton skeleton, string name, string spriteName, int index, int parentIndex, Vector2 position, float length, float rotation,
+        public void AddBone(Skeleton skeleton, string name, string spritePath, int index, int parentIndex, Vector2 position, float length, float rotation,
             Vector2 scale, Vector2 origin, float rotationOffset)
         {
             //Add the bone.
             skeleton.AddBone(new Bone(skeleton, name, index, parentIndex, position, scale, rotation, length));
 
             //If a sprite name has been received, attach a sprite to the bone.
-            if (!spriteName.Equals(""))
+            if (!spritePath.Equals(""))
             {
-                Factory.Instance.AddSprite(skeleton.Sprites, spriteName, position, 0, 1, 0, 0, 0, (skeleton.Bones.Count - 1).ToString(), origin);
-                skeleton.Sprites.GetLastSprite().RotationOffset = rotationOffset;
+                Factory.Instance.AddSprite(skeleton.Sprites, name, spritePath, position, 0, 1, 0, 0, 0, (skeleton.Bones.Count - 1).ToString(), origin);
+                skeleton.Sprites.LastSprite().RotationOffset = rotationOffset;
             }
         }
         #endregion

@@ -287,6 +287,34 @@ namespace Library
             return _Random.Next(min, max + 1);
         }
         /// <summary>
+        /// Add two angles.
+        /// </summary>
+        /// <param name="radian1">The first angle to add.</param>
+        /// <param name="radian2">The second angle to add.</param>
+        /// <returns>The angle sum.</returns>
+        public static float AddAngles(float radian1, float radian2)
+        {
+            //Add the angles together.
+            float addResult = radian1 + radian2;
+            //Check if the sum of the angles has overreached a full lap, aka two PI, and if so fix it.
+            if (addResult > (Math.PI * 2)) { return (addResult - ((float)Math.PI * 2)); }
+            else { return addResult; }
+        }
+        /// <summary>
+        /// Subtracts an angle from an angle.
+        /// </summary>
+        /// <param name="radian1">The angle to subtract from.</param>
+        /// <param name="radian2">The angle to subtract.</param>
+        /// <returns>The subtracted angle.</returns>
+        public static float SubtractAngles(float radian1, float radian2)
+        {
+            //Subtract the angles from eachother.
+            float subtractResult = radian1 - radian2;
+            //If the difference has exceeded a full lap, aka 0, fix that.
+            if (subtractResult < 0) { return (subtractResult + ((float)Math.PI * 2)); }
+            else { return subtractResult; }
+        }
+        /// <summary>
         /// Get the difference in direction between two positions in radians, using a right handed coordination system.
         /// </summary>
         /// <param name="parentPosition">The parent position.</param>
@@ -728,7 +756,7 @@ namespace Library
                 {
                     //Begin with the frame.
                     textWriter.WriteStartElement("Frame");
-                    textWriter.WriteAttributeString("Name", frame.Name);
+                    textWriter.WriteAttributeString("Name", frame.Path);
 
                     //The origin.
                     textWriter.WriteStartElement("Origin");
@@ -881,9 +909,9 @@ namespace Library
                 float rotationOffset = float.Parse(spriteNode.SelectSingleNode("RotationOffset").InnerText);
 
                 //Add a sprite to the skeleton.
-                Sprite sprite = Factory.Instance.AddSprite(skeleton.Sprites, spriteName, rotationOffset, tag);
-                //Delete the default frame.
-                sprite.Frames.Clear();
+                Sprite sprite = new Sprite(skeleton.Sprites, spriteName);
+                sprite.RotationOffset = rotationOffset;
+                sprite.Tag = tag;
 
                 //The frames.
                 foreach (XmlNode frameNode in spriteNode.SelectNodes("Frames/Frame"))

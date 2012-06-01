@@ -133,33 +133,8 @@ namespace Library.GUI.Basic
         private void UpdateState()
         {
             //Make sure that only the selected tab is visible.
-            _Items.FindAll(a => (a.GetType() == typeof(TabPage) && a != _SelectedTab)).ForEach(item => (item as TabPage).HidingChangeInvoke(true));
-            _SelectedTab.HidingChangeInvoke(false);
-        }
-        /// <summary>
-        /// Tell the world that the bounds of this item has changed.
-        /// </summary>
-        /// <param name="width">The new width of the item.</param>
-        /// <param name="height">The new height of the item.</param>
-        protected override void BoundsChangeInvoke(float width, float height)
-        {
-            //Call the base method.
-            base.BoundsChangeInvoke(width, height);
-
-            //Update the components' positions and bounds.
-            //UpdateComponents();
-        }
-        /// <summary>
-        /// Tell the world that the position of this item has changed.
-        /// </summary>
-        /// <param name="position">The new position of the item.</param>
-        protected override void PositionChangeInvoke(Vector2 position)
-        {
-            //Call the base method.
-            base.PositionChangeInvoke(position);
-
-            //Update the components' positions and bounds.
-            //UpdateComponents();
+            _Items.FindAll(a => (a.GetType() == typeof(TabPage) && a != _SelectedTab)).ForEach(item => (item as TabPage).IsHiding = true);
+            _SelectedTab.IsHiding = false;
         }
         /// <summary>
         /// Change the selected tab.

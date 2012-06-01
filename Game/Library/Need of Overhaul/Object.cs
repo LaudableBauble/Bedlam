@@ -46,7 +46,7 @@ namespace Library
         private System _System;
         private List<Body> _Bodies;
         private List<Geom> _Geoms;
-        private SpriteCollection _SpriteCollection = new SpriteCollection();
+        private SpriteManager _SpriteManager = new SpriteManager();
         public int Id;
         public string FirstTag;
         public string SecondTag;
@@ -94,7 +94,7 @@ namespace Library
         public virtual void LoadContent(ContentManager contentManager)
         {
             //Load the Sprite.
-            _SpriteCollection.LoadContent(contentManager);
+            _SpriteManager.LoadContent(contentManager);
         }
         /// <summary>
         /// Update the object.
@@ -103,7 +103,7 @@ namespace Library
         public virtual void Update(GameTime gameTime)
         {
             //Loop through all sprites.
-            foreach (Sprite sprite in _SpriteCollection.Sprites)
+            foreach (Sprite sprite in _SpriteManager.Sprites)
             {
                 //Update the sprite frames along with Sprite position.
                 sprite.Update(gameTime, _Bodies[0].Position, _Bodies[0].Rotation);
@@ -116,7 +116,7 @@ namespace Library
         public virtual void Draw(SpriteBatch spriteBatch)
         {
             //Draw all the object's sprites.
-            _SpriteCollection.Draw(spriteBatch);
+            _SpriteManager.Draw(spriteBatch);
         }
         #endregion
 
@@ -148,9 +148,9 @@ namespace Library
             _Geoms.Add(GeomFactory.Instance.CreateRectangleGeom(_System.PhysicsSimulator, _Bodies[BodyCount - 1], width, height));
 
             //The Sprite.
-            Factory.Instance.AddSprite(_SpriteCollection, spriteName, _Bodies[BodyCount - 1].Position, timePerFrame, scale, depth, rotation, offset, tag);
+            Factory.Instance.AddSprite(_SpriteManager, spriteName, _Bodies[BodyCount - 1].Position, timePerFrame, scale, depth, rotation, offset, tag);
             //Pass along a tag to the body.
-            _SpriteCollection.GetLastSprite().Tag = tag;
+            _SpriteManager.GetLastSprite().Tag = tag;
 
             //Return the index of the body.
             return (BodyCount - 1);
@@ -180,9 +180,9 @@ namespace Library
             _Geoms.Add(GeomFactory.Instance.CreateRectangleGeom(_System.PhysicsSimulator, _Bodies[BodyCount - 1], width, height));
 
             //The Sprite.
-            Factory.Instance.AddSprite(_SpriteCollection, spriteName, _Bodies[BodyCount - 1].Position, timePerFrame, scale, depth, rotation, 0, tag);
+            Factory.Instance.AddSprite(_SpriteManager, spriteName, _Bodies[BodyCount - 1].Position, timePerFrame, scale, depth, rotation, 0, tag);
             //Pass along the index of the body.
-            _SpriteCollection.GetLastSprite().Tag = tag;
+            _SpriteManager.GetLastSprite().Tag = tag;
 
             //Return the index of the body.
             return (BodyCount - 1);
@@ -215,9 +215,9 @@ namespace Library
             _Geoms.Add(GeomFactory.Instance.CreateRectangleGeom(_System.PhysicsSimulator, _Bodies[BodyCount - 1], width, height));
 
             //The Sprite.
-            Factory.Instance.AddSprite(_SpriteCollection, spriteName, _Bodies[BodyCount - 1].Position, timePerFrame, scale, depth, rotation, offset, tag, origin);
+            Factory.Instance.AddSprite(_SpriteManager, spriteName, _Bodies[BodyCount - 1].Position, timePerFrame, scale, depth, rotation, offset, tag, origin);
             //Pass along the index of the body.
-            _SpriteCollection.GetLastSprite().Tag = tag;
+            _SpriteManager.GetLastSprite().Tag = tag;
 
             //Return the index of the body.
             return (BodyCount - 1);
@@ -246,9 +246,9 @@ namespace Library
             _Geoms.Add(GeomFactory.Instance.CreateEllipseGeom(_System.PhysicsSimulator, _Bodies[BodyCount - 1], width, height, 32));
 
             //The Sprite.
-            Factory.Instance.AddSprite(_SpriteCollection, spriteName, _Bodies[BodyCount - 1].Position, timePerFrame, scale, depth, 0, 0, tag);
+            Factory.Instance.AddSprite(_SpriteManager, spriteName, _Bodies[BodyCount - 1].Position, timePerFrame, scale, depth, 0, 0, tag);
             //Pass along the index of the body.
-            _SpriteCollection.GetLastSprite().Tag = tag;
+            _SpriteManager.GetLastSprite().Tag = tag;
 
             //Return the index of the body.
             return (BodyCount - 1);
@@ -278,9 +278,9 @@ namespace Library
             _Geoms.Add(GeomFactory.Instance.CreateCircleGeom(_System.PhysicsSimulator, _Bodies[BodyCount - 1], radius, 32));
 
             //The Sprite.
-            Factory.Instance.AddSprite(_SpriteCollection, spriteName, _Bodies[BodyCount - 1].Position, timePerFrame, scale, depth, rotation, offset, tag);
+            Factory.Instance.AddSprite(_SpriteManager, spriteName, _Bodies[BodyCount - 1].Position, timePerFrame, scale, depth, rotation, offset, tag);
             //Pass along the index of the body.
-            _SpriteCollection.GetLastSprite().Tag = tag;
+            _SpriteManager.GetLastSprite().Tag = tag;
 
             //Return the index of the body.
             return (BodyCount - 1);
@@ -331,7 +331,7 @@ namespace Library
             //The Geoms.
             foreach (Geom geom in _Geoms) { if (geom != null) { geom.Dispose(); } }
             //The Sprite.
-            _SpriteCollection = null;
+            _SpriteManager = null;
         }
         /// <summary>
         /// The weapon equip method.
@@ -385,10 +385,10 @@ namespace Library
         /// <summary>
         /// The sprite collection of the Object.
         /// </summary>
-        public SpriteCollection SpriteCollection
+        public SpriteManager SpriteManager
         {
-            get { return (_SpriteCollection); }
-            set { _SpriteCollection = value; }
+            get { return (_SpriteManager); }
+            set { _SpriteManager = value; }
         }
         /// <summary>
         /// The facing direction of the Object.

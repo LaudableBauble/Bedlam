@@ -43,7 +43,6 @@ namespace Library.Core
         private Camera2D _Camera;
         private GraphicsDevice _GraphicsDevice;
         private ContentManager _ContentManager;
-        private SpriteBatch _SpriteBatch;
         private World _World;
         private LevelState _State;
 
@@ -92,7 +91,6 @@ namespace Library.Core
             _Camera = camera;
             _GraphicsDevice = null;
             _ContentManager = null;
-            _SpriteBatch = null;
             _World = new World(new Vector2(0, 10));
             _State = LevelState.Play;
         }
@@ -106,6 +104,9 @@ namespace Library.Core
             //Save the content manager for future use.
             _GraphicsDevice = graphicsDevice;
             _ContentManager = contentManager;
+
+            //Manage layers.
+            ManageLayers();
 
             //Load all layer's content.
             foreach (Layer layer in _Layers) { layer.LoadContent(contentManager); }
@@ -255,7 +256,7 @@ namespace Library.Core
         /// </summary>
         public void ManageLayers()
         {
-            //Update the list of layers and sort them in necessary.
+            //Update the list of layers and sort them if necessary.
             if (_Layers.Update()) { SortLayers(); }
         }
         /// <summary>

@@ -11,14 +11,6 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Net;
 using Microsoft.Xna.Framework.Storage;
 
-using FarseerPhysics;
-using FarseerPhysics.Collision;
-using FarseerPhysics.Common;
-using FarseerPhysics.Controllers;
-using FarseerPhysics.Dynamics;
-using FarseerPhysics.Dynamics.Joints;
-using FarseerPhysics.Factories;
-
 namespace Library.Imagery
 {
     /// <summary>
@@ -27,7 +19,7 @@ namespace Library.Imagery
     public class Frame
     {
         #region Fields
-        private string _Name;
+        private string _Path;
         private float _Width;
         private float _Height;
         private Vector2 _Origin;
@@ -36,38 +28,46 @@ namespace Library.Imagery
 
         #region Constructor
         /// <summary>
-        /// Create a frame.
+        /// Constructor for a frame.
         /// </summary>
-        /// <param name="name">The name of the frame.</param>
+        /// <param name="path">The path of the frame.</param>
         /// <param name="width">The width of the frame.</param>
         /// <param name="height">The height of the frame.</param>
-        public Frame(string name, float width, float height)
+        public Frame(string path, float width, float height)
         {
-            //Intialize the frame.
-            Initialize(name, null, width, height, new Vector2((_Width / 2), (_Height / 2)));
+            Intialize(path, null, width, height, new Vector2((_Width / 2), (_Height / 2)));
         }
         /// <summary>
-        /// Create a frame.
+        /// Constructor for a frame.
+        /// </summary>
+        /// <param name="path">The path of the frame.</param>
+        /// <param name="width">The width of the frame.</param>
+        /// <param name="height">The height of the frame.</param>
+        /// <param name="origin">The origin of the frame.</param>
+        public Frame(string path, float width, float height, Vector2 origin)
+        {
+            Intialize(path, null, width, height, origin);
+        }
+        /// <summary>
+        /// Constructor for a frame.
         /// </summary>
         /// <param name="texture">The texture of the frame.</param>
         /// <param name="width">The width of the frame.</param>
         /// <param name="height">The height of the frame.</param>
         public Frame(Texture2D texture, float width, float height)
         {
-            //Intialize the frame.
-            Initialize("", texture, width, height, new Vector2((_Width / 2), (_Height / 2)));
+            Intialize("", texture, width, height, new Vector2((_Width / 2), (_Height / 2)));
         }
         /// <summary>
-        /// Create a frame.
+        /// Constructor for a frame.
         /// </summary>
-        /// <param name="name">The name of the frame.</param>
+        /// <param name="texture">The texture of the frame.</param>
         /// <param name="width">The width of the frame.</param>
         /// <param name="height">The height of the frame.</param>
         /// <param name="origin">The origin of the frame.</param>
-        public Frame(string name, float width, float height, Vector2 origin)
+        public Frame(Texture2D texture, float width, float height, Vector2 origin)
         {
-            //Intialize the frame.
-            Initialize(name, null, width, height, origin);
+            Intialize("", texture, width, height, origin);
         }
         #endregion
 
@@ -75,15 +75,15 @@ namespace Library.Imagery
         /// <summary>
         /// Intialize the frame.
         /// </summary>
-        /// <param name="name">The name of the frame.</param>
+        /// <param name="path">The path of the frame.</param>
         /// <param name="texture">The texture of the frame.</param>
         /// <param name="width">The width of the frame.</param>
-        /// <param name="height">The height of th frame.</param>
+        /// <param name="height">The height of the frame.</param>
         /// <param name="origin">The origin of the frame texture.</param>
-        public void Initialize(string name, Texture2D texture, float width, float height, Vector2 origin)
+        public void Intialize(string path, Texture2D texture, float width, float height, Vector2 origin)
         {
             //Intialize a few variables.
-            _Name = name;
+            _Path = path;
             _Texture = texture;
             _Height = height;
             _Width = width;
@@ -93,19 +93,19 @@ namespace Library.Imagery
 
         #region Properties
         /// <summary>
-        /// The name of the frame.
+        /// The path of the frame.
         /// </summary>
-        public string Name
+        public string Path
         {
-            get { return (_Name); }
-            set { _Name = value; }
+            get { return _Path; }
+            set { _Path = value; }
         }
         /// <summary>
         /// The texture of the frame.
         /// </summary>
         public Texture2D Texture
         {
-            get { return (_Texture); }
+            get { return _Texture; }
             set { _Texture = value; }
         }
         /// <summary>
@@ -113,7 +113,7 @@ namespace Library.Imagery
         /// </summary>
         public Vector2 Origin
         {
-            get { return (_Origin); }
+            get { return _Origin; }
             set { _Origin = value; }
         }
         /// <summary>
@@ -121,7 +121,7 @@ namespace Library.Imagery
         /// </summary>
         public float OriginX
         {
-            get { return (_Origin.X); }
+            get { return _Origin.X; }
             set { _Origin.X = value; }
         }
         /// <summary>
@@ -129,7 +129,7 @@ namespace Library.Imagery
         /// </summary>
         public float OriginY
         {
-            get { return (_Origin.Y); }
+            get { return _Origin.Y; }
             set { _Origin.Y = value; }
         }
         /// <summary>
@@ -137,7 +137,7 @@ namespace Library.Imagery
         /// </summary>
         public float Height
         {
-            get { return (_Height); }
+            get { return _Height; }
             set { _Height = value; }
         }
         /// <summary>
@@ -145,7 +145,7 @@ namespace Library.Imagery
         /// </summary>
         public float Width
         {
-            get { return (_Width); }
+            get { return _Width; }
             set { _Width = value; }
         }
         #endregion

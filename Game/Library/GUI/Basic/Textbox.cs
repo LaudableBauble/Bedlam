@@ -169,7 +169,7 @@ namespace Library.GUI.Basic
                 Texture2D texture = DrawingHelper.CreateRectangleTexture(GUI.GraphicsDevice, (int)Width, (int)Height, new Color(0, 0, 0, 155));
 
                 //If there already exists a sprite, just switch a new texture to it.
-                if (_Sprite.GetLastSprite() != null) { _Sprite.GetLastSprite().Texture = texture; }
+                if (_Sprite.LastSprite() != null) { _Sprite.LastSprite().Texture = texture; }
                 //Otherwise create a new sprite.
                 else { AddSprite(texture); }
             }
@@ -182,7 +182,7 @@ namespace Library.GUI.Basic
         public void InsertText(string text)
         {
             //Control the string's legitimacy.
-            if ((text == null) || (text.Equals(""))) { return; }
+            if (text == null || text.Equals("")) { return; }
 
             //Insert the text at the correct position.
             _Text = _Text.Insert(_MarkerIndex, text);
@@ -474,8 +474,7 @@ namespace Library.GUI.Basic
         /// <returns>The cropped text.</returns>
         private string CropText()
         {
-            //Crop the text so that it will fit into the box.
-            return (_Text.Substring(_TextStart, _VisibleTextLength));
+            return _Text.Substring(_TextStart, _VisibleTextLength);
         }
         /// <summary>
         /// Calculate the text selection marker's position.
@@ -501,6 +500,20 @@ namespace Library.GUI.Basic
             //Update the marker.
             UpdateMarker();
         }
+        /// <summary>
+        /// Change the text of this textbox.
+        /// </summary>
+        /// <param name="text">The new text.</param>
+        protected void TextChangeInvoke(string text)
+        {
+            //If the text is the same, stop here.
+            if (_Text.Equals(text)) { return; }
+
+            //Change the text and reset the marker position.
+            _Text = text;
+            _TextStart = 0;
+            FitAndAlignText();
+        }
         #endregion
 
         #region Properties
@@ -510,7 +523,7 @@ namespace Library.GUI.Basic
         public string Text
         {
             get { return _Text; }
-            set { _Text = value; }
+            set { TextChangeInvoke(value); }
         }
         /// <summary>
         /// The font that is used by this textbox.

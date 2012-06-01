@@ -26,7 +26,7 @@ namespace Library.Animate
         private List<Bone> _Bones;
         private List<Bone> _BoneUpdateOrder;
         private List<Animation> _Animations;
-        private SpriteCollection _Sprites;
+        private SpriteManager _Sprites;
 
         private Vector2 _Position;
         private float _Rotation;
@@ -57,7 +57,7 @@ namespace Library.Animate
             _Bones = new List<Bone>();
             _BoneUpdateOrder = _Bones;
             _Animations = new List<Animation>();
-            _Sprites = new SpriteCollection();
+            _Sprites = new SpriteManager();
 
             _BoneBrush = new FarseerPhysics.DrawingSystem.LineBrush(1, Color.Black);
             _SelectedBoneBrush = new FarseerPhysics.DrawingSystem.LineBrush(1, Color.Green);
@@ -141,13 +141,13 @@ namespace Library.Animate
         /// <summary>
         /// Add a sprite to the skeleton.
         /// </summary>
-        /// <param name="name">The name of the asset to load.</param>
+        /// <param name="path">The path of the asset to load.</param>
         /// <param name="boneIndex">The index of the bone.</param>
         /// <param name="origin">The origin of the sprite relative to the bone.</param>
-        public void AddSprite(string name, int boneIndex, Vector2 origin)
+        public void AddSprite(string path, int boneIndex, Vector2 origin)
         {
             //Add a sprite.
-            Factory.Instance.AddSprite(_Sprites, name, _Bones[boneIndex].AbsolutePosition, 0, 1, 0, 0, 0, boneIndex.ToString(), origin);
+            Factory.Instance.AddSprite(_Sprites, _Bones[boneIndex].Name, path, _Bones[boneIndex].AbsolutePosition, 0, 1, 0, 0, 0, boneIndex.ToString(), origin);
         }
         /// <summary>
         /// Add a sprite to the skeleton.
@@ -158,7 +158,7 @@ namespace Library.Animate
         public void AddSprite(Texture2D texture, int boneIndex, Vector2 origin)
         {
             //Add a sprite.
-            Factory.Instance.AddSprite(_Sprites, texture.Name, texture, _Bones[boneIndex].AbsolutePosition, 0, 1, 0, 0, 0, boneIndex.ToString(), origin);
+            Factory.Instance.AddSprite(_Sprites, _Bones[boneIndex].Name, texture, _Bones[boneIndex].AbsolutePosition, 0, 1, 0, 0, 0, boneIndex.ToString(), origin);
         }
         #endregion
 
@@ -395,7 +395,7 @@ namespace Library.Animate
         /// <summary>
         /// The sprite collection of the skeleton.
         /// </summary>
-        public SpriteCollection Sprites
+        public SpriteManager Sprites
         {
             get { return (_Sprites); }
             set { _Sprites = value; }

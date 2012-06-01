@@ -17,6 +17,7 @@ using FarseerPhysics.DrawingSystem;
 using Library;
 using Library.Animate;
 using Library.Core;
+using Library.Enums;
 using Library.GUI;
 using Library.GUI.Basic;
 using Library.Factories;
@@ -31,7 +32,7 @@ namespace Library.Core
     public class TextureItem : Item
     {
         #region Fields
-        private SpriteCollection _Sprites;
+        private SpriteManager _Sprites;
         #endregion
 
         #region Constructors
@@ -67,7 +68,7 @@ namespace Library.Core
             base.Initialize(level, name, position, rotation, scale, width, height);
 
             //Initialize some variables.
-            _Sprites = new SpriteCollection();
+            _Sprites = new SpriteManager();
             _Type = Enums.ItemType.TextureItem;
         }
         /// <summary>
@@ -120,11 +121,11 @@ namespace Library.Core
         /// <summary>
         /// Add a sprite to the item.
         /// </summary>
-        /// <param name="name">The name of the asset to load.</param>
-        public void AddSprite(string name)
+        /// <param name="path">The path of the asset to load.</param>
+        public void AddSprite(string path)
         {
             //Add a sprite.
-            AddSprite(Factory.Instance.AddSprite(Sprites, name, Position, 0, 1, 0, 0, 0, "Sprite" + _Sprites.SpriteCount));
+            AddSprite(Factory.Instance.AddSprite(Sprites, "Sprite" + _Sprites.Count, path, Position, 0, 1, 0, 0, 0, "Sprite" + _Sprites.Count));
         }
         /// <summary>
         /// Add a sprite to the item.
@@ -133,7 +134,7 @@ namespace Library.Core
         public void AddSprite(Texture2D texture)
         {
             //Add a sprite.
-            AddSprite(Factory.Instance.AddSprite(Sprites, texture.Name, texture, Position, 0, 1, 0, 0, 0, "Sprite" + _Sprites.SpriteCount));
+            AddSprite(Factory.Instance.AddSprite(Sprites, texture.Name, texture, Position, 0, 1, 0, 0, 0, "Sprite" + _Sprites.Count));
         }
         /// <summary>
         /// Change the visibility state of this item.
@@ -144,7 +145,10 @@ namespace Library.Core
             //Call the base method.
             base.ChangeVisibilityState(isVisible);
 
-            //Change the visibility state of the sprite collection.
+            //If the sprite manager has no sprites, stop here.
+            if (_Sprites.Count == 0) { return; }
+
+            //Change the state of visibility for the sprite collection.
             if (isVisible) { _Sprites[0].Visibility = Visibility.Visible; }
             else { _Sprites[0].Visibility = Visibility.Invisible; }
         }
@@ -156,7 +160,7 @@ namespace Library.Core
         public override bool IsPixelsIntersecting(Vector2 point)
         {
             //If the point and this item intersects, return true.
-            if (Helper.IsPointWithinImage(point, _Sprites.GetFirstSprite())) { return true; }
+            if (Helper.IsPointWithinImage(point, _Sprites.FirstSprite())) { return true; }
 
             //Return false;
             return false;
@@ -179,7 +183,7 @@ namespace Library.Core
         /// <summary>
         /// The sprites of the item.
         /// </summary>
-        public SpriteCollection Sprites
+        public SpriteManager Sprites
         {
             get { return _Sprites; }
             set { _Sprites = value; }
