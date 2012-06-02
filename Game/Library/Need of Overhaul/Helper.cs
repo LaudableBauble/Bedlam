@@ -909,7 +909,7 @@ namespace Library
                 float rotationOffset = float.Parse(spriteNode.SelectSingleNode("RotationOffset").InnerText);
 
                 //Add a sprite to the skeleton.
-                Sprite sprite = skeleton.Sprites.AddSprite(new Sprite(skeleton.Sprites, spriteName));
+                Sprite sprite = skeleton.Sprites.Add(new Sprite(skeleton.Sprites, spriteName));
                 sprite.RotationOffset = rotationOffset;
                 sprite.Tag = tag;
 

@@ -29,9 +29,6 @@ namespace Library.GUI.Basic
         private Textbox _Textbox;
         private float _Ratio;
         private bool _IsFixed;
-
-        public delegate void CheckboxTickHandler(object obj, TickEventArgs e);
-        public event CheckboxTickHandler CheckboxTick;
         #endregion
 
         #region Constructor

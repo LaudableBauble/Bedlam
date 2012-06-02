@@ -42,6 +42,7 @@ namespace Library.GUI.Basic
         protected List<Component> _Items;
         protected Component _Parent;
         protected bool _UpdateDrawOrders;
+        private bool _IsContentLoaded;
         #endregion
 
         #region Events
@@ -103,7 +104,10 @@ namespace Library.GUI.Basic
             _Sprite.LoadContent(_GUI.ContentManager);
 
             //Loop through all items and load their content.
-            foreach (Component item in _Items) { item.LoadContent(); }
+            _Items.ForEach(item => item.LoadContent());
+
+            //Content has now been loaded.
+            _IsContentLoaded = true;
         }
         /// <summary>
         /// Update the item.
@@ -129,7 +133,7 @@ namespace Library.GUI.Basic
             _Sprite.Update(gametime);
 
             //Loop through all items and update them.
-            foreach (Component item in _Items) { item.Update(gametime); }
+            _Items.ForEach(item => item.Update(gametime));
         }
         /// <summary>
         /// Handle user input.
@@ -187,11 +191,7 @@ namespace Library.GUI.Basic
             else { _IsMouseHovering = false; }
 
             //Loop through all items and give them access to user input.
-            foreach (Component item in _Items)
-            {
-                //Enable the item to handle input.
-                item.HandleInput(input);
-            }
+            _Items.ForEach(item => item.HandleInput(input));
         }
         /// <summary>
         /// Draw the item.
@@ -206,7 +206,7 @@ namespace Library.GUI.Basic
             _Sprite.Draw(spriteBatch);
 
             //Draw all items.
-            foreach (Component item in _Items) { item.Draw(spriteBatch); }
+            _Items.ForEach(item => item.Draw(spriteBatch));
         }
 
         /// <summary>
@@ -219,6 +219,9 @@ namespace Library.GUI.Basic
             _Items.Add(item);
             item.Parent = this;
             item.DrawOrder = _Items.Count;
+
+            //Load the item's content if necessary.
+            if (_IsContentLoaded) { item.LoadContent(); }
 
             //Subscribe to some events.
             item.BoundsChange += OnItemBoundsChange;
@@ -234,7 +237,6 @@ namespace Library.GUI.Basic
         /// <param name="path">The path of the asset to load.</param>
         public Sprite AddSprite(string path)
         {
-            //Add a sprite.
             return Factory.Instance.AddSprite(_Sprite, "Sprite" + _Sprite.Count, path, _Position, 0, 1, 0, 0, 0, "Sprite" + _Sprite.Count);
         }
         /// <summary>
@@ -244,7 +246,6 @@ namespace Library.GUI.Basic
         /// <param name="position">The position of the sprite.</param>
         public Sprite AddSprite(string path, Vector2 position)
         {
-            //Add a sprite.
             return Factory.Instance.AddSprite(_Sprite, "Sprite" + _Sprite.Count, path, position, 0, 1, 0, 0, 0, "Sprite" + _Sprite.Count);
         }
         /// <summary>
@@ -254,7 +255,6 @@ namespace Library.GUI.Basic
         /// <param name="position">The position of the sprite.</param>
         public Sprite AddSprite(Texture2D texture, Vector2 position)
         {
-            //Add a sprite.
             return Factory.Instance.AddSprite(_Sprite, texture.Name, texture, position, 0, 1, 0, 0, 0, "Sprite" + _Sprite.Count);
         }
         /// <summary>
@@ -263,7 +263,6 @@ namespace Library.GUI.Basic
         /// <param name="texture">The texture of the asset to use.</param>
         public Sprite AddSprite(Texture2D texture)
         {
-            //Add a sprite.
             return Factory.Instance.AddSprite(_Sprite, texture.Name, texture, _Position, 0, 1, 0, 0, 0, "Sprite" + _Sprite.Count);
         }
         /// <summary>

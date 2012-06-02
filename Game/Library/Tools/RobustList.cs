@@ -6,7 +6,7 @@ using System.Text;
 namespace Library.Tools
 {
     /// <summary>
-    /// A robust list is just like any other list but with the notable exception that it can handle concurrent modification.
+    /// A robust list is just like any other list but with the notable exception that it can handle concurrent modification passably.
     /// </summary>
     /// <typeparam name="T">The type of object to list.</typeparam>
     public class RobustList<T> : IList<T>
@@ -51,7 +51,7 @@ namespace Library.Tools
         public bool Update()
         {
             //The return value.
-            bool answer = _ToAdd.Count > 0 || _ToRemove.Count > 0;
+            bool update = _ToAdd.Count > 0 || _ToRemove.Count > 0;
 
             //Add and remove items from the list.
             _Items.AddRange(_ToAdd);
@@ -62,7 +62,7 @@ namespace Library.Tools
             _ToRemove.Clear();
 
             //Return the answer.
-            return answer;
+            return update;
         }
 
         /// <summary>
@@ -127,6 +127,23 @@ namespace Library.Tools
             _Items.CopyTo(array, arrayIndex);
         }
         /// <summary>
+        /// Determines whether the System.Collections.Generic.List contains elements that match the conditions defined by the specified predicate.
+        /// </summary>
+        /// <param name="match">The System.Predicate delegate that defines the conditions of the elements to search for.</param>
+        /// <returns>true if the System.Collections.Generic.List contains one or more elements that match the conditions defined by the specified predicate; otherwise, false.</returns>
+        public bool Exists(Predicate<T> match)
+        {
+            return _Items.Exists(match);
+        }
+        /// <summary>
+        /// Performs the specified action on each element of the System.Collections.Generic.List.
+        /// </summary>
+        /// <param name="action">The System.Action delegate to perform on each element of the System.Collections.Generic.List.</param>
+        public void ForEach(Action<T> action)
+        {
+            _Items.ForEach(action);
+        }
+        /// <summary>
         /// Removes the first occurrence of a specific object from the System.Collections.Generic.List.
         /// </summary>
         /// <param name="item">The object to remove from the System.Collections.Generic.List. The value can be null for reference types.</param>
@@ -135,14 +152,6 @@ namespace Library.Tools
         {
             _ToRemove.Add(item);
             return _Items.Contains(item);
-        }
-        /// <summary>
-        /// Get the last item in the list.
-        /// </summary>
-        public T GetLastItem()
-        {
-            if (_ToAdd.Count == 0) { return _Items[_Items.Count - 1]; }
-            else { return _ToAdd[_ToAdd.Count - 1]; }
         }
         /// <summary>
         /// Sorts the elements in the entire System.Collections.Generic.List using the specified System.Comparison.
@@ -180,11 +189,29 @@ namespace Library.Tools
 
         #region Properties
         /// <summary>
-        /// Gets the number of elements actually contained in the System.Collections.Generic.List.
+        /// Gets the number of elements actually contained in the active System.Collections.Generic.List.
         /// </summary>
         public int Count
         {
             get { return _Items.Count; }
+        }
+        /// <summary>
+        /// Gets the number of elements actually contained in the active System.Collections.Generic.List plus those still waiting to be acknowledged.
+        /// </summary>
+        public int CompleteCount
+        {
+            get { return _Items.Count + _ToAdd.Count - _ToRemove.Count; }
+        }
+        /// <summary>
+        /// The last item in the list.
+        /// </summary>
+        public T LastItem
+        {
+            get
+            {
+                if (_ToAdd.Count == 0) { return _Items[_Items.Count - 1]; }
+                else { return _ToAdd[_ToAdd.Count - 1]; }
+            }
         }
         /// <summary>
         /// Serves no useful function.

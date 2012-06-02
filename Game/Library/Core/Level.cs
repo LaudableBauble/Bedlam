@@ -226,8 +226,7 @@ namespace Library.Core
         /// </summary>
         public Layer GetLastLayer()
         {
-            //Return the last layer.
-            return _Layers.GetLastItem();
+            return _Layers.LastItem;
         }
         /// <summary>
         /// Get the item closest to the given position.

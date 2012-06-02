@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework.Net;
 using Microsoft.Xna.Framework.Storage;
 
 using Library.Enums;
+using Library.Tools;
 
 namespace Library.Imagery
 {
@@ -23,8 +24,7 @@ namespace Library.Imagery
     {
         #region Fields
         private ContentManager _ContentManager;
-        private List<Sprite> _SpritesInner;
-        private List<Sprite> _SpritesOuter;
+        private RobustList<Sprite> _Sprites;
         #endregion
 
         #region Indexers
@@ -35,8 +35,8 @@ namespace Library.Imagery
         /// <returns>The sprite instance.</returns>
         public Sprite this[int index]
         {
-            get { return GetSprite(index); }
-            set { SetSprite(index, value); }
+            get { return Find(index); }
+            set { Set(index, value); }
         }
         /// <summary>
         /// Get or set a sprite.
@@ -45,8 +45,8 @@ namespace Library.Imagery
         /// <returns>The sprite instance.</returns>
         public Sprite this[string tag]
         {
-            get { return GetSprite(tag); }
-            set { SetSprite(tag, value); }
+            get { return Find(tag); }
+            set { Set(tag, value); }
         }
         #endregion
 
@@ -66,9 +66,8 @@ namespace Library.Imagery
         /// </summary>
         private void Initialize()
         {
-            //Initialize variables. The inner list is not iterated upon but serves as a container, whereas the outer list mimick the inner and is iterated upon.
-            _SpritesInner = new List<Sprite>();
-            _SpritesOuter = new List<Sprite>();
+            //Initialize variables.
+            _Sprites = new RobustList<Sprite>();
         }
         /// <summary>
         /// Load the texture for all the sprites using the Content Pipeline.
@@ -79,11 +78,11 @@ namespace Library.Imagery
             //Save the content manager for future usage.
             _ContentManager = contentManager;
 
-            //Put all the sprites to update and draw in a seperate list.
-            _SpritesOuter = new List<Sprite>(_SpritesInner);
+            //Update the robust list so that each added sprite will have its content loaded.
+            ManageSprites();
 
             //If there's any sprites in the list, load their content.
-            _SpritesOuter.ForEach(item => item.LoadContent());
+            _Sprites.ForEach(item => item.LoadContent());
         }
         /// <summary>
         /// Update all sprites.
@@ -91,11 +90,11 @@ namespace Library.Imagery
         /// <param name="gameTime">The Game Time.</param>
         public void Update(GameTime gameTime)
         {
-            //Put all the sprites to update and draw in a seperate list.
+            //Update the robust list.
             ManageSprites();
 
             //Update all sprites.
-            _SpritesOuter.ForEach(item => item.Update(gameTime));
+            _Sprites.ForEach(item => item.Update(gameTime));
         }
         /// <summary>
         /// Update all sprites.
@@ -105,11 +104,11 @@ namespace Library.Imagery
         /// <param name="rotation">The rotation of the sprite.</param>
         public void Update(GameTime gameTime, Vector2 position, float rotation)
         {
-            //Put all the sprites to update and draw in a seperate list.
+            //Update the robust list.
             ManageSprites();
 
             //Update all sprites's position.
-            _SpritesOuter.ForEach(item => item.UpdateSprite(position, rotation));
+            _Sprites.ForEach(item => item.UpdateSprite(position, rotation));
 
             //Update the sprites.
             Update(gameTime);
@@ -121,17 +120,17 @@ namespace Library.Imagery
         public void Draw(SpriteBatch spriteBatch)
         {
             //Draw all sprites.
-            _SpritesOuter.ForEach(item => item.Draw(spriteBatch));
+            _Sprites.ForEach(item => item.Draw(spriteBatch));
         }
 
         /// <summary>
         /// Add a sprite.
         /// </summary>
         /// <param name="sprite">The sprite to add.</param>
-        public Sprite AddSprite(Sprite sprite)
+        public Sprite Add(Sprite sprite)
         {
             //Add the sprite to the list.
-            _SpritesInner.Add(sprite);
+            _Sprites.Add(sprite);
 
             //If we have a valid content manager, load the sprite's content.
             if (_ContentManager != null) { sprite.LoadContent(); }
@@ -146,17 +145,17 @@ namespace Library.Imagery
         /// <returns>The index of the sprite.</returns>
         public int IndexOf(string tag)
         {
-            return _SpritesOuter.IndexOf(GetSprite(tag));
+            return _Sprites.IndexOf(Find(tag));
         }
         /// <summary>
         /// Get a sprite.
         /// </summary>
         /// <param name="name">The name of the sprite.</param>
         /// <returns>The sprite.</returns>
-        public Sprite GetSprite(string name)
+        public Sprite Find(string name)
         {
             //Loop through the list of sprites and find the one with the right name.
-            foreach (Sprite sprite in _SpritesOuter) { if (sprite.Name.Equals(name)) { return sprite; } }
+            foreach (Sprite sprite in _Sprites) { if (sprite.Name.Equals(name)) { return sprite; } }
 
             //Return null.
             return null;
@@ -166,33 +165,33 @@ namespace Library.Imagery
         /// </summary>
         /// <param name="index">The index of the sprite.</param>
         /// <returns>The sprite.</returns>
-        public Sprite GetSprite(int index)
+        public Sprite Find(int index)
         {
             //If the index is out of bounds, quit here.
-            if (index >= _SpritesOuter.Count) { return null; }
+            if (index >= _Sprites.Count) { return null; }
 
             //Return the sprite.
-            return _SpritesInner[index];
+            return _Sprites[index];
         }
         /// <summary>
         /// Set a sprite.
         /// </summary>
         /// <param name="index">The index of the sprite.</param>
         /// <param name="sprite">The sprite.</param>
-        public void SetSprite(int index, Sprite sprite)
+        public void Set(int index, Sprite sprite)
         {
             //If the index is out of bounds, quit here.
             if (index >= Count) { return; }
 
             //Set the sprite.
-            _SpritesOuter[index] = sprite;
+            _Sprites[index] = sprite;
         }
         /// <summary>
         /// Set a sprite.
         /// </summary>
         /// <param name="tag">The tag of the sprite to set.</param>
         /// <param name="sprite">The sprite.</param>
-        public void SetSprite(string tag, Sprite sprite)
+        public void Set(string tag, Sprite sprite)
         {
             //The index.
             int index = IndexOf(tag);
@@ -201,45 +200,52 @@ namespace Library.Imagery
             if (index >= Count) { return; }
 
             //Set the sprite.
-            _SpritesInner[index] = sprite;
+            _Sprites[index] = sprite;
         }
         /// <summary>
         /// Remove a sprite and its frames.
         /// </summary>
-        /// <param name="tag">The tag of the sprite to remove.</param>
-        public void RemoveSprite(string tag)
+        /// <param name="name">The name of the sprite to remove.</param>
+        public void Remove(string name)
         {
-            RemoveSprite(IndexOf(tag));
+            Remove(Find(name));
+        }
+        /// <summary>
+        /// Remove a sprite and its frames.
+        /// </summary>
+        /// <param name="sprite">The sprite to remove.</param>
+        public void Remove(Sprite sprite)
+        {
+            _Sprites.Remove(sprite);
+
+            //Sort the list by depth.
+            _Sprites.Sort((x, y) => x.Depth.CompareTo(y.Depth));
         }
         /// <summary>
         /// Remove a sprite and its frames.
         /// </summary>
         /// <param name="index">The index of the sprite to remove.</param>
-        public void RemoveSprite(int index)
+        public void Remove(int index)
         {
-            _SpritesInner.RemoveAt(index);
+            _Sprites.RemoveAt(index);
 
             //Sort the list by depth.
-            _SpritesInner.Sort((x, y) => x.Depth.CompareTo(y.Depth));
+            _Sprites.Sort((x, y) => x.Depth.CompareTo(y.Depth));
         }
         /// <summary>
         /// Manage all sprites, ie. add and remove them from the master list.
         /// </summary>
         public void ManageSprites()
         {
-            //Sort the list by depth.
-            _SpritesInner.Sort((x, y) => x.Depth.CompareTo(y.Depth));
-
-            //Put all the sprites to update and draw in a seperate list.
-            _SpritesOuter = new List<Sprite>(_SpritesInner);
+            //Update the robust list, and sort it by depth if necessary.
+            if (_Sprites.Update()) { _Sprites.Sort((x, y) => x.Depth.CompareTo(y.Depth)); }
         }
         /// <summary>
         /// Clear all sprites.
         /// </summary>
         public void Clear()
         {
-            _SpritesInner.Clear();
-            _SpritesOuter.Clear();
+            _Sprites.Clear();
         }
         /// <summary>
         /// Get the bounds of a certain texture asset.
@@ -268,14 +274,14 @@ namespace Library.Imagery
         /// </summary>
         public Sprite FirstSprite()
         {
-            return _SpritesInner.Count != 0 ? _SpritesInner[0] : null;
+            return _Sprites.Count != 0 ? _Sprites[0] : null;
         }
         /// <summary>
         /// Shortcut to the last sprite in the collection.
         /// </summary>
         public Sprite LastSprite()
         {
-            return _SpritesInner.Count != 0 ? _SpritesInner[_SpritesInner.Count - 1] : null;
+            return _Sprites.Count != 0 ? _Sprites[_Sprites.Count - 1] : null;
         }
         /// <summary>
         /// Reset all sprites to this position.
@@ -283,7 +289,7 @@ namespace Library.Imagery
         /// <param name="position">The new base position for all sprites.</param>
         public void SetPosition(Vector2 position)
         {
-            _SpritesOuter.ForEach(item => item.UpdateSprite(position, item.Rotation));
+            _Sprites.ForEach(item => item.UpdateSprite(position, item.Rotation));
         }
         /// <summary>
         /// Change the visibility of all the collection's sprites.
@@ -292,7 +298,7 @@ namespace Library.Imagery
         private void ChangeVisibility(Visibility visibility)
         {
             //For all sprites in the collection, change their visibility to match the specified one.
-            foreach (Sprite sprite in _SpritesInner) { sprite.Visibility = visibility; }
+            foreach (Sprite sprite in _Sprites) { sprite.Visibility = visibility; }
         }
         #endregion
 
@@ -310,22 +316,28 @@ namespace Library.Imagery
         /// </summary>
         public List<Sprite> Sprites
         {
-            get { return new List<Sprite>(_SpritesInner); }
-            set { _SpritesInner = value; }
+            get { return _Sprites.ToList(); }
         }
         /// <summary>
         /// The number of sprites.
         /// </summary>
         public int Count
         {
-            get { return _SpritesInner.Count; }
+            get { return _Sprites.Count; }
+        }
+        /// <summary>
+        /// The complete number of sprites, including those that have yet to be activated.
+        /// </summary>
+        public int CompleteCount
+        {
+            get { return _Sprites.CompleteCount; }
         }
         /// <summary>
         /// The collection's state of visibility.
         /// </summary>
         public Visibility Visibility
         {
-            get { return (_SpritesInner.Exists(s => s.Visibility == Visibility.Visible) ? Visibility.Visible : Visibility.Invisible); }
+            get { return (_Sprites.Exists(s => s.Visibility == Visibility.Visible) ? Visibility.Visible : Visibility.Invisible); }
             set { ChangeVisibility(value); }
         }
         #endregion

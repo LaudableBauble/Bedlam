@@ -114,29 +114,24 @@ namespace Library.GUI.Basic
             //The inherited method.
             base.HandleInput(input);
 
-            //If the inputbox is active, write the input to the box.
-            if (IsActive)
+            //If the component is not active nor visible, stop here.
+            if (!IsActive || !IsVisible) { return; }
+
+            //If the component has focus.
+            if (HasFocus)
             {
-                //If the inputbox is visible.
-                if (IsVisible)
-                {
-                    //If the textbox has focus.
-                    if (HasFocus)
-                    {
-                        //Delete text.
-                        if (input.IsKeyDown(Keys.Delete) && !_UsedKeys.ContainsKey(Keys.Delete)) { DeleteText(true); }
-                        else if (input.IsKeyDown(Keys.Back) && !_UsedKeys.ContainsKey(Keys.Back)) { DeleteText(false); }
-                        //Unfocus the textbox.
-                        else if (input.IsKeyDown(Keys.Enter) && !_UsedKeys.ContainsKey(Keys.Enter)) { FocusChangeInvoke(false); }
+                //Delete text.
+                if (input.IsKeyDown(Keys.Delete) && !_UsedKeys.ContainsKey(Keys.Delete)) { DeleteText(true); }
+                else if (input.IsKeyDown(Keys.Back) && !_UsedKeys.ContainsKey(Keys.Back)) { DeleteText(false); }
+                //Unfocus the textbox.
+                else if (input.IsKeyDown(Keys.Enter) && !_UsedKeys.ContainsKey(Keys.Enter)) { FocusChangeInvoke(false); }
 
-                        //If the marker should be moved.
-                        if (input.IsKeyDown(Keys.Left) && !_UsedKeys.ContainsKey(Keys.Left)) { MoveMarkerLeft(); }
-                        if (input.IsKeyDown(Keys.Right) && !_UsedKeys.ContainsKey(Keys.Right)) { MoveMarkerRight(); }
+                //If the marker should be moved.
+                if (input.IsKeyDown(Keys.Left) && !_UsedKeys.ContainsKey(Keys.Left)) { MoveMarkerLeft(); }
+                if (input.IsKeyDown(Keys.Right) && !_UsedKeys.ContainsKey(Keys.Right)) { MoveMarkerRight(); }
 
-                        //If a key has been pressed, write to the textbox.
-                        if (input.IsAnyKeyPress()) { InsertText(input, 0, _MarkerIndex); }
-                    }
-                }
+                //If a key has been pressed, write to the textbox.
+                if (input.IsAnyKeyPress()) { InsertText(input, 0, _MarkerIndex); }
             }
         }
         /// <summary>

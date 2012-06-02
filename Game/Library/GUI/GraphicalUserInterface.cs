@@ -15,6 +15,7 @@ using Microsoft.Xna.Framework.Storage;
 using Library.GUI.Basic;
 using Library.Animate;
 using Library.Infrastructure;
+using Library.Tools;
 
 namespace Library.GUI
 {
@@ -24,18 +25,16 @@ namespace Library.GUI
     public class GraphicalUserInterface
     {
         #region Fields
-        private List<Component> _Items;
-        private List<Component> _ItemsToBeAdded;
-        private List<Component> _ItemsToBeRemoved;
+        private RobustList<Component> _Items;
+        private RobustList<Component> _ForegroundItems;
         private List<Component> _FocusQueue;
-        private List<Component> _ForegroundItems;
-        private List<Component> _ForegroundItemsToBeAdded;
         private bool _IsActive;
         private bool _IsVisible;
         private Texture2D _FadeTexture;
         private List _RightClickList;
         private bool _HasRightClicked;
         private bool _UpdateDrawOrders;
+        private bool _IsContentLoaded;
 
         private ContentManager _ContentManager;
         private GraphicsDevice _GraphicsDevice;
@@ -55,7 +54,7 @@ namespace Library.GUI
         /// <returns>The item instance.</returns>
         public Component this[int index]
         {
-            get { return (_Items[index]); }
+            get { return _Items[index]; }
             set { _Items[index] = value; }
         }
         #endregion
@@ -75,19 +74,17 @@ namespace Library.GUI
         /// <summary>
         /// Initialize the GUI.
         /// </summary>
-        public void Initialize()
+        private void Initialize()
         {
             //Initialize some variables.
-            _Items = new List<Component>();
-            _ItemsToBeAdded = new List<Component>();
-            _ItemsToBeRemoved = new List<Component>();
+            _Items = new RobustList<Component>();
             _FocusQueue = new List<Component>();
-            _ForegroundItems = new List<Component>();
-            _ForegroundItemsToBeAdded = new List<Component>();
+            _ForegroundItems = new RobustList<Component>();
             _IsActive = true;
             _IsVisible = true;
             _RightClickList = new List(this, Vector2.Zero, 100, 200);
             _HasRightClicked = false;
+            _IsContentLoaded = false;
 
             //Play with the right click list.
             _RightClickList.AddItem();
@@ -119,6 +116,9 @@ namespace Library.GUI
             //Loop through all items and load their content.
             _Items.ForEach(item => item.LoadContent());
             _ForegroundItems.ForEach(item => item.LoadContent());
+
+            //Content has now been loaded.
+            _IsContentLoaded = true;
         }
         /// <summary>
         /// Update the GUI and all its items.
@@ -171,22 +171,17 @@ namespace Library.GUI
         /// </summary>
         public void Draw()
         {
-            //If the GUI is active, continue.
-            if (_IsActive)
-            {
-                //If the GUI is visible.
-                if (_IsVisible)
-                {
-                    //Loop through all items and draw them.
-                    Items.ForEach(item => item.Draw(_SpriteBatch));
+            //If the GUI is not active nor visible, discontinue.
+            if (!_IsActive || !_IsVisible) { return; }
 
-                    //If there exists items in the foreground, fade the background and draw them.
-                    if (_ForegroundItems.Count != 0) { FadeBackBufferToBlack(150); _ForegroundItems.ForEach(item => item.Draw(_SpriteBatch)); }
+            //Loop through all items and draw them.
+            Items.ForEach(item => item.Draw(_SpriteBatch));
 
-                    //Draw the right click list, if the time is right.
-                    if (_HasRightClicked) { _RightClickList.Draw(_SpriteBatch); }
-                }
-            }
+            //If there exists items in the foreground, fade the background and draw them.
+            if (_ForegroundItems.Count != 0) { FadeBackBufferToBlack(150); _ForegroundItems.ForEach(item => item.Draw(_SpriteBatch)); }
+
+            //Draw the right click list, if the time is right.
+            if (_HasRightClicked) { _RightClickList.Draw(_SpriteBatch); }
         }
 
         /// <summary>
@@ -195,8 +190,13 @@ namespace Library.GUI
         /// <param name="item">The item to add.</param>
         public void AddItem(Component item)
         {
-            //Store the item in a list until it is time to add them to the GUI.
-            _ItemsToBeAdded.Add(item);
+            //Add the item, try to load its content and update its draw order.
+            _Items.Add(item);
+            if (_IsContentLoaded) { item.LoadContent(); }
+            item.DrawOrder = _Items.CompleteCount;
+
+            //Hook up some events.
+            AddItemEvents(item);
         }
         /// <summary>
         /// Add a foreground item to the GUI.
@@ -204,8 +204,13 @@ namespace Library.GUI
         /// <param name="item">The item to add.</param>
         public void AddForegroundItem(Component item)
         {
-            //Store the item in a list until it is time to add it to the GUI.
-            _ForegroundItemsToBeAdded.Add(item);
+            //Add the item, try to load its content and update its draw order.
+            _ForegroundItems.Add(item);
+            if (_IsContentLoaded) { item.LoadContent(); }
+            item.DrawOrder = _ForegroundItems.CompleteCount;
+
+            //Hook up some events.
+            AddItemEvents(item);
         }
         /// <summary>
         /// Remove an item from the GUI.
@@ -213,67 +218,20 @@ namespace Library.GUI
         /// <param name="item">The item to remove.</param>
         public void RemoveItem(Component item)
         {
+            //Unsubscribe from the item.
+            RemoveItemEvents(item);
+
             //Remove the item from the list of items.
-            _ItemsToBeRemoved.Add(item);
+            _Items.Remove(item);
+            _ForegroundItems.Remove(item);
         }
         /// <summary>
         /// Add and remove items to and from the GUI.
         /// </summary>
         public void ManageItems()
         {
-            //If there are items to add to the GUI, add them.
-            if (_ItemsToBeAdded.Count != 0)
-            {
-                foreach (Component item in _ItemsToBeAdded)
-                {
-                    //Add the item to the GUI.
-                    _Items.Add(item);
-                    //Load its contents.
-                    try { item.LoadContent(); }
-                    catch { }
-                    //Update the draw order.
-                    item.DrawOrder = _Items.Count;
-                    //Hook up some events.
-                    AddItemEvents(_Items[_Items.Count - 1]);
-                }
-
-                //Clear the list.
-                _ItemsToBeAdded.Clear();
-            }
-            //If there are foregound items to add to the GUI, add them.
-            if (_ForegroundItemsToBeAdded.Count != 0)
-            {
-                foreach (Component item in _ForegroundItemsToBeAdded)
-                {
-                    //Add the item to the GUI.
-                    _ForegroundItems.Add(item);
-                    //Load its contents.
-                    try { item.LoadContent(); }
-                    catch { }
-                    //Update the draw order.
-                    item.DrawOrder = _ForegroundItems.Count;
-                    //Hook up some events.
-                    AddItemEvents(item);
-                }
-
-                //Clear the list.
-                _ForegroundItemsToBeAdded.Clear();
-            }
-            //If there are items to remove from the GUI, remove them.
-            if (_ItemsToBeRemoved.Count != 0)
-            {
-                foreach (Component item in _ItemsToBeRemoved)
-                {
-                    //Unsubscribe from the item.
-                    RemoveItemEvents(item);
-                    //Remove the item from the list of items.
-                    _Items.Remove(item);
-                    _ForegroundItems.Remove(item);
-                }
-
-                //Clear the list.
-                _ItemsToBeRemoved.Clear();
-            }
+            //Update the list of items.
+            _Items.Update();
 
             //If there is any items vying for focus.
             if (_FocusQueue.Count > 0)
@@ -305,7 +263,7 @@ namespace Library.GUI
             //The draw order counter.
             int counter = _Items.Count;
 
-            //Go through all items and reset their draw orders. Reset the counter inbetween.
+            //Go through all items and reset their draw orders. Reset the counter in between.
             _Items.ForEach(item => item.DrawOrder = counter--);
             counter = _Items.Count;
             _ForegroundItems.ForEach(item => item.DrawOrder = counter--);
@@ -419,15 +377,6 @@ namespace Library.GUI
             while (parent != null) { parent.DrawOrder = 0; parent = parent.Parent; }
         }
         /// <summary>
-        /// Get the last component in the collection, even if the component hasn't technically been added yet.
-        /// </summary>
-        public Component GetLastComponent()
-        {
-            //Return the last component in the list.            
-            if (_ItemsToBeAdded.Count == 0) { return _Items[_Items.Count - 1]; }
-            else { return _ItemsToBeAdded[_ItemsToBeAdded.Count - 1]; }
-        }
-        /// <summary>
         /// Draws a translucent black fullscreen sprite, used for darkening the background behind popups.
         /// </summary>
         public void FadeBackBufferToBlack(int alpha)
@@ -474,35 +423,14 @@ namespace Library.GUI
         /// </summary>
         public List<Component> Items
         {
-            get { return _Items; }
-            set { _Items = value; }
-        }
-        /// <summary>
-        /// The list of items to be added in this GUI.
-        /// </summary>
-        public List<Component> ItemsToBeAdded
-        {
-            get { return _ItemsToBeAdded; }
-            set { _ItemsToBeAdded = value; }
-        }
-        /// <summary>
-        /// The list of items to be removed in this GUI.
-        /// </summary>
-        public List<Component> ItemsToBeRemoved
-        {
-            get { return _ItemsToBeRemoved; }
-            set { _ItemsToBeRemoved = value; }
+            get { return _Items.ToList(); }
         }
         /// <summary>
         /// The last item in the list.
         /// </summary>
         public Component LastItem
         {
-            get
-            {
-                if (_ItemsToBeAdded.Count == 0) { return _Items[_Items.Count - 1]; }
-                else { return _ItemsToBeAdded[_ItemsToBeAdded.Count - 1]; }
-            }
+            get { return _Items.LastItem; }
         }
         /// <summary>
         /// If the GUI is active.

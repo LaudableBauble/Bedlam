@@ -278,7 +278,7 @@ namespace Library.GUI
         {
             //Select the bone.
             _Bone = bone;
-            _BoneSprite = _Bone.Skeleton.Sprites.GetSprite(_Bone.Index.ToString());
+            _BoneSprite = _Bone.Skeleton.Sprites.Find(_Bone.Index.ToString());
             //Update all components to reflect this change.
             UpdateComponents();
 

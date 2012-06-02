@@ -14,6 +14,7 @@ using Microsoft.Xna.Framework.Storage;
 
 using FarseerPhysics.DrawingSystem;
 
+using Library.Factories;
 using Library.Imagery;
 using Library.Infrastructure;
 
@@ -86,40 +87,11 @@ namespace Library.GUI.Basic
 
             //Create the button's texture and load the font.
             _Font = GUI.ContentManager.Load<SpriteFont>("GameScreen/Fonts/diagnosticFont");
-            //Create the default button texture.
-            _DefaultSprite = AddSprite(DrawingHelper.CreateRectangleTexture(GUI.GraphicsDevice, (int)Width, (int)Height, Color.SlateGray, Color.Black));
+            //Update the default button texture.
+            UpdateTexture();
 
             //Fit and align the text accordingly, now that the font has finally been created properly.
             FitAndAlignText();
-        }
-        /// <summary>
-        /// Update the button.
-        /// </summary>
-        /// <param name="gametime">The time to adhere to.</param>
-        public override void Update(GameTime gametime)
-        {
-            //The inherited method.
-            base.Update(gametime);
-        }
-        /// <summary>
-        /// Handle user input.
-        /// </summary>
-        /// <param name="input">The helper for reading input from the user.</param>
-        public override void HandleInput(InputState input)
-        {
-            //The inherited method.
-            base.HandleInput(input);
-
-            //If the item is active.
-            if (IsActive)
-            {
-                //If the item is visible.
-                if (IsVisible)
-                {
-                    //If the item has focus.
-                    if (HasFocus) { }
-                }
-            }
         }
         /// <summary>
         /// Draw the button.
@@ -130,8 +102,11 @@ namespace Library.GUI.Basic
             //The inherited method.
             base.Draw(spriteBatch);
 
+            //If the component isn't active or visible, stop here.
+            if (!_IsActive || !_IsVisible) { return; }
+
             //Draw the text.
-            GUI.SpriteBatch.DrawString(_Font, CropText(), new Vector2((Position.X + 2), (Position.Y + 2)), Color.White);
+            GUI.SpriteBatch.DrawString(_Font, CropText(), new Vector2(Position.X + 2, Position.Y + 2), Color.White);
         }
 
         /// <summary>
@@ -166,8 +141,7 @@ namespace Library.GUI.Basic
         /// <returns>The cropped text.</returns>
         private string CropText()
         {
-            //Crop the text so that it will fit into the box.
-            return (_Text.Substring(0, _VisibleTextLength));
+            return _Text.Substring(0, _VisibleTextLength);
         }
         /// <summary>
         /// Tell the world that the text of this item has changed.
@@ -181,6 +155,36 @@ namespace Library.GUI.Basic
             if (TextChange != null) { TextChange(this, new EventArgs()); }
         }
         /// <summary>
+        /// Update the texture of the button.
+        /// </summary>
+        private void UpdateTexture()
+        {
+            //If there exists no valid content manager, stop here.
+            if (GUI.ContentManager == null) { return; }
+
+            //If there exists no default texture, create one.
+            if (_DefaultSprite == null)
+            {
+                _DefaultSprite = Factory.Instance.AddSprite(_Sprite, "Default", DrawingHelper.CreateRectangleTexture(GUI.GraphicsDevice, (int)Width, (int)Height, Color.SlateGray, Color.Black));
+                _DefaultSprite.Position = _Position;
+            }
+
+            //If the default sprite is active.
+            if (_Sprite.CompleteCount == 1 && _Sprite[0].Name.Equals("Default"))
+            {
+                //Make it visible.
+                _DefaultSprite.Visibility = Enums.Visibility.Visible;
+
+                //If the bounds do not match, update its texture.
+                if (_Sprite[0].Frames[0].Width != _Width || _Sprite[0].Frames[0].Height != _Height)
+                {
+                    _Sprite[0].Frames[0].Texture = DrawingHelper.CreateRectangleTexture(GUI.GraphicsDevice, (int)_Width, (int)_Height, Color.SlateGray, Color.Black);
+                }
+            }
+            //Otherwise make it invisible.
+            else { _DefaultSprite.Visibility = Enums.Visibility.Invisible; }
+        }
+        /// <summary>
         /// Tell the world that the bounds of this item has changed.
         /// </summary>
         /// <param name="width">The new width of the item.</param>
@@ -190,7 +194,7 @@ namespace Library.GUI.Basic
             //Fit and align the text.
             FitAndAlignText();
             //Update the default button texture.
-            if (GUI.ContentManager != null) { _DefaultSprite[0].Texture = DrawingHelper.CreateRectangleTexture(GUI.GraphicsDevice, (int)width, (int)height, Color.SlateGray, Color.Black); }
+            UpdateTexture();
 
             //Direct the call to the base event.
             base.BoundsChangeInvoke(width, height);
@@ -203,6 +207,9 @@ namespace Library.GUI.Basic
         {
             //Fit and align the text.
             FitAndAlignText();
+
+            //Update the position of the sprites.
+            _Sprite.Sprites.ForEach(item => item.Position = position);
 
             //Direct the call to the base event.
             base.PositionChangeInvoke(position);

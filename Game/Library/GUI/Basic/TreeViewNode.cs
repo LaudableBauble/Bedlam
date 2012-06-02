@@ -94,8 +94,8 @@ namespace Library.GUI.Basic
 
             //Intialize some variables.
             _Nodes = new List<TreeViewNode>();
-            _Button = new Button(gui, new Vector2(Position.X, (Position.Y + (Height / 3))));
-            _Checkbox = new Checkbox(gui, new Vector2((Position.X + _Button.Width + 2), Position.Y), width, height);
+            _Button = new Button(gui, new Vector2(Position.X, Position.Y + (Height / 3)));
+            _Checkbox = new Checkbox(gui, new Vector2(Position.X + _Button.Width + 2, Position.Y), width, height);
             _NodeState = TreeViewNodeState.None;
 
             //Add the items to the list.
@@ -127,62 +127,7 @@ namespace Library.GUI.Basic
             _Button.Height = button[0].Height;
 
             //Update the positions of all the checkbox because of the button's changed bounds.
-            _Checkbox.Position = new Vector2((Position.X + _Button.Width + 2), Position.Y);
-
-            //Load every child node's content.
-            foreach (TreeViewNode node in _Nodes) { node.LoadContent(); }
-        }
-        /// <summary>
-        /// Update the treeview node.
-        /// </summary>
-        /// <param name="gametime">The time to adhere to.</param>
-        public override void Update(GameTime gametime)
-        {
-            //The inherited method.
-            base.Update(gametime);
-
-            //Update every child node.
-            foreach (TreeViewNode node in _Nodes) { node.Update(gametime); }
-        }
-        /// <summary>
-        /// Handle user input.
-        /// </summary>
-        /// <param name="input">The helper for reading input from the user.</param>
-        public override void HandleInput(InputState input)
-        {
-            //The inherited method.
-            base.HandleInput(input);
-
-            //If the item is active.
-            if (IsActive)
-            {
-                //If the item is visible.
-                if (IsVisible)
-                {
-                    //Enable the child nodes to handle user input.
-                    foreach (TreeViewNode node in _Nodes) { node.HandleInput(input); }
-                }
-            }
-        }
-        /// <summary>
-        /// Draw the treeview node and all its child nodes.
-        /// </summary>
-        /// <param name="spriteBatch">The sprite batch to use.</param>
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            //If the item is active, continue.
-            if (IsActive)
-            {
-                //If the item is visible.
-                if (IsVisible)
-                {
-                    //The inherited method.
-                    base.Draw(spriteBatch);
-
-                    //Draw all child nodes.
-                    foreach (TreeViewNode node in _Nodes) { node.Draw(spriteBatch); }
-                }
-            }
+            _Checkbox.Position = new Vector2(Position.X + _Button.Width + 2, Position.Y);
         }
 
         /// <summary>
@@ -190,7 +135,6 @@ namespace Library.GUI.Basic
         /// </summary>
         public void AddNode()
         {
-            //Add the child node to the list of other nodes.
             AddNode(Width, Height);
         }
         /// <summary>
@@ -201,11 +145,12 @@ namespace Library.GUI.Basic
         public void AddNode(float width, float height)
         {
             //Add the child node to the list of other nodes.
-            _Nodes.Add(new TreeViewNode(GUI, this, new Vector2((Position.X + 15), (Position.Y + 15)), width, height));
-            //Load the node's content.
-            if (GUI.ContentManager != null) { _Nodes[_Nodes.Count - 1].LoadContent(); }
+            TreeViewNode node = new TreeViewNode(GUI, this, new Vector2(Position.X + 15, Position.Y + 15), width, height);
+            Add(node);
+            _Nodes.Add(node);
+
             //Let the world now you just added a child node.
-            ChildNodeAddedInvoke(_Nodes[_Nodes.Count - 1]);
+            ChildNodeAddedInvoke(node);
         }
         /// <summary>
         /// Insert a child node.
@@ -216,6 +161,8 @@ namespace Library.GUI.Basic
         {
             //Insert the child node to the list of other nodes.
             _Nodes.Insert(index, childNode);
+            Add(childNode);
+
             //Let the world now you just added a child node.
             ChildNodeAddedInvoke(_Nodes[index]);
         }
@@ -252,8 +199,7 @@ namespace Library.GUI.Basic
         /// <returns>The index of the node.</returns>
         public int GetNodeIndex(TreeViewNode node)
         {
-            //Return the index.
-            return (_Nodes.IndexOf(node));
+            return _Nodes.IndexOf(node);
         }
         /// <summary>
         /// See if a certain node exists underneath this one.
@@ -270,7 +216,6 @@ namespace Library.GUI.Basic
             if (!surfaceScratchcOnly) { foreach (TreeViewNode n in _Nodes) { if (n.Contains(node, false)) { return true; } } }
 
             //Return false, no one was found.
-            //I bet your face looks appropriately sunken and puffy at this time, complete with eyes red from crying.
             return false;
         }
         /// <summary>

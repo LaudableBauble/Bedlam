@@ -218,11 +218,35 @@ namespace Library.Factories
         /// <returns>The recently added sprite.</returns>
         public Sprite AddSprite(SpriteManager manager, string name, string path)
         {
-            //Create the sprite and add it to the manager.
-            Sprite sprite = manager.AddSprite(new Sprite(manager, name));
+            //Create the sprite.
+            Sprite sprite = new Sprite(manager, name);
 
             //Add a frame to the sprite.
             sprite.AddFrame(path);
+
+            //Add the sprite to the manager.
+            manager.Add(sprite);
+            manager.ManageSprites();
+
+            //Return the sprite.
+            return sprite;
+        }
+        /// <summary>
+        /// Add a sprite.
+        /// </summary>
+        /// <param name="manager">The manager to add the sprite to.</param>
+        /// <param name="name">The name of the sprite.</param>
+        /// <param name="texture">The texture of the sprite.</param>
+        public Sprite AddSprite(SpriteManager manager, string name, Texture2D texture)
+        {
+            //Create the sprite.
+            Sprite sprite = new Sprite(manager, name);
+
+            //Add a frame to the sprite.
+            sprite.AddFrame(texture);
+
+            //Add the sprite to the manager.
+            manager.Add(sprite);
             manager.ManageSprites();
 
             //Return the sprite.
@@ -238,11 +262,14 @@ namespace Library.Factories
         /// <returns>The recently added sprite.</returns>
         public Sprite AddSprite(SpriteManager manager, string name, string path, Vector2 origin)
         {
-            //Create the sprite and add it to the manager.
-            Sprite sprite = manager.AddSprite(new Sprite(manager, name));
+            //Create the sprite.
+            Sprite sprite = new Sprite(manager, name);
 
             //Add a frame to the sprite.
             sprite.AddFrame(path, origin);
+
+            //Add the sprite to the manager.
+            manager.Add(sprite);
             manager.ManageSprites();
 
             //Return the sprite.
@@ -258,8 +285,8 @@ namespace Library.Factories
         /// <param name="tag">The tag of the sprite, that is something to link it with.</param>
         public Sprite AddSprite(SpriteManager manager, string name, string path, float rotationOffset, string tag)
         {
-            //Create the sprite and add it to the manager.
-            Sprite sprite = manager.AddSprite(new Sprite(manager, name));
+            //Create the sprite.
+            Sprite sprite = new Sprite(manager, name);
 
             //Set the properties.
             sprite.Tag = tag;
@@ -267,6 +294,9 @@ namespace Library.Factories
 
             //Add a frame to the sprite.
             sprite.AddFrame(path);
+
+            //Add the sprite to the manager.
+            manager.Add(sprite);
             manager.ManageSprites();
 
             //Return the sprite.
@@ -288,8 +318,8 @@ namespace Library.Factories
         public Sprite AddSprite(SpriteManager manager, string name, string path, Vector2 position, float timePerFrame, float scale, int depth, float rotation,
             float offset, string tag)
         {
-            //Create the sprite and add it to the manager.
-            Sprite sprite = manager.AddSprite(new Sprite(manager, name));
+            //Create the sprite.
+            Sprite sprite = new Sprite(manager, name);
 
             //Set the properties.
             sprite.Position = position;
@@ -301,6 +331,9 @@ namespace Library.Factories
 
             //Add a frame to the sprite.
             sprite.AddFrame(path);
+
+            //Add the sprite to the manager.
+            manager.Add(sprite);
             manager.ManageSprites();
 
             //Return the sprite.
@@ -323,8 +356,8 @@ namespace Library.Factories
         public Sprite AddSprite(SpriteManager manager, string name, string path, Vector2 position, float orbitRotation, float timePerFrame, float scale, int depth,
             float rotation, string tag, float offset)
         {
-            //Create the sprite and add it to the manager.
-            Sprite sprite = manager.AddSprite(new Sprite(manager, name));
+            //Create the sprite.
+            Sprite sprite = new Sprite(manager, name);
 
             //Set the properties.
             sprite.Position = Helper.CalculateOrbitPosition(position, orbitRotation, offset);
@@ -337,6 +370,9 @@ namespace Library.Factories
 
             //Add a frame to the sprite.
             sprite.AddFrame(path);
+
+            //Add the sprite to the manager.
+            manager.Add(sprite);
             manager.ManageSprites();
 
             //Return the sprite.
@@ -359,8 +395,8 @@ namespace Library.Factories
         public Sprite AddSprite(SpriteManager manager, string name, string path, Vector2 position, float timePerFrame, float scale, int depth, float rotation, float offset,
             string tag, Vector2 origin)
         {
-            //Create the sprite and add it to the manager.
-            Sprite sprite = manager.AddSprite(new Sprite(manager, name));
+            //Create the sprite.
+            Sprite sprite = new Sprite(manager, name);
 
             //Set the properties.
             sprite.Position = position;
@@ -373,6 +409,9 @@ namespace Library.Factories
 
             //Add a frame to the sprite.
             sprite.AddFrame(path, origin);
+
+            //Add the sprite to the manager.
+            manager.Add(sprite);
             manager.ManageSprites();
 
             //Return the sprite.
@@ -394,8 +433,8 @@ namespace Library.Factories
         public Sprite AddSprite(SpriteManager manager, string name, Texture2D texture, Vector2 position, float timePerFrame, float scale, int depth, float rotation,
             float offset, string tag)
         {
-            //Create the sprite and add it to the manager.
-            Sprite sprite = manager.AddSprite(new Sprite(manager, name));
+            //Create the sprite.
+            Sprite sprite = new Sprite(manager, name);
 
             //Set the properties.
             sprite.Position = position;
@@ -408,6 +447,9 @@ namespace Library.Factories
 
             //Add a frame to the sprite.
             sprite.AddFrame(texture);
+
+            //Add the sprite to the manager.
+            manager.Add(sprite);
             manager.ManageSprites();
 
             //Return the sprite.
@@ -431,7 +473,7 @@ namespace Library.Factories
             float offset, string tag, Vector2 origin)
         {
             //Create the sprite and add it to the manager.
-            Sprite sprite = manager.AddSprite(new Sprite(manager, name));
+            Sprite sprite = manager.Add(new Sprite(manager, name));
 
             //Set the properties.
             sprite.Position = position;
@@ -756,7 +798,7 @@ namespace Library.Factories
             if (!spritePath.Equals(""))
             {
                 Factory.Instance.AddSprite(skeleton.Sprites, name, spritePath, position, 0, 1, 0, 0, 0, (skeleton.Bones.Count - 1).ToString(), origin);
-                skeleton.Sprites.GetSprite(name).RotationOffset = rotationOffset;
+                skeleton.Sprites.Find(name).RotationOffset = rotationOffset;
             }
         }
         #endregion

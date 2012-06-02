@@ -66,56 +66,6 @@ namespace Library.GUI.Basic
             //Subscribe to some events.
             _Button.MouseClick += OnButtonClick;
         }
-        /// <summary>
-        /// Load the content of this tabpage.
-        /// </summary>
-        public override void LoadContent()
-        {
-            //The inherited method.
-            base.LoadContent();
-        }
-        /// <summary>
-        /// Update the tabpage.
-        /// </summary>
-        /// <param name="gametime">The time to adhere to.</param>
-        public override void Update(GameTime gametime)
-        {
-            //The inherited method.
-            base.Update(gametime);
-        }
-        /// <summary>
-        /// Handle user input.
-        /// </summary>
-        /// <param name="input">The helper for reading input from the user.</param>
-        public override void HandleInput(InputState input)
-        {
-            //The inherited method.
-            base.HandleInput(input);
-
-            //If the item is active.
-            if (IsActive)
-            {
-                //If the item is visible.
-                if (IsVisible) { }
-            }
-        }
-        /// <summary>
-        /// Draw the tabpage.
-        /// </summary>
-        /// <param name="spriteBatch">The sprite batch to use.</param>
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            //If the item is active, continue.
-            if (IsActive)
-            {
-                //If the item is visible.
-                if (IsVisible)
-                {
-                    //The inherited method.
-                    base.Draw(spriteBatch);
-                }
-            }
-        }
 
         /// <summary>
         /// Add an item to the tabpage.

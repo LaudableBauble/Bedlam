@@ -173,7 +173,7 @@ namespace Library.Core
         /// </summary>
         public Item GetLastItem()
         {
-            return _Items.GetLastItem();
+            return _Items.LastItem;
         }
         /// <summary>
         /// Get the item closest to the given position.
