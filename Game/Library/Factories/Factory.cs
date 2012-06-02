@@ -372,7 +372,7 @@ namespace Library.Factories
             sprite.Tag = tag;
 
             //Add a frame to the sprite.
-            sprite.AddFrame(path);
+            sprite.AddFrame(path, origin);
             manager.ManageSprites();
 
             //Return the sprite.
@@ -603,7 +603,6 @@ namespace Library.Factories
         /// <param name="origin">The origin of the sprite to attach to the bone.</param>
         public void AddBone(Skeleton skeleton, string name, string spritePath, int parentIndex, Vector2 position, float length, Vector2 origin)
         {
-            //Add a bone to a skeleton.
             AddBone(skeleton, name, spritePath, -1, parentIndex, position, length, 0, Vector2.One, origin, 0);
         }
         /// <summary>

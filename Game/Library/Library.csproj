@@ -106,6 +106,7 @@
     <Compile Include="Core\Level.cs" />
     <Compile Include="Entities\Box.cs" />
     <Compile Include="Factories\Factory.cs" />
+    <Compile Include="GUI\Advanced\ItemModifier.cs" />
     <Compile Include="GUI\Advanced\ModifyItemFormOld.cs" />
     <Compile Include="GUI\Advanced\ModifyItemForm.cs" />
     <Compile Include="GUI\Advanced\EditBoneDialog.cs" />

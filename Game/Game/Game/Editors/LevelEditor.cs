@@ -62,8 +62,7 @@ namespace Game.Editors
 
         private TreeView _TreeView;
         private List _PropertyList;
-        private TabControl _TabControl;
-        private ModifyItemForm _ModifyItemForm;
+        private ItemModifier _ItemModifier;
         private Menu _Menu;
 
         private LineBrush _SelectionBrush;
@@ -109,18 +108,13 @@ namespace Game.Editors
             //Create the GUI items.
             _TreeView = new TreeView(_GUI, new Vector2(0, 50), 275, 450);
             _PropertyList = new List(_GUI, new Vector2(0, 505), 275, 200);
-            _TabControl = new TabControl(_GUI, new Vector2(viewport.Width - 300, 50), 300, 500);
-            _ModifyItemForm = new ModifyItemForm(_GUI, new Vector2(viewport.Width - 300, 75), 300, 500);
+            _ItemModifier = new ItemModifier(_GUI, new Vector2(viewport.Width - 300, 50), 300, 500);
             _Menu = new Menu(_GUI, new Vector2(0, 0), 500, 30);
-
-            //Modify the tab control.
-            _TabControl.AddTab(_ModifyItemForm);
-            _TabControl.AddTab(new SpriteDialog(_GUI, new Vector2(viewport.Width - 300, 75), 300, 500));
 
             //Add items to the GUI.
             _GUI.AddItem(_TreeView);
             _GUI.AddItem(_PropertyList);
-            _GUI.AddItem(_TabControl);
+            _GUI.AddItem(_ItemModifier);
             _GUI.AddItem(_Menu);
 
             //Brushes.
@@ -761,7 +755,7 @@ namespace Game.Editors
             UpdatePropertyList();
 
             //Let the modification form know of the selection.
-            _ModifyItemForm.Item = _SelectedItem;
+            _ItemModifier.Item = _SelectedItem;
         }
         /// <summary>
         /// Move the selected item.

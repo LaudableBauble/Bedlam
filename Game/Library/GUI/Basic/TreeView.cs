@@ -83,11 +83,11 @@ namespace Library.GUI.Basic
             //Intialize some variables.
             _Nodes = new List<TreeViewNode>();
             _Indent = 15;
-            _ChildPosition = new Vector2((Position.X + _Indent), (Position.Y + 10));
+            _ChildPosition = new Vector2(Position.X + _Indent, Position.Y + 10);
             _ChildWidth = 200;
             _ChildHeight = 15;
-            _MoveNodeUp = new Button(gui, new Vector2((position.X + (width / 4)), (position.Y + 5)));
-            _MoveNodeDown = new Button(gui, new Vector2((position.X + (width / 4) + 20), (position.Y + 5)));
+            _MoveNodeUp = new Button(gui, new Vector2(position.X + (width / 4), position.Y + 5));
+            _MoveNodeDown = new Button(gui, new Vector2(position.X + (width / 4) + 20, position.Y + 5));
 
             //Add the controls.
             Add(_MoveNodeDown);
@@ -118,44 +118,6 @@ namespace Library.GUI.Basic
             _MoveNodeUp.Height = moveUp[0].Height;
             _MoveNodeDown.Width = moveDown[0].Width;
             _MoveNodeDown.Height = moveDown[0].Height;
-        }
-        /// <summary>
-        /// Update the treeview.
-        /// </summary>
-        /// <param name="gametime">The time to adhere to.</param>
-        public override void Update(GameTime gametime)
-        {
-            //The inherited method.
-            base.Update(gametime);
-        }
-        /// <summary>
-        /// Handle user input.
-        /// </summary>
-        /// <param name="input">The helper for reading input from the user.</param>
-        public override void HandleInput(InputState input)
-        {
-            //The inherited method.
-            base.HandleInput(input);
-
-            //If the item is active.
-            if (IsActive)
-            {
-                //If the item is visible.
-                if (IsVisible)
-                {
-                    //If the item has focus.
-                    if (HasFocus) { }
-                }
-            }
-        }
-        /// <summary>
-        /// Draw the treeview and all its nodes.
-        /// </summary>
-        /// <param name="spriteBatch">The spritebatch to use.</param>
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            //The inherited method.
-            base.Draw(spriteBatch);
         }
 
         /// <summary>
