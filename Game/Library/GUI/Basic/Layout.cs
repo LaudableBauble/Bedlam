@@ -166,10 +166,10 @@ namespace Library.GUI.Basic
             //How to distribute space between cells in the row.
             switch (_SizeStyle)
             {
-                case (LayoutSizeStyle.Evenly):
+                case LayoutSizeStyle.Evenly:
                     {
                         //The average width.
-                        float avgWidth = GetAvailableSpace(row, LayoutStructure.Row) / cellCount;
+                        float avgWidth = GetAvailableSpace(row, LayoutStructure.Row, _SizeStyle) / cellCount;
 
                         //For each cell in the row.
                         for (int xCell = (dir == 1) ? 0 : cellCount - 1; xCell >= 0 && xCell < cellCount; xCell += dir)
@@ -187,10 +187,10 @@ namespace Library.GUI.Basic
                         }
                         break;
                     }
-                case (LayoutSizeStyle.FirstInLine):
+                case LayoutSizeStyle.FirstInLine:
                     {
                         //Get the available space for this row.
-                        float availableWidth = GetAvailableSpace(row, LayoutStructure.Row);
+                        float availableWidth = GetAvailableSpace(row, LayoutStructure.Row, _SizeStyle);
 
                         //For each cell in the row.
                         for (int xCell = (dir == 1) ? 0 : cellCount - 1; xCell >= 0 && xCell < cellCount; xCell += dir)
@@ -225,16 +225,16 @@ namespace Library.GUI.Basic
             int cellCount = ColumnCount(column);
 
             //The current cell's position coordinates and height.
-            float yPos = (dir == 1) ? _Position.Y : _Position.Y + _Height;
+            float yPos = (dir == 1) ? _Position.Y + _Padding : _Position.Y + _Height - _Padding;
             float height = 0;
 
             //How to distribute space between cells in the column.
             switch (_SizeStyle)
             {
-                case (LayoutSizeStyle.Evenly):
+                case LayoutSizeStyle.Evenly:
                     {
                         //The average height.
-                        float avgHeight = GetAvailableSpace(column, LayoutStructure.Column) / cellCount;
+                        float avgHeight = GetAvailableSpace(column, LayoutStructure.Column, _SizeStyle) / cellCount;
 
                         //For each cell in the column.
                         for (int yCell = (dir == 1) ? 0 : cellCount - 1; yCell >= 0 && yCell < cellCount; yCell += dir)
@@ -244,7 +244,7 @@ namespace Library.GUI.Basic
 
                             //The width available for the cell and its new position.
                             _Grid[column, yCell].ProposeHeight(avgHeight);
-                            _Grid[column, yCell].Y = yPos + (dir * (height + ((cellCount - 1 > yCell) ? _Margin : 0)));
+                            _Grid[column, yCell].Y = yPos + (dir * (height + ((yCell > 0 && yCell < cellCount) ? _Margin : 0)));
 
                             //Update the reference values.
                             yPos = _Grid[column, yCell].Y;
@@ -252,7 +252,7 @@ namespace Library.GUI.Basic
                         }
                         break;
                     }
-                case (LayoutSizeStyle.FirstInLine):
+                case LayoutSizeStyle.FirstInLine:
                     {
                         //For each cell in the column.
                         for (int yCell = (dir == 1) ? 0 : cellCount - 1; yCell >= 0 && yCell < cellCount; yCell += dir)
@@ -350,18 +350,45 @@ namespace Library.GUI.Basic
             return count;
         }
         /// <summary>
-        /// Get the available space for a row or column based upon padding, margin and the number of elements.
+        /// Get the available space for a row or column based upon padding, margin, the number of elements and their current size.
         /// </summary>
         /// <param name="index">The index of the row or column.</param>
         /// <param name="structure">Whether it is a row or column we are checking.</param>
+        /// <param name="sizeStyle">Whether we want to distribute the available size evenly or to the cell first in line.</param>
         /// <returns>The amount of 'free' space available for the given row or column.</returns>
-        private float GetAvailableSpace(int index, LayoutStructure structure)
+        private float GetAvailableSpace(int index, LayoutStructure structure, LayoutSizeStyle sizeStyle)
         {
             //Whether to check a row or column.
             switch (structure)
             {
-                case (LayoutStructure.Row): { return (AvailableWidth - ((RowCount(index) - 1) * _Margin)); }
-                case (LayoutStructure.Column): { return (AvailableHeight - ((ColumnCount(index) - 1) * _Margin)); }
+                case (LayoutStructure.Row):
+                    {
+                        //The space available.
+                        float available = AvailableWidth - ((RowCount(index) - 1) * _Margin);
+
+                        //Subtract the width of all cells.
+                        if (sizeStyle == LayoutSizeStyle.FirstInLine)
+                        {
+                            for (int x = 0; x < _Grid.GetLength(0); x++) { if (_Grid[x, index] != null) { available -= _Grid[x, index].GoalWidth; } }
+                        }
+
+                        //Return the available space.
+                        return available;
+                    }
+                case (LayoutStructure.Column):
+                    {
+                        //The space available.
+                        float available = AvailableHeight - ((ColumnCount(index) - 1) * _Margin);
+
+                        //Subtract the height of all cells.
+                        if (sizeStyle == LayoutSizeStyle.FirstInLine)
+                        {
+                            for (int y = 0; y < _Grid.GetLength(1); y++) { if (_Grid[index, y] != null) { available -= _Grid[index, y].GoalHeight; } }
+                        }
+
+                        //Return the available space.
+                        return available;
+                    }
                 default: { return 0; }
             }
         }

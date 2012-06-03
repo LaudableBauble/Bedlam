@@ -315,7 +315,7 @@ namespace Library.Factories
         /// <param name="rotation">The rotation of the sprite.</param>
         /// <param name="offset">The offset of the sprite.</param>
         /// <param name="tag">The tag of the sprite, that is something to link it with.</param>
-        public Sprite AddSprite(SpriteManager manager, string name, string path, Vector2 position, float timePerFrame, float scale, int depth, float rotation,
+        public Sprite AddSprite(SpriteManager manager, string name, string path, Vector2 position, float timePerFrame, Vector2 scale, int depth, float rotation,
             float offset, string tag)
         {
             //Create the sprite.
@@ -353,7 +353,7 @@ namespace Library.Factories
         /// <param name="rotation">The rotation of the sprite.</param>
         /// <param name="tag">The tag of the sprite, that is something to link it with.</param>
         /// <param name="offset">The offset of the sprite.</param>
-        public Sprite AddSprite(SpriteManager manager, string name, string path, Vector2 position, float orbitRotation, float timePerFrame, float scale, int depth,
+        public Sprite AddSprite(SpriteManager manager, string name, string path, Vector2 position, float orbitRotation, float timePerFrame, Vector2 scale, int depth,
             float rotation, string tag, float offset)
         {
             //Create the sprite.
@@ -392,7 +392,7 @@ namespace Library.Factories
         /// <param name="offset">The offset of the sprite.</param>
         /// <param name="tag">The tag of the sprite, that is something to link it with.</param>
         /// <param name="origin">The origin of the sprite.</param>
-        public Sprite AddSprite(SpriteManager manager, string name, string path, Vector2 position, float timePerFrame, float scale, int depth, float rotation, float offset,
+        public Sprite AddSprite(SpriteManager manager, string name, string path, Vector2 position, float timePerFrame, Vector2 scale, int depth, float rotation, float offset,
             string tag, Vector2 origin)
         {
             //Create the sprite.
@@ -430,7 +430,7 @@ namespace Library.Factories
         /// <param name="rotation">The rotation of the sprite.</param>
         /// <param name="offset">The positional offset of the sprite.</param>
         /// <param name="tag">The tag of the sprite, that is something to link it with.</param>
-        public Sprite AddSprite(SpriteManager manager, string name, Texture2D texture, Vector2 position, float timePerFrame, float scale, int depth, float rotation,
+        public Sprite AddSprite(SpriteManager manager, string name, Texture2D texture, Vector2 position, float timePerFrame, Vector2 scale, int depth, float rotation,
             float offset, string tag)
         {
             //Create the sprite.
@@ -469,7 +469,7 @@ namespace Library.Factories
         /// <param name="offset">The offset of the sprite.</param>
         /// <param name="tag">The tag of the sprite, that is something to link it with.</param>
         /// <param name="origin">The origin of the sprite.</param>
-        public Sprite AddSprite(SpriteManager manager, string name, Texture2D texture, Vector2 position, float timePerFrame, float scale, int depth, float rotation,
+        public Sprite AddSprite(SpriteManager manager, string name, Texture2D texture, Vector2 position, float timePerFrame, Vector2 scale, int depth, float rotation,
             float offset, string tag, Vector2 origin)
         {
             //Create the sprite and add it to the manager.
@@ -797,7 +797,7 @@ namespace Library.Factories
             //If a sprite name has been received, attach a sprite to the bone.
             if (!spritePath.Equals(""))
             {
-                Factory.Instance.AddSprite(skeleton.Sprites, name, spritePath, position, 0, 1, 0, 0, 0, (skeleton.Bones.Count - 1).ToString(), origin);
+                Factory.Instance.AddSprite(skeleton.Sprites, name, spritePath, position, 0, Vector2.One, 0, 0, 0, (skeleton.Bones.Count - 1).ToString(), origin);
                 skeleton.Sprites.Find(name).RotationOffset = rotationOffset;
             }
         }

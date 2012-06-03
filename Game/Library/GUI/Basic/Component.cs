@@ -237,7 +237,7 @@ namespace Library.GUI.Basic
         /// <param name="path">The path of the asset to load.</param>
         public Sprite AddSprite(string path)
         {
-            return Factory.Instance.AddSprite(_Sprite, "Sprite" + _Sprite.Count, path, _Position, 0, 1, 0, 0, 0, "Sprite" + _Sprite.Count);
+            return Factory.Instance.AddSprite(_Sprite, "Sprite" + _Sprite.Count, path, _Position, 0, Vector2.One, 0, 0, 0, "Sprite" + _Sprite.Count);
         }
         /// <summary>
         /// Add a sprite to the item.
@@ -246,7 +246,7 @@ namespace Library.GUI.Basic
         /// <param name="position">The position of the sprite.</param>
         public Sprite AddSprite(string path, Vector2 position)
         {
-            return Factory.Instance.AddSprite(_Sprite, "Sprite" + _Sprite.Count, path, position, 0, 1, 0, 0, 0, "Sprite" + _Sprite.Count);
+            return Factory.Instance.AddSprite(_Sprite, "Sprite" + _Sprite.Count, path, position, 0, Vector2.One, 0, 0, 0, "Sprite" + _Sprite.Count);
         }
         /// <summary>
         /// Add a sprite to the item.
@@ -255,7 +255,7 @@ namespace Library.GUI.Basic
         /// <param name="position">The position of the sprite.</param>
         public Sprite AddSprite(Texture2D texture, Vector2 position)
         {
-            return Factory.Instance.AddSprite(_Sprite, texture.Name, texture, position, 0, 1, 0, 0, 0, "Sprite" + _Sprite.Count);
+            return Factory.Instance.AddSprite(_Sprite, texture.Name, texture, position, 0, Vector2.One, 0, 0, 0, "Sprite" + _Sprite.Count);
         }
         /// <summary>
         /// Add a sprite to the item.
@@ -263,7 +263,7 @@ namespace Library.GUI.Basic
         /// <param name="texture">The texture of the asset to use.</param>
         public Sprite AddSprite(Texture2D texture)
         {
-            return Factory.Instance.AddSprite(_Sprite, texture.Name, texture, _Position, 0, 1, 0, 0, 0, "Sprite" + _Sprite.Count);
+            return Factory.Instance.AddSprite(_Sprite, texture.Name, texture, _Position, 0, Vector2.One, 0, 0, 0, "Sprite" + _Sprite.Count);
         }
         /// <summary>
         /// See if any child items still has focus.

@@ -31,15 +31,15 @@ namespace Library.Core
     public abstract class Item
     {
         #region Fields
-        private Level _Level;
-        private string _Name;
-        private bool _IsVisible;
-        private Vector2 _Position;
-        private float _Rotation;
-        private Vector2 _Scale;
-        private float _Width;
-        private float _Height;
-        private Vector2 _Origin;
+        protected Level _Level;
+        protected string _Name;
+        protected bool _IsVisible;
+        protected Vector2 _Position;
+        protected float _Rotation;
+        protected Vector2 _Scale;
+        protected float _Width;
+        protected float _Height;
+        protected Vector2 _Origin;
         protected ItemType _Type;
         #endregion
 
@@ -97,10 +97,21 @@ namespace Library.Core
         /// Change the visibility state of this item.
         /// </summary>
         /// <param name="isVisible">Whether the item will be visible or not.</param>
-        public virtual void ChangeVisibilityState(bool isVisible)
+        protected virtual void ChangeVisibilityState(bool isVisible)
         {
-            //Make the item visible or not.
             _IsVisible = isVisible;
+        }
+        /// <summary>
+        /// Change the scale of this item.
+        /// </summary>
+        /// <param name="scale">The new scale to change into.</param>
+        protected virtual void ScaleChangeInvoke(Vector2 scale)
+        {
+            //If the scale is the same as before, stop here.
+            if (_Scale == scale) { return; }
+
+            //Change the scale.
+            _Scale = scale;
         }
         /// <summary>
         /// See if a vector position collides with this item.
@@ -110,10 +121,7 @@ namespace Library.Core
         public virtual bool IsPixelsIntersecting(Vector2 point)
         {
             //If the point and this item intersects, return true.
-            if (Helper.IsPointWithinBox(point, Helper.GetBoundingBox(this))) { return true; }
-
-            //Return false;
-            return false;
+            return Helper.IsPointWithinBox(point, Helper.GetBoundingBox(this));
         }
         #endregion
 
@@ -156,7 +164,7 @@ namespace Library.Core
         public Vector2 Scale
         {
             get { return _Scale; }
-            set { _Scale = value; }
+            set { ScaleChangeInvoke(value); }
         }
         /// <summary>
         /// The width of the item.

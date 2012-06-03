@@ -98,7 +98,7 @@ namespace Library.GUI.Basic
 
             //Add a sprite to the slider.
             Factory.Instance.AddSprite(Sprite, "", DrawingHelper.CreateRectangleTexture(GUI.GraphicsDevice, (int)Width, (int)Height, new Color(0, 0, 0, 155), Color.Black),
-                Position, 0, 1, 0, 0, 0, "Base");
+                Position, 0, Vector2.One, 0, 0, 0, "Base");
 
             //Update the buttons' positions and bounds.
             UpdateButtons();

@@ -92,9 +92,8 @@ namespace Library.Core
             //Call the base method.
             base.Update(gameTime);
 
-            //Update the sprite. TODO: Do this in a better way.
+            //Update the sprite.
             _Sprites.Update(gameTime, Position, Rotation);
-            foreach (Sprite sprite in _Sprites.Sprites) { sprite.Scale = (Scale.X + Scale.Y) / 2; }
         }
         /// <summary>
         /// Draw the item.
@@ -125,7 +124,7 @@ namespace Library.Core
         public void AddSprite(string path)
         {
             //Add a sprite.
-            AddSprite(Factory.Instance.AddSprite(Sprites, "Sprite" + _Sprites.Count, path, Position, 0, 1, 0, 0, 0, "Sprite" + _Sprites.Count));
+            AddSprite(Factory.Instance.AddSprite(Sprites, "Sprite" + _Sprites.Count, path, Position, 0, Vector2.One, 0, 0, 0, "Sprite" + _Sprites.Count));
         }
         /// <summary>
         /// Add a sprite to the item.
@@ -134,13 +133,13 @@ namespace Library.Core
         public void AddSprite(Texture2D texture)
         {
             //Add a sprite.
-            AddSprite(Factory.Instance.AddSprite(Sprites, texture.Name, texture, Position, 0, 1, 0, 0, 0, "Sprite" + _Sprites.Count));
+            AddSprite(Factory.Instance.AddSprite(Sprites, texture.Name, texture, Position, 0, Vector2.One, 0, 0, 0, "Sprite" + _Sprites.Count));
         }
         /// <summary>
         /// Change the visibility state of this item.
         /// </summary>
         /// <param name="isVisible">Whether the item will be visible or not.</param>
-        public override void ChangeVisibilityState(bool isVisible)
+        protected override void ChangeVisibilityState(bool isVisible)
         {
             //Call the base method.
             base.ChangeVisibilityState(isVisible);
@@ -149,8 +148,7 @@ namespace Library.Core
             if (_Sprites.Count == 0) { return; }
 
             //Change the state of visibility for the sprite collection.
-            if (isVisible) { _Sprites[0].Visibility = Visibility.Visible; }
-            else { _Sprites[0].Visibility = Visibility.Invisible; }
+            _Sprites[0].Visibility = IsVisible ? Visibility.Visible : Visibility.Invisible;
         }
         /// <summary>
         /// See if a vector position collides with this item. Because of this is a texture item we will do per-pixel collision.
@@ -165,7 +163,18 @@ namespace Library.Core
             //Return false;
             return false;
         }
+        /// <summary>
+        /// Change the scale of this item.
+        /// </summary>
+        /// <param name="scale">The new scale to change into.</param>
+        protected override void ScaleChangeInvoke(Vector2 scale)
+        {
+            //Call the base method.
+            base.ScaleChangeInvoke(scale);
 
+            //Update all sprites' scale to match.
+            _Sprites.Sprites.ForEach(sprite => sprite.Scale = Scale);
+        }
         /// <summary>
         /// The bounds of the main sprite has changed, update the item's bounds to reflect this.
         /// </summary>

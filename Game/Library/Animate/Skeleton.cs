@@ -142,7 +142,7 @@ namespace Library.Animate
         /// <param name="origin">The origin of the sprite relative to the bone.</param>
         public void AddSprite(string path, int boneIndex, Vector2 origin)
         {
-            Factory.Instance.AddSprite(_Sprites, _Bones[boneIndex].Name, path, _Bones[boneIndex].AbsolutePosition, 0, 1, 0, 0, 0, boneIndex.ToString(), origin);
+            Factory.Instance.AddSprite(_Sprites, _Bones[boneIndex].Name, path, _Bones[boneIndex].AbsolutePosition, 0, Vector2.One, 0, 0, 0, boneIndex.ToString(), origin);
         }
         /// <summary>
         /// Add a sprite to the skeleton.
@@ -152,7 +152,7 @@ namespace Library.Animate
         /// <param name="origin">The origin of the sprite relative to the bone.</param>
         public void AddSprite(Texture2D texture, int boneIndex, Vector2 origin)
         {
-            Factory.Instance.AddSprite(_Sprites, _Bones[boneIndex].Name, texture, _Bones[boneIndex].AbsolutePosition, 0, 1, 0, 0, 0, boneIndex.ToString(), origin);
+            Factory.Instance.AddSprite(_Sprites, _Bones[boneIndex].Name, texture, _Bones[boneIndex].AbsolutePosition, 0, Vector2.One, 0, 0, 0, boneIndex.ToString(), origin);
         }
         /// <summary>
         /// Transform the skeleton according to the state of its animation.

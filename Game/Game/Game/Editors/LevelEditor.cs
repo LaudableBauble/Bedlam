@@ -763,7 +763,6 @@ namespace Game.Editors
         /// <param name="move">The amount to move.</param>
         public void MoveItem(Vector2 move)
         {
-            //Move the selected item.
             if (_SelectedItem != null) { _SelectedItem.Position += move; }
         }
         /// <summary>
@@ -772,7 +771,6 @@ namespace Game.Editors
         /// <param name="amount">The amount to rotate.</param>
         public void RotateItem(float amount)
         {
-            //Move the selected item.
             if (_SelectedItem != null) { _SelectedItem.Rotation += amount; }
         }
         /// <summary>
@@ -781,7 +779,6 @@ namespace Game.Editors
         /// <param name="scale">The amount of change in scale.</param>
         public void ScaleItem(Vector2 scale)
         {
-            //Move the selected item.
             if (_SelectedItem != null) { _SelectedItem.Scale += scale; }
         }
         /// <summary>
@@ -1052,7 +1049,7 @@ namespace Game.Editors
             if ((layer >= 0) && (layer < _Level.Layers.Count))
             {
                 //If the item exists, change its state of visibility. Otherwise change the layer's state of visibility.
-                if ((item >= 0) && (item < _Level[layer].Items.Count)) { _Level[layer][item].ChangeVisibilityState(isVisible); }
+                if ((item >= 0) && (item < _Level[layer].Items.Count)) { _Level[layer][item].IsVisible = isVisible; }
                 else { _Level[layer].ChangeVisibilityState(isVisible); }
             }
             else { _Level.ChangeVisibilityState(isVisible); }

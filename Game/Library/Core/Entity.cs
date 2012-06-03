@@ -111,14 +111,13 @@ namespace Library.Core
         /// Change the visibility state of this item.
         /// </summary>
         /// <param name="isVisible">Whether the item will be visible or not.</param>
-        public override void ChangeVisibilityState(bool isVisible)
+        protected override void ChangeVisibilityState(bool isVisible)
         {
             //Call the base method.
             base.ChangeVisibilityState(isVisible);
 
             //Change the visibility state of the sprite collection.
-            if (isVisible) { _Sprites.Visibility = Visibility.Visible; }
-            else { _Sprites.Visibility = Visibility.Invisible; }
+            _Sprites.Visibility = IsVisible ? Visibility.Visible : Visibility.Invisible;
         }
         #endregion
 

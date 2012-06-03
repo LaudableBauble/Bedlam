@@ -102,7 +102,7 @@ namespace Library.GUI.Basic
         protected void OnButtonClick(object obj, MouseClickEventArgs e)
         {
             //Invoke the tab page's mouse click method.
-            base.MouseClickInvoke(e.Position, e.Button);
+            MouseClickInvoke(e.Position, e.Button);
         }
         #endregion
 
@@ -114,6 +114,14 @@ namespace Library.GUI.Basic
         {
             get { return _Button; }
             set { _Button = value; }
+        }
+        /// <summary>
+        /// The title of this tabpage.
+        /// </summary>
+        public string Title
+        {
+            get { return _Button.Text; }
+            set { _Button.Text = value; }
         }
         /// <summary>
         /// Whether the tabpage is in hiding.

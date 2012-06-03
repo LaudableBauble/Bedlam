@@ -441,8 +441,7 @@ namespace Library
         /// <returns>Whether the point truly is within the bounds of the sprite.</returns>
         public static bool IsPointWithinImage(Vector2 point, Sprite sprite)
         {
-            //Return the result.
-            return (IsPointWithinImage(point, sprite.Position, sprite.Rotation, new Vector2(sprite.Scale, sprite.Scale), sprite[0].Origin, sprite.Texture));
+            return IsPointWithinImage(point, sprite.Position, sprite.Rotation, sprite.Scale, sprite[0].Origin, sprite.Texture);
         }
         /// <summary>
         /// If the point is within the bounds of an image, return true. An alpha value of zero does not count as being part of the image.

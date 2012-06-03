@@ -110,10 +110,14 @@ namespace Library.GUI.Basic
         /// Add a tab page to the tab control.
         /// </summary>
         /// <param name="item">The items to be displayed on the new tab page.</param>
-        public void AddTab(Component item)
+        /// <param name="title">The title of the tab page.</param>
+        public void AddTab(Component item, string title)
         {
             //Create the new tabpage.
             TabPage tab = new TabPage(_GUI, _Position + new Vector2(_Tabs.Count * 55, 0), 50, 25);
+
+            //set the caption of the tab page.
+            tab.Title = title;
 
             //Add the item to the tabpage.
             tab.AddItem(item);

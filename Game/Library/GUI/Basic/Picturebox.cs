@@ -20,7 +20,7 @@ using Library.Infrastructure;
 namespace Library.GUI.Basic
 {
     /// <summary>
-    /// A picturebox displays a picture and crops it to fit within the given area.
+    /// A picturebox displays a picture and crops it to fit within a given area.
     /// </summary>
     public class Picturebox : Component
     {
@@ -85,42 +85,6 @@ namespace Library.GUI.Basic
             ChangeBackgroundColor(Color.CornflowerBlue);
         }
         /// <summary>
-        /// Update the picturebox.
-        /// </summary>
-        /// <param name="gametime">The time to adhere to.</param>
-        public override void Update(GameTime gametime)
-        {
-            //The inherited method.
-            base.Update(gametime);
-        }
-        /// <summary>
-        /// Handle user input.
-        /// </summary>
-        /// <param name="input">The helper for reading input from the user.</param>
-        public override void HandleInput(InputState input)
-        {
-            //The inherited method.
-            base.HandleInput(input);
-
-            //If the inputbox is active, write the input to the box.
-            if (IsActive)
-            {
-                //If the inputbox is visible.
-                if (IsVisible)
-                {
-                    //If the left mouse button has been pressed.
-                    if (input.IsNewLeftMouseClick())
-                    {
-                        //If the user clicks somewhere on the item, fire the event.
-                        if (Helper.IsPointWithinBox(new Vector2(Mouse.GetState().X, Mouse.GetState().Y), Position, Width, Height))
-                        {
-
-                        }
-                    }
-                }
-            }
-        }
-        /// <summary>
         /// Draw the picturebox.
         /// </summary>
         /// <param name="spriteBatch">The sprite batch to use.</param>
@@ -128,6 +92,7 @@ namespace Library.GUI.Basic
         {
             //Draw the background image.
             GUI.SpriteBatch.Draw(_Background, Position, Color.White);
+
             //Draw the sprite, but only if it exists.
             if (_Picture != null)
             {
@@ -137,11 +102,22 @@ namespace Library.GUI.Basic
         }
 
         /// <summary>
+        /// Update the position and bounds of all components located in the component.
+        /// </summary>
+        protected override void UpdateComponents()
+        {
+            //Update the draw area.
+            ChangePictureDrawArea();
+        }
+        /// <summary>
         /// Change the background's color.
         /// </summary>
         /// <param name="color">The new color of the background.</param>
         public void ChangeBackgroundColor(Color color)
         {
+            //If no graphics device exists, stop here.
+            if (GUI.GraphicsDevice == null) { return; }
+
             //Create the background texture.
             _Background = DrawingHelper.CreateRectangleTexture(GUI.GraphicsDevice, (int)Width, (int)Height, color, Color.Black);
         }
@@ -151,7 +127,6 @@ namespace Library.GUI.Basic
         /// <param name="name">The name of the asset to set.</param>
         public void SetPicture(string name)
         {
-            //Set the picture.
             SetPicture(GUI.ContentManager.Load<Texture2D>(name));
         }
         /// <summary>
@@ -160,30 +135,47 @@ namespace Library.GUI.Basic
         /// <param name="texture">The texture of the asset to set.</param>
         public void SetPicture(Texture2D texture)
         {
-            //Set the picture.
             PictureChangeInvoke(texture);
+        }
+        /// <summary>
+        /// Set the picturebox's picture.
+        /// </summary>
+        /// <param name="manager">The sprite manager of the asset to set.</param>
+        public void SetPicture(SpriteManager manager)
+        {
+            //If the sprite is null, stop here.
+            if (manager == null || manager.Count == 0) { return; }
+
+            //Change the texture into the sprite's first frame.
+            PictureChangeInvoke(manager[0].Texture);
         }
         /// <summary>
         /// Change the visible area of the picture.
         /// </summary>
         public void ChangePictureDrawArea()
         {
-            //If a is picture loaded.
-            if (_Picture != null)
-            {
-                //Change the picture's draw area and origin.
-                _DrawArea.Width = (int)(Math.Min((_Picture.Width * _Scale), Width) / _Scale);
-                _DrawArea.Height = (int)(Math.Min((_Picture.Height * _Scale), Height) / _Scale);
-                _DrawArea.X = (int)Math.Max((_Picture.Width / 2) - (_DrawArea.Width / 2), 0);
-                _DrawArea.Y = (int)Math.Max((_Picture.Height / 2) - (_DrawArea.Height / 2), 0);
-                _PictureOrigin = new Vector2((_DrawArea.Width / 2), (_DrawArea.Height / 2));
-                _Origin = new Vector2(Width / 2, Height / 2);
-            }
+            //Set draw area to match the item's bounds.
+            _DrawArea.Width = (int)Width;
+            _DrawArea.Height = (int)Height;
+
+            //Get a new background image.
+            ChangeBackgroundColor(Color.CornflowerBlue);
+
+            //If a is picture has not been loaded, stop here.
+            if (_Picture == null) { return; }
+
+            //Change the picture's draw area and origin.
+            _DrawArea.Width = (int)(Math.Min(_Picture.Width * _Scale, Width) / _Scale);
+            _DrawArea.Height = (int)(Math.Min(_Picture.Height * _Scale, Height) / _Scale);
+            _DrawArea.X = (int)Math.Max((_Picture.Width / 2) - (_DrawArea.Width / 2), 0);
+            _DrawArea.Y = (int)Math.Max((_Picture.Height / 2) - (_DrawArea.Height / 2), 0);
+            _PictureOrigin = new Vector2(_DrawArea.Width / 2, _DrawArea.Height / 2);
+            _Origin = new Vector2(Width / 2, Height / 2);
         }
         /// <summary>
         /// Change the scale of this picturebox's picture.
         /// </summary>
-        /// <param name="scale">The amount of scaling.</param>
+        /// <param name="scale">The amount of scaling to apply.</param>
         protected virtual void ScaleChangeInvoke(float scale)
         {
             //Change the scale.
@@ -200,7 +192,7 @@ namespace Library.GUI.Basic
         /// <param name="picture">The new picture.</param>
         protected virtual void PictureChangeInvoke(Texture2D picture)
         {
-            //Change the scale.
+            //Change the picture.
             _Picture = picture;
             //Change the picture's draw area.
             ChangePictureDrawArea();

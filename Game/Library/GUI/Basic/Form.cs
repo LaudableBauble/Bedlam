@@ -109,35 +109,6 @@ namespace Library.GUI.Basic
             //Fade the component appropriately.
             Fade(gametime);
         }
-        /// <summary>
-        /// Handle user input.
-        /// </summary>
-        /// <param name="input">The helper for reading input from the user.</param>
-        public override void HandleInput(InputState input)
-        {
-            //The inherited method.
-            base.HandleInput(input);
-
-            //If the item is active.
-            if (IsActive)
-            {
-                //If the item is visible.
-                if (IsVisible)
-                {
-                    //If the item has focus.
-                    if (HasFocus) { }
-                }
-            }
-        }
-        /// <summary>
-        /// Draw the form.
-        /// </summary>
-        /// <param name="spriteBatch">The sprite batch to use.</param>
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            //The inherited method.
-            base.Draw(spriteBatch);
-        }
 
         /// <summary>
         /// Add a component to the form.

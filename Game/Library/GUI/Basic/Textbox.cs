@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -36,6 +37,8 @@ namespace Library.GUI.Basic
         private TimeSpan _KeyRepeatTime;
         private TimeSpan _FastKeyRepeatTime;
         private TimeSpan _TotalElapsedTime;
+        private string _Validator;
+        private bool _IsReadOnly;
         #endregion
 
         #region Constructor
@@ -78,6 +81,8 @@ namespace Library.GUI.Basic
             _KeyRepeatTime = new TimeSpan(0, 0, 0, 0, 500);
             _FastKeyRepeatTime = new TimeSpan(0, 0, 0, 0, 25);
             _TotalElapsedTime = TimeSpan.Zero;
+            _Validator = ".*";
+            _IsReadOnly = false;
         }
         /// <summary>
         /// Load the content of this textbox.
@@ -150,7 +155,7 @@ namespace Library.GUI.Basic
             GUI.SpriteBatch.DrawString(_Font, CropText(), new Vector2((Position.X + 2), Position.Y), Color.White);
 
             //If the textbox is in focus, draw the selection marker.
-            if (HasFocus) { GUI.SpriteBatch.DrawString(_Font, _MarkerCharacter.ToString(), _MarkerPosition, Color.White); }
+            if (HasFocus && !_IsReadOnly) { GUI.SpriteBatch.DrawString(_Font, _MarkerCharacter.ToString(), _MarkerPosition, Color.White); }
         }
 
         /// <summary>
@@ -176,6 +181,9 @@ namespace Library.GUI.Basic
         /// <param name="text">The text to insert.</param>
         public void InsertText(string text)
         {
+            //If the textbox is read only, stop here.
+            if (_IsReadOnly) { return; }
+
             //Control the string's legitimacy.
             if (text == null || text.Equals("")) { return; }
 
@@ -193,11 +201,14 @@ namespace Library.GUI.Basic
         /// <param name="index">At which index to insert the text.</param>
         public void InsertText(InputState input, int i, int index)
         {
+            //If the textbox is read only, stop here.
+            if (_IsReadOnly) { return; }
+
             //Get the user input.
             string text = GetTextInput(input, i);
 
-            //Control the string's legitimacy.
-            if (!text.Equals(""))
+            //Control the string's legitimacy by running it through the validator.
+            if (!text.Equals("") && Regex.IsMatch(text, _Validator))
             {
                 //Insert the text at the correct position.
                 _Text = _Text.Insert(index, text);
@@ -348,15 +359,14 @@ namespace Library.GUI.Basic
         /// <param name="count">The number of characters to delete.</param>
         public void DeleteText(int index, int count)
         {
+            //If the textbox is read only, stop here.
+            if (_IsReadOnly) { return; }
+
             //Quit if the text is shorter than index.
             if ((_Text.Length <= index) && (index >= 0)) { return; }
 
-            //Try and catch possible exceptions.
-            try
-            {
-                //Delete the text specified.
-                _Text = _Text.Remove(index, Math.Min(_Text.Length - index, count));
-            }
+            //Try to delete the text specified.
+            try { _Text = _Text.Remove(index, Math.Min(_Text.Length - index, count)); }
             catch { }
 
             //Update the marker.
@@ -575,6 +585,22 @@ namespace Library.GUI.Basic
         {
             get { return _MarkerPosition; }
             set { _MarkerPosition = value; }
+        }
+        /// <summary>
+        /// The validator of this textbox. Only text who has been matched by the regex validator is allowed onto the textbox.
+        /// </summary>
+        public string Validator
+        {
+            get { return _Validator; }
+            set { _Validator = value; }
+        }
+        /// <summary>
+        /// Whether the textbox is read only and cannot be written to.
+        /// </summary>
+        public bool IsReadOnly
+        {
+            get { return _IsReadOnly; }
+            set { _IsReadOnly = value; }
         }
         #endregion
     }

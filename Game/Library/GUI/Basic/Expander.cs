@@ -188,7 +188,7 @@ namespace Library.GUI.Basic
 
         #region Properties
         /// <summary>
-        /// The text that currently is displayed on this checkbox.
+        /// The text that currently is displayed on this expander.
         /// </summary>
         public string Text
         {

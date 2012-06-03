@@ -35,7 +35,7 @@ namespace Library.Imagery
         private bool _AnimationDirection;
         private float _TotalElapsedTime;
         private float _Rotation;
-        private float _Scale;
+        private Vector2 _Scale;
         private int _Depth;
         private float _PositionOffset;
         private float _OrbitOffset;
@@ -88,7 +88,7 @@ namespace Library.Imagery
             _Name = name;
             _Position = Vector2.Zero;
             _TimePerFrame = 1;
-            _Scale = 1;
+            _Scale = Vector2.One;
             _Depth = 0;
             _Rotation = 0;
             _PositionOffset = 0;
@@ -477,7 +477,7 @@ namespace Library.Imagery
         /// <summary>
         /// The sprite scaling.
         /// </summary>
-        public float Scale
+        public Vector2 Scale
         {
             get { return _Scale; }
             set { _Scale = value; }
