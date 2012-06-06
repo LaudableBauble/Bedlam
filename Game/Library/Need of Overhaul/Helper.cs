@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Xml;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
 
 using Microsoft.Xna.Framework;
@@ -171,7 +174,6 @@ namespace Library
         /// <returns>The bounding box.</returns>
         public static Rectangle GetBoundingBox(Item item)
         {
-            //Return as a rectangle.
             return GetBoundingBox(item.Position, item.Rotation, item.Scale, item.Width, item.Height, item.Origin);
         }
         /// <summary>
@@ -182,7 +184,6 @@ namespace Library
         /// <returns>The bounding box.</returns>
         public static Rectangle GetBoundingBox(Item item, Vector2 origin)
         {
-            //Return as a rectangle.
             return GetBoundingBox(item.Position, item.Rotation, item.Scale, item.Width, item.Height, origin);
         }
         /// <summary>
@@ -195,7 +196,6 @@ namespace Library
         /// <returns>The bounding box.</returns>
         public static Rectangle GetBoundingBox(Item item, float width, float height, Vector2 origin)
         {
-            //Return as a rectangle.
             return GetBoundingBox(item.Position, item.Rotation, item.Scale, width, height, origin);
         }
         /// <summary>
@@ -369,7 +369,6 @@ namespace Library
         /// <returns>The position of the mouse.</returns>
         public static Vector2 GetMousePosition()
         {
-            //Return the mouse's position.
             return new Vector2(Mouse.GetState().X, Mouse.GetState().Y);
         }
         /// <summary>
@@ -537,6 +536,32 @@ namespace Library
             Vector2 direction = Vector2.Normalize(origin - end);
             //Return the angle.
             return ((float)Math.Atan2(direction.X, direction.Y));
+        }
+        /// <summary>
+        /// Perform a deep clone of the specified object.
+        /// </summary>
+        /// <typeparam name="T">The type of object being cloned.</typeparam>
+        /// <param name="source">The object instance to clone.</param>
+        /// <returns>The cloned object.</returns>
+        public static T Clone<T>(this T source)
+        {
+            //Validation check.
+            if (!typeof(T).IsSerializable) { throw new ArgumentException("The type must be serializable.", "source"); }
+
+            // Don't serialize a null object, simply return the default for that object.
+            if (Object.ReferenceEquals(source, null)) { return default(T); }
+
+            //Create the formatter adn stream.
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream = new MemoryStream();
+
+            //Serialize the object into the stream and then deserialize its data into a new object.
+            using (stream)
+            {
+                formatter.Serialize(stream, source);
+                stream.Seek(0, SeekOrigin.Begin);
+                return (T)formatter.Deserialize(stream);
+            }
         }
         /// <summary>
         /// Save an animation as a xml file.

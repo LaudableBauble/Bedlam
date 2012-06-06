@@ -32,6 +32,7 @@ namespace Library.GUI
         private Item _Item;
         private TabControl _TabControl;
         private Form _FrmGeneral;
+        private Form _FrmPhysics;
         private Picturebox _PtbThumbnail;
         private Expander _ExpBase;
         private Expander _ExpWorld;
@@ -45,6 +46,11 @@ namespace Library.GUI
         private Field _FldScaleY;
         private Field _FldOriginX;
         private Field _FldOriginY;
+        private Field _FldMass;
+        private Field _FldRestitution;
+        private Field _FldFriction;
+        private Checkbox _CkbIsStatic;
+        private Checkbox _CkbIgnoreGravity;
         #endregion
 
         #region Constructors
@@ -96,10 +102,18 @@ namespace Library.GUI
             _FldOriginX = new Field(gui, width - 10, 15);
             _FldOriginY = new Field(gui, width - 10, 15);
 
+            //Create the physics tab.
+            _FrmPhysics = new Form(gui, position + new Vector2(0, 25), width, height);
+            _FldMass = new Field(gui, width - 10, 15);
+            _FldFriction = new Field(gui, width - 10, 15);
+            _FldRestitution = new Field(gui, width - 10, 15);
+            _CkbIsStatic = new Checkbox(gui, position, width - 10, 15);
+            _CkbIgnoreGravity = new Checkbox(gui, position, width - 10, 15);
+
             //Set up the components.
             SetUpComponents();
 
-            //Add controls to the expander.
+            //Add controls to the expanders.
             _ExpBase.AddItem(_FldWidth);
             _ExpBase.AddItem(_FldHeight);
             _ExpWorld.AddItem(_FldPosX);
@@ -110,26 +124,37 @@ namespace Library.GUI
             _ExpLocal.AddItem(_FldOriginX);
             _ExpLocal.AddItem(_FldOriginY);
 
-            //Add the controls to the form.
+            //Add the controls to the forms.
             _FrmGeneral.AddItem(_PtbThumbnail);
             _FrmGeneral.AddItem(_ExpBase);
             _FrmGeneral.AddItem(_ExpWorld);
             _FrmGeneral.AddItem(_ExpLocal);
+            _FrmPhysics.AddItem(_FldMass);
+            _FrmPhysics.AddItem(_FldFriction);
+            _FrmPhysics.AddItem(_FldRestitution);
+            _FrmPhysics.AddItem(_CkbIsStatic);
+            _FrmPhysics.AddItem(_CkbIgnoreGravity);
 
             //Add the controls to their respective tabs.
             _TabControl.AddTab(_FrmGeneral, "General");
+            _TabControl.AddTab(_FrmPhysics, "Physics");
 
             //Add the tab control to this modifier.
             Add(_TabControl);
 
             //Subscribe to the component's events.
-            _FldPosX.Textbox.FocusChange += OnTextboxFocusChange;
-            _FldPosY.Textbox.FocusChange += OnTextboxFocusChange;
-            _FldRotation.Textbox.FocusChange += OnTextboxFocusChange;
-            _FldScaleX.Textbox.FocusChange += OnTextboxFocusChange;
-            _FldScaleY.Textbox.FocusChange += OnTextboxFocusChange;
-            _FldOriginX.Textbox.FocusChange += OnTextboxFocusChange;
-            _FldOriginY.Textbox.FocusChange += OnTextboxFocusChange;
+            _FldPosX.Textbox.FocusChange += OnUserModify;
+            _FldPosY.Textbox.FocusChange += OnUserModify;
+            _FldRotation.Textbox.FocusChange += OnUserModify;
+            _FldScaleX.Textbox.FocusChange += OnUserModify;
+            _FldScaleY.Textbox.FocusChange += OnUserModify;
+            _FldOriginX.Textbox.FocusChange += OnUserModify;
+            _FldOriginY.Textbox.FocusChange += OnUserModify;
+            _FldMass.Textbox.FocusChange += OnUserModify;
+            _FldFriction.Textbox.FocusChange += OnUserModify;
+            _FldRestitution.Textbox.FocusChange += OnUserModify;
+            _CkbIsStatic.CheckboxTick += OnUserModify;
+            _CkbIgnoreGravity.CheckboxTick += OnUserModify;
         }
         /// <summary>
         /// Update the item modifier.
@@ -165,6 +190,11 @@ namespace Library.GUI
             _FldScaleY.Title = "ScaleY:";
             _FldOriginX.Title = "OriginX:";
             _FldOriginY.Title = "OriginY:";
+            _FldMass.Title = "Mass:";
+            _FldFriction.Title = "Friction:";
+            _FldRestitution.Title = "Restitution:";
+            _CkbIsStatic.Text = "Is static?";
+            _CkbIgnoreGravity.Text = "Ignores gravity?";
             _FldWidth.Textbox.Validator = validator;
             _FldHeight.Textbox.Validator = validator;
             _FldPosX.Textbox.Validator = validator;
@@ -202,6 +232,9 @@ namespace Library.GUI
                 _FldScaleY.Text = "";
                 _FldOriginX.Text = "";
                 _FldOriginY.Text = "";
+                _FldMass.Text = "";
+                _FldFriction.Text = "";
+                _FldRestitution.Text = "";
                 _PtbThumbnail.SetPicture((Texture2D)null);
                 return;
             }
@@ -212,10 +245,29 @@ namespace Library.GUI
             if (!_FldPosX.Textbox.HasFocus) { _FldPosX.Text = _Item.Position.X.ToString(); }
             if (!_FldPosY.Textbox.HasFocus) { _FldPosY.Text = _Item.Position.Y.ToString(); }
             if (!_FldRotation.Textbox.HasFocus) { _FldRotation.Text = _Item.Rotation.ToString(); }
-            if (!_FldScaleX.Textbox.HasFocus) { _FldScaleX.Text = _Item.Scale.X.ToString(); }
-            if (!_FldScaleY.Textbox.HasFocus) { _FldScaleY.Text = _Item.Scale.Y.ToString(); }
+            if (!_FldScaleX.Textbox.HasFocus) { _FldScaleX.Text = (_Item.Width * _Item.Scale.X).ToString(); }
+            if (!_FldScaleY.Textbox.HasFocus) { _FldScaleY.Text = (_Item.Height * _Item.Scale.Y).ToString(); }
             if (!_FldOriginX.Textbox.HasFocus) { _FldOriginX.Text = _Item.Origin.X.ToString(); }
             if (!_FldOriginY.Textbox.HasFocus) { _FldOriginY.Text = _Item.Origin.Y.ToString(); }
+
+            //Display additional data depending on the type of item.
+            switch (_Item.Type)
+            {
+                case ItemType.Entity:
+                    {
+                        //Cast the item to an entity.
+                        Entity entity = (Entity)_Item;
+
+                        if (!_FldMass.Textbox.HasFocus) { _FldMass.Text = entity.Mass.ToString(); }
+                        if (!_FldFriction.Textbox.HasFocus) { _FldFriction.Text = entity.Friction.ToString(); }
+                        if (!_FldRestitution.Textbox.HasFocus) { _FldRestitution.Text = entity.Restitution.ToString(); }
+                        if (!_CkbIsStatic.HasFocus) { _CkbIsStatic.IsChecked = entity.IsStatic; }
+                        if (!_CkbIgnoreGravity.HasFocus) { _CkbIgnoreGravity.IsChecked = entity.IgnoreGravity; }
+
+                        break;
+                    }
+                case ItemType.Character: { goto case ItemType.Entity; }
+            }
         }
         /// <summary>
         /// Update the inner components when an item type has been selected.
@@ -242,23 +294,44 @@ namespace Library.GUI
             SetUpComponents();
         }
         /// <summary>
-        /// When a textbox has lost its focus, update the selected item to match the data specified by the user.
+        /// When the user has requested a modification of an item, update the selected item to match the data specified by the user.
         /// </summary>
         /// <param name="obj">The component that fired the event.</param>
         /// <param name="e">The event arguments.</param>
-        private void OnTextboxFocusChange(object obj, FocusChangeEventArgs e)
+        private void OnUserModify(object obj, EventArgs e)
         {
+            //Cast the object to a GUI component.
+            Component item = (Component)obj;
+
             //If the textbox has not lost focus, stop here.
-            if (e.Item.HasFocus) { return; }
+            //if (item.HasFocus) { return; }
 
             //Decide which property to modify.
-            if (e.Item == _FldPosX.Textbox) { _Item.Position = new Vector2(float.Parse(_FldPosX.Textbox.Text), _Item.Position.Y); }
-            if (e.Item == _FldPosY.Textbox) { _Item.Position = new Vector2(_Item.Position.X, float.Parse(_FldPosY.Textbox.Text)); }
-            if (e.Item == _FldRotation.Textbox) { _Item.Rotation = float.Parse(_FldRotation.Textbox.Text); }
-            if (e.Item == _FldScaleX.Textbox) { _Item.Scale = new Vector2(float.Parse(_FldScaleX.Textbox.Text), _Item.Scale.Y); }
-            if (e.Item == _FldScaleY.Textbox) { _Item.Scale = new Vector2(_Item.Scale.X, float.Parse(_FldScaleY.Textbox.Text)); }
-            if (e.Item == _FldOriginX.Textbox) { _Item.Origin = new Vector2(float.Parse(_FldOriginX.Textbox.Text), _Item.Origin.Y); }
-            if (e.Item == _FldOriginY.Textbox) { _Item.Origin = new Vector2(_Item.Origin.X, float.Parse(_FldOriginY.Textbox.Text)); }
+            if (item == _FldPosX.Textbox) { _Item.Position = new Vector2(float.Parse(_FldPosX.Textbox.Text), _Item.Position.Y); }
+            if (item == _FldPosY.Textbox) { _Item.Position = new Vector2(_Item.Position.X, float.Parse(_FldPosY.Textbox.Text)); }
+            if (item == _FldRotation.Textbox) { _Item.Rotation = float.Parse(_FldRotation.Textbox.Text); }
+            if (item == _FldScaleX.Textbox) { _Item.Scale = new Vector2(float.Parse(_FldScaleX.Textbox.Text) / _Item.Width, _Item.Scale.Y); }
+            if (item == _FldScaleY.Textbox) { _Item.Scale = new Vector2(_Item.Scale.X, float.Parse(_FldScaleY.Textbox.Text) / _Item.Height); }
+            if (item == _FldOriginX.Textbox) { _Item.Origin = new Vector2(float.Parse(_FldOriginX.Textbox.Text), _Item.Origin.Y); }
+            if (item == _FldOriginY.Textbox) { _Item.Origin = new Vector2(_Item.Origin.X, float.Parse(_FldOriginY.Textbox.Text)); }
+
+            //Modify additional properties depending on the type of item.
+            switch (_Item.Type)
+            {
+                case ItemType.Entity:
+                    {
+                        //Cast the item to an entity.
+                        Entity entity = (Entity)_Item;
+
+                        if (item == _FldMass.Textbox) { entity.Mass = float.Parse(_FldMass.Text); }
+                        if (item == _FldFriction.Textbox) { entity.Friction = float.Parse(_FldFriction.Text); }
+                        if (item == _FldRestitution.Textbox) { entity.Restitution = float.Parse(_FldRestitution.Text); }
+                        if (item == _CkbIsStatic) { entity.IsStatic = _CkbIsStatic.IsChecked; }
+                        if (item == _CkbIgnoreGravity) { entity.IgnoreGravity = _CkbIgnoreGravity.IsChecked; }
+
+                        break;
+                    }
+            }
         }
         #endregion
 

@@ -99,7 +99,7 @@
     <Compile Include="Animate\SkeletonReader.cs" />
     <Compile Include="Animate\Keyframe.cs" />
     <Compile Include="Animate\Skeleton.cs" />
-    <Compile Include="Core\Part.cs" />
+    <Compile Include="Core\Limb.cs" />
     <Compile Include="Core\TextureItem.cs" />
     <Compile Include="Core\Item.cs" />
     <Compile Include="Core\Layer.cs" />

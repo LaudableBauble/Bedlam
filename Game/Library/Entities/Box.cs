@@ -25,8 +25,9 @@ using Library.Imagery;
 namespace Library.Entities
 {
     /// <summary>
-    /// A box is simply a rectangular object operating under the laws of physics. If you want it to, that is.
+    /// A box is simply a rectangular object operating under the laws of physics.
     /// </summary>
+    [Serializable]
     public class Box : Entity
     {
         #region Fields
@@ -34,7 +35,11 @@ namespace Library.Entities
 
         #region Constructors
         /// <summary>
-        /// Create a box.
+        /// Empty constructor for a box.
+        /// </summary>
+        public Box() { }
+        /// <summary>
+        /// Constructor for a box.
         /// </summary>
         /// <param name="level">The level that this box will belong to.</param>
         /// <param name="name">The name of the box.</param>
@@ -69,16 +74,20 @@ namespace Library.Entities
             Body body = BodyFactory.CreateRectangle(level.World, ConvertUnits.ToSimUnits(width), ConvertUnits.ToSimUnits(height), 1, ConvertUnits.ToSimUnits(position));
             body.BodyType = BodyType.Dynamic;
             //Create a part to hold the body and sprite.
-            Factory.Instance.AddPart(this, body);
+            Factory.Instance.AddLimb(this, body);
         }
+        /// <summary>
+        /// Update the box.
+        /// </summary>
+        /// <param name="gameTime">The current game time.</param>
         public override void Update(GameTime gameTime)
         {
             //Call the base method.
             base.Update(gameTime);
 
             //Update the position and rotation of the box.
-            Position = ConvertUnits.ToDisplayUnits(Parts[0].Body.Position);
-            Rotation = Parts[0].Body.Rotation;
+            _Position = ConvertUnits.ToDisplayUnits(Limbs[0].Body.Position);
+            _Rotation = Limbs[0].Body.Rotation;
         }
 
         /// <summary>
@@ -88,7 +97,62 @@ namespace Library.Entities
         public void SetSprite(Sprite sprite)
         {
             //As this box only is supposed to have one part, the index of the part to set the sprite for is zero.
-            Parts[0].AddSprite(sprite);
+            Limbs[0].AddSprite(sprite);
+        }
+        /// <summary>
+        /// Clone the box.
+        /// </summary>
+        /// <returns>A clone of this box.</returns>
+        public override Item Clone()
+        {
+            //Create the clone.
+            Box clone = new Box();
+
+            //Clone the properties.
+            clone.Sprites = _Sprites.Clone();
+            clone.Limbs = new List<Limb>();
+            clone.Level = _Level;
+            clone.Name = _Name;
+            clone.Position = _Position;
+            clone.Rotation = _Rotation;
+            clone.Scale = _Scale;
+            clone.Width = _Width;
+            clone.Height = _Height;
+            clone.IsVisible = _IsVisible;
+            clone.Origin = _Origin;
+            clone._Type = _Type;
+
+            //Clone the limbs.
+            foreach (Limb limb in _Limbs)
+            {
+                //Create the cloned limb.
+                Limb lClone = new Limb();
+                lClone.Body = limb.Body.DeepClone();
+
+                //Match the limb's sprites to the cloned ones.
+                foreach (Sprite sprite in limb.Sprites) { lClone.AddSprite(clone.Sprites[_Sprites.IndexOf(sprite)]); }
+
+                //Add the cloned limb.
+                clone.AddLimb(lClone);
+            }
+
+            //Return the clone.
+            return clone;
+        }
+        /// <summary>
+        /// Change the position of this item.
+        /// </summary>
+        /// <param name="position">The new scale to change into.</param>
+        protected override void PositionChangeInvoke(Vector2 position)
+        {
+            //Call the base method.
+            base.PositionChangeInvoke(position);
+
+            //If there is exists no limbs, stop here.
+            if (_Limbs.Count == 0) { return; }
+
+            //Update the body's position.
+            Limbs[0].Body.Position = ConvertUnits.ToSimUnits(_Position);
         }
         #endregion
     }

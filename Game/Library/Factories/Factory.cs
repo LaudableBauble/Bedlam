@@ -71,7 +71,6 @@ namespace Library.Factories
         /// <param name="item">The item to add.</param>
         public Item AddItem(Layer layer, Item item)
         {
-            //Add the item to the specified layer and return it.
             return layer.AddItem(item);
         }
         /// <summary>
@@ -94,58 +93,56 @@ namespace Library.Factories
         }
         #endregion
 
-        #region Parts
+        #region Limbs
         /// <summary>
-        /// Add a part to an entity.
+        /// Add a limb to an entity.
         /// </summary>
         /// <param name="entity">The destination entity.</param>
-        /// <returns>The recently added part.</returns>
-        public Part AddPart(Entity entity)
+        /// <returns>The recently added limb.</returns>
+        public Limb AddLimb(Entity entity)
         {
-            //Add the part to the specified entity and return it.
-            return entity.AddPart(new Part());
+            return entity.AddLimb(new Limb());
         }
         /// <summary>
-        /// Add a part to an entity.
+        /// Add a limb to an entity.
         /// </summary>
         /// <param name="entity">The destination entity.</param>
-        /// <param name="part">The part to add.</param>
-        /// <returns>The recently added part.</returns>
-        public Part AddPart(Entity entity, Part part)
+        /// <param name="limb">The limb to add.</param>
+        /// <returns>The recently added limb.</returns>
+        public Limb AddLimb(Entity entity, Limb limb)
         {
-            //Add the part to the specified entity and return it.
-            return entity.AddPart(part);
+            return entity.AddLimb(limb);
         }
         /// <summary>
-        /// Add a part to an entity.
+        /// Add a limb to an entity.
         /// </summary>
         /// <param name="entity">The destination entity.</param>
-        /// <param name="body">The body to be in the part.</param>
-        /// <returns>The recently added part.</returns>
-        public Part AddPart(Entity entity, Body body)
+        /// <param name="body">The body to be in the limb.</param>
+        /// <returns>The recently added limb.</returns>
+        public Limb AddLimb(Entity entity, Body body)
         {
-            //Add the part to the specified entity and return it.
-            Part part = AddPart(entity);
-            part.Body = body;
+            //Add the limb to the specified entity and return it.
+            Limb limb = AddLimb(entity);
+            limb.Body = body;
+
+            //Return the limb.
+            return limb;
+        }
+        /// <summary>
+        /// Add a limb to an entity.
+        /// </summary>
+        /// <param name="entity">The destination entity.</param>
+        /// <param name="body">The body to be in the limb.</param>
+        /// <param name="sprite">The sprite to be in the limb.</param>
+        /// <returns>The recently added limb.</returns>
+        public Limb AddLimb(Entity entity, Body body, Sprite sprite)
+        {
+            //Add the limb to the specified entity and return it.
+            Limb limb = AddLimb(entity, body);
+            limb.AddSprite(sprite);
 
             //Return the part.
-            return part;
-        }
-        /// <summary>
-        /// Add a part to an entity.
-        /// </summary>
-        /// <param name="entity">The destination entity.</param>
-        /// <param name="body">The body to be in the part.</param>
-        /// <param name="sprite">The sprite to be in the part.</param>
-        /// <returns>The recently added part.</returns>
-        public Part AddPart(Entity entity, Body body, Sprite sprite)
-        {
-            //Add the part to the specified entity and return it.
-            Part part = AddPart(entity, body);
-            part.AddSprite(sprite);
-
-            //Return the part.
-            return part;
+            return limb;
         }
         #endregion
 

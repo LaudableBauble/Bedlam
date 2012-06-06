@@ -194,12 +194,12 @@ namespace Game.Editors
             AddTextureItem(layer7, @"General/Textures/Rock[2]", "Rock 2", new Vector2(300, 550), 0, Vector2.One);
 
             Box box1 = Factory.Instance.AddBox(layer5, "Ground", @"General/Textures/FrozenMetalGroundV1[1]", new Vector2(800, 700), 937, 32);
-            box1.Parts[0].Body.BodyType = FarseerPhysics.Dynamics.BodyType.Static;
+            box1.Limbs[0].Body.BodyType = FarseerPhysics.Dynamics.BodyType.Static;
 
             for (int i = 0; i <= 5; i++)
             {
                 Box box2 = Factory.Instance.AddBox(layer5, "Box", @"General/Textures/BlueBoxV1[1]", new Vector2(500 + 50 * i, 50), 26, 27);
-                box2.Parts[0].Body.Restitution = .1f * i;
+                box2.Limbs[0].Body.Restitution = .1f * i;
                 //box2.Parts[0].Body.Mass = 1 + 1 * i;
             }
             #endregion
@@ -226,7 +226,7 @@ namespace Game.Editors
             //Character test.
             _Level.ManageLayers();
             Character character = Factory.Instance.AddCharacter(_Level.Layers[0], "test", new Vector2(1000, 500), 100, 100);
-            Part part = Factory.Instance.AddPart(character, BodyFactory.CreateRectangle(_Level.World, ConvertUnits.ToSimUnits(character.Width),
+            Limb part = Factory.Instance.AddLimb(character, BodyFactory.CreateRectangle(_Level.World, ConvertUnits.ToSimUnits(character.Width),
                 ConvertUnits.ToSimUnits(character.Height), 1, ConvertUnits.ToSimUnits(character.Position)));
             part.Body.BodyType = BodyType.Dynamic;
             character.Skeleton = Helper.LoadSkeleton(graphicsDevice, contentManager.RootDirectory + @"\Editor\default");
@@ -580,8 +580,8 @@ namespace Game.Editors
                 if (input.IsKeyDown(Keys.D)) { MoveCamera(new Vector2(1, 0)); }
 
                 //Let the user zoom in and out.
-                if (input.IsKeyDown(Keys.D1)) { _Camera.Zoom(-.05f); }
-                if (input.IsKeyDown(Keys.D2)) { _Camera.Zoom(.05f); }
+                if (input.IsKeyDown(Keys.Z)) { _Camera.Zoom(-.05f); }
+                if (input.IsKeyDown(Keys.X)) { _Camera.Zoom(.05f); }
             }
             #endregion
 
@@ -600,8 +600,11 @@ namespace Game.Editors
                 if (input.IsKeyDown(Keys.E)) { RotateItem(.01f); }
 
                 //Let the user scale the item.
-                if (input.IsKeyDown(Keys.D1)) { ScaleItem(new Vector2(-.05f, -.05f)); }
-                if (input.IsKeyDown(Keys.D2)) { ScaleItem(new Vector2(.05f, .05f)); }
+                if (input.IsKeyDown(Keys.Z)) { ScaleItem(new Vector2(-.05f, -.05f)); }
+                if (input.IsKeyDown(Keys.X)) { ScaleItem(new Vector2(.05f, .05f)); }
+
+                //Let the user copy the item.
+                if (input.IsNewKeyPress(Keys.V)) { CopyItem(Helper.GetMousePosition()); }
             }
 
             //If the GUI hasn't been clicked.
@@ -635,8 +638,8 @@ namespace Game.Editors
             #endregion
 
             //Quickie.
-            if (input.IsKeyDown(Keys.Z)) { SetUpTreeView(); }
-            if (input.IsNewKeyPress(Keys.X)) { ToggleGUI(); }
+            if (input.IsKeyDown(Keys.N)) { SetUpTreeView(); }
+            if (input.IsNewKeyPress(Keys.M)) { ToggleGUI(); }
 
             //Let the level handle user input.
             _Level.HandleInput(input);
@@ -715,7 +718,6 @@ namespace Game.Editors
         /// <param name="item">The item to add.</param>
         public Item AddItem(Layer layer, Item item)
         {
-            //Add the item to the specified layer.
             return Factory.Instance.AddItem(layer, item);
         }
         /// <summary>
@@ -782,6 +784,19 @@ namespace Game.Editors
             if (_SelectedItem != null) { _SelectedItem.Scale += scale; }
         }
         /// <summary>
+        /// Copy the selected item to the specified position.
+        /// </summary>
+        /// <param name="position">The local screen position to copy the selected item to.</param>
+        public void CopyItem(Vector2 position)
+        {
+            //Get a clone of the item and change its position.
+            Item item = _SelectedItem.Clone();
+            item.Position = _SelectedLayer.GetWorldPosition(position);
+
+            //Add the item to the level.
+            AddItem(_SelectedLayer, item);
+        }
+        /// <summary>
         /// Grapple an item by the mouse and force it to submit to the user's every whim and fancy.
         /// </summary>
         public void GrappleItem()
@@ -789,7 +804,7 @@ namespace Game.Editors
             //Check what kind of item we are dealing with.
             switch (_SelectedItem.Type)
             {
-                case (ItemType.Item):
+                case ItemType.Item:
                     {
                         //If the grapple point has not been set, set it.
                         if (_ItemGrapplePoint == Vector2.Zero) { _ItemGrapplePoint = Helper.GetMousePosition() - _SelectedItem.Position; break; }
@@ -798,18 +813,16 @@ namespace Game.Editors
                         _SelectedItem.Position = Helper.GetMousePosition() - _ItemGrapplePoint;
                         break;
                     }
-                case (ItemType.TextureItem):
-                    {
-                        //Use the same method as the one that was applied to the item.
-                        goto case (ItemType.Item);
-                    }
-                case (ItemType.Entity):
+                case (ItemType.TextureItem): { goto case ItemType.Item; }
+                case ItemType.Entity:
                     {
                         //The mouse's position.
                         Vector2 position = ConvertUnits.ToSimUnits(_Camera.ConvertScreenToWorld(Helper.GetMousePosition()));
 
                         //If a grapple joint already exist, update its position and then call this off.
                         if (_MouseGrappleJoint != null) { _MouseGrappleJoint.WorldAnchorB = position; break; }
+                        //If the mouse's position is not within the bounds of the selected item, stop here.
+                        else if (!_SelectedItem.IsPixelsIntersecting(_Camera.ConvertScreenToWorld(Helper.GetMousePosition()))) { break; }
 
                         //Create a new fixture for the grapple joint.
                         Fixture fixture = _Level.World.TestPoint(position);
@@ -829,11 +842,7 @@ namespace Game.Editors
 
                         break;
                     }
-                case (ItemType.Character):
-                    {
-                        //Use the same method as the one that was applied to the entity.
-                        goto case (ItemType.Entity);
-                    }
+                case ItemType.Character: { goto case ItemType.Entity; }
             }
         }
         /// <summary>

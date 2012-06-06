@@ -72,7 +72,7 @@ namespace Game
             Layer layer = _Level.AddLayer("Layer 1", Vector2.One);
 
             Box box1 = Factory.Instance.AddBox(layer, "Ground", @"General/Textures/FrozenMetalGroundV1[1]", new Vector2(800, 700), 937, 32);
-            box1.Parts[0].Body.BodyType = FarseerPhysics.Dynamics.BodyType.Static;
+            box1.Limbs[0].Body.BodyType = FarseerPhysics.Dynamics.BodyType.Static;
 
             Body ground = BodyFactory.CreateRectangle(_World, 937 / MeterInPixels, 32 / MeterInPixels, 1);
             ground.BodyType = BodyType.Static;
@@ -82,8 +82,8 @@ namespace Game
             for (int i = 0; i <= 5; i++)
             {
                 Box box2 = Factory.Instance.AddBox(layer, "Box", @"General/Textures/BlueBoxV1[1]", new Vector2(500 + 50 * i, 50), 26, 27);
-                box2.Parts[0].Body.Restitution = .1f * i;
-                box2.Parts[0].Body.Mass = 1 + 10 * i;
+                box2.Limbs[0].Body.Restitution = .1f * i;
+                box2.Limbs[0].Body.Mass = 1 + 10 * i;
             }
 
             box = BodyFactory.CreateRectangle(_World, 26 / MeterInPixels, 27 / MeterInPixels, 1);

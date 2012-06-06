@@ -148,6 +148,15 @@ namespace Library.Imagery
             return _Sprites.IndexOf(Find(tag));
         }
         /// <summary>
+        /// Get a sprite's index.
+        /// </summary>
+        /// <param name="tag">The sprite.</param>
+        /// <returns>The index of the sprite.</returns>
+        public int IndexOf(Sprite sprite)
+        {
+            return _Sprites.IndexOf(sprite);
+        }
+        /// <summary>
         /// Get a sprite.
         /// </summary>
         /// <param name="name">The name of the sprite.</param>
@@ -246,6 +255,65 @@ namespace Library.Imagery
         public void Clear()
         {
             _Sprites.Clear();
+        }
+        /// <summary>
+        /// Clone this sprite manager and all its sprites.
+        /// </summary>
+        /// <returns>A clone of this sprite manager.</returns>
+        public SpriteManager Clone()
+        {
+            //Create the clone.
+            SpriteManager manager = new SpriteManager();
+
+            //Clone the properties.
+            manager.ContentManager = _ContentManager;
+
+            //Clone the sprites.
+            foreach (Sprite sprite in _Sprites)
+            {
+                //Create the cloned sprite.
+                Sprite sClone = new Sprite(manager, sprite.Name);
+
+                //Clone the properties.
+                sClone.Position = sprite.Position;
+                sClone.TimePerFrame = sprite.TimePerFrame;
+                sClone.Scale = sprite.Scale;
+                sClone.Depth = sprite.Depth;
+                sClone.Rotation = sprite.Rotation;
+                sClone.PositionOffset = sprite.PositionOffset;
+                sClone.OrbitOffset = sprite.OrbitOffset;
+                sClone.RotationOffset = sprite.RotationOffset;
+                sClone.Tag = sprite.Tag;
+                sClone.Transparence = sprite.Transparence;
+                sClone.Visibility = sprite.Visibility;
+                sClone.Orientation = sprite.Orientation;
+
+                //Clone the frames.
+                foreach (Frame frame in sprite.Frames)
+                {
+                    //Create the cloned frame.
+                    Frame fClone = new Frame(frame.Path, frame.Width, frame.Height);
+
+                    //Clone the properties.
+                    fClone.Path = frame.Path;
+                    fClone.Width = frame.Width;
+                    fClone.Height = frame.Height;
+                    fClone.Origin = frame.Origin;
+                    fClone.Texture = frame.Texture;
+
+                    //Add the cloned frame to the cloned sprite.
+                    sClone.AddFrame(fClone);
+                }
+
+                //Add the cloned sprite to the cloned manager.
+                manager.Add(sClone);
+            }
+
+            //Make sure that all sprites have been properly activated.
+            manager.ManageSprites();
+
+            //Return the clone.
+            return manager;
         }
         /// <summary>
         /// Get the bounds of a certain texture asset.

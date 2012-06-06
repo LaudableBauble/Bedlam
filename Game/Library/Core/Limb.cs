@@ -14,6 +14,7 @@ using Microsoft.Xna.Framework.Storage;
 
 using FarseerPhysics;
 using FarseerPhysics.Collision;
+using FarseerPhysics.Collision.Shapes;
 using FarseerPhysics.Common;
 using FarseerPhysics.Controllers;
 using FarseerPhysics.Dynamics;
@@ -26,11 +27,10 @@ using Library.Imagery;
 namespace Library.Core
 {
     /// <summary>
-    /// A part, in absence of a more suitable word, is a connection between a body and its sprites.
-    /// A body is only a set of invisible points in space that can collide, whereas a sprite can be seen with the naked eye.
-    /// A part binds these two together into one cohesive unit.
+    /// A limb is a connection between a body and its sprites. A body is only a set of invisible points in space that can collide, whereas a sprite can be seen with the naked eye.
+    /// A limb binds these two together into a cohesive unit.
     /// </summary>
-    public class Part
+    public class Limb
     {
         #region Fields
         private Body _Body;
@@ -41,7 +41,7 @@ namespace Library.Core
         /// <summary>
         /// Create a part.
         /// </summary>
-        public Part()
+        public Limb()
         {
             //Initialize stuff.
             _Sprites = new List<Sprite>();
@@ -93,6 +93,34 @@ namespace Library.Core
             //Return the sprite at the given index.
             return _Sprites[index];
         }
+        /// <summary>
+        /// Scale the limb.
+        /// </summary>
+        /// <param name="scale">The scale to apply.</param>
+        /// <param name="oldScale">The old scale.</param>
+        public void Scale(Vector2 scale, Vector2 oldScale)
+        {
+            //Get the relative scale. Needed for the polygon scaling.
+            Vector2 rScale = scale / oldScale;
+
+            //For all the body's fixtures, scale them.
+            foreach (Fixture fixture in new List<Fixture>(_Body.FixtureList))
+            {
+                //Depending on the type of the shapes, do different stuff.
+                switch (fixture.ShapeType)
+                {
+                    case ShapeType.Polygon:
+                        {
+                            //Cast the shape to a polygon shape and scale it.
+                            (fixture.Shape as PolygonShape).Vertices.Scale(ref rScale);
+                            break;
+                        }
+                }
+            }
+
+            //Scale the sprites as well.
+            _Sprites.ForEach(item => item.Scale = scale);
+        }
         #endregion
 
         #region Properties
@@ -105,7 +133,7 @@ namespace Library.Core
             set { SetBody(value); }
         }
         /// <summary>
-        /// The list of sprites available to to the body.
+        /// The list of sprites available to the body.
         /// </summary>
         public List<Sprite> Sprites
         {

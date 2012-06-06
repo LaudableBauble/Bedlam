@@ -72,26 +72,17 @@ namespace Library.Core
         /// Load all content.
         /// </summary>
         /// <param name="contentManager">The manager that handles all graphical content.</param>
-        public virtual void LoadContent(ContentManager contentManager)
-        {
-
-        }
+        public abstract void LoadContent(ContentManager contentManager);
         /// <summary>
         /// Update the item.
         /// </summary>
         /// <param name="gameTime">The game time.</param>
-        public virtual void Update(GameTime gameTime)
-        {
-
-        }
+        public abstract void Update(GameTime gameTime);
         /// <summary>
         /// Draw the item.
         /// </summary>
         /// <param name="spriteBatch">The sprite batch to use.</param>
-        public virtual void Draw(SpriteBatch spriteBatch)
-        {
-
-        }
+        public abstract void Draw(SpriteBatch spriteBatch);
 
         /// <summary>
         /// Change the visibility state of this item.
@@ -100,6 +91,18 @@ namespace Library.Core
         protected virtual void ChangeVisibilityState(bool isVisible)
         {
             _IsVisible = isVisible;
+        }
+        /// <summary>
+        /// Change the position of this item.
+        /// </summary>
+        /// <param name="position">The new scale to change into.</param>
+        protected virtual void PositionChangeInvoke(Vector2 position)
+        {
+            //If the position is the same as before, stop here.
+            if (_Position == position) { return; }
+
+            //Change the position.
+            _Position = position;
         }
         /// <summary>
         /// Change the scale of this item.
@@ -123,6 +126,11 @@ namespace Library.Core
             //If the point and this item intersects, return true.
             return Helper.IsPointWithinBox(point, Helper.GetBoundingBox(this));
         }
+        /// <summary>
+        /// Clones the item.
+        /// </summary>
+        /// <returns>A clone of this item.</returns>
+        public abstract Item Clone();
         #endregion
 
         #region Properties
@@ -148,7 +156,7 @@ namespace Library.Core
         public Vector2 Position
         {
             get { return _Position; }
-            set { _Position = value; }
+            set { PositionChangeInvoke(value); }
         }
         /// <summary>
         /// The rotation of the item.

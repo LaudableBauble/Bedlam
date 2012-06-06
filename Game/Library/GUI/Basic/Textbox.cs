@@ -393,15 +393,13 @@ namespace Library.GUI.Basic
         /// </summary>
         public void MoveMarkerToEnd()
         {
-            //Move the selection marker to the end of the text.
-            MoveMarker((_Text.Length - 1) - _MarkerIndex);
+            MoveMarker(_Text.Length - _MarkerIndex);
         }
         /// <summary>
         /// Move the selection marker to the start of the text.
         /// </summary>
         public void MoveMarkerToStart()
         {
-            //Move the selection marker to the start of the text.
             MoveMarker(-_MarkerIndex);
         }
         /// <summary>
@@ -518,6 +516,18 @@ namespace Library.GUI.Basic
             _Text = text;
             _TextStart = 0;
             FitAndAlignText();
+        }
+        /// <summary>
+        /// Change the focus of this item.
+        /// </summary>
+        /// <param name="hasFocus">Whether the item has been granted focus or not.</param>
+        protected override void FocusChangeInvoke(bool hasFocus)
+        {
+            //Call the base method.
+            base.FocusChangeInvoke(hasFocus);
+
+            //Move the marker to the end.
+            MoveMarkerToEnd();
         }
         #endregion
 

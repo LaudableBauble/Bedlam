@@ -91,8 +91,8 @@ namespace Library.Core
             base.Update(gameTime);
 
             //Update the skeleton.
-            Position = (Parts.Count != 0) ? ConvertUnits.ToDisplayUnits(Parts[0].Body.Position) : Position;
-            Rotation = (Parts.Count != 0) ? Parts[0].Body.Rotation : Rotation;
+            Position = (Limbs.Count != 0) ? ConvertUnits.ToDisplayUnits(Limbs[0].Body.Position) : Position;
+            Rotation = (Limbs.Count != 0) ? Limbs[0].Body.Rotation : Rotation;
             _Skeleton.Position = Position;
             _Skeleton.Rotation = Rotation;
             _Skeleton.Bones[0].RelativeRotation = Rotation;

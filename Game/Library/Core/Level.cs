@@ -160,6 +160,7 @@ namespace Library.Core
 
             //Hook up to some events.
             GetLastLayer().ItemChanged += OnItemChanged;
+
             //Return the layer.
             return GetLastLayer();
         }

@@ -46,7 +46,6 @@ namespace Library.Core
         /// <param name="scale">The scale of the item.</param>
         public TextureItem(Level level, string name, Vector2 position, float rotation, Vector2 scale)
         {
-            //Initialize the editor.
             Initialize(level, name, position, rotation, scale, 0, 0);
         }
         #endregion
@@ -77,9 +76,6 @@ namespace Library.Core
         /// <param name="contentManager">The manager that handles all graphical content.</param>
         public override void LoadContent(ContentManager contentManager)
         {
-            //Call the base method.
-            base.LoadContent(contentManager);
-
             //Load the sprite.
             _Sprites.LoadContent(contentManager);
         }
@@ -89,9 +85,6 @@ namespace Library.Core
         /// <param name="gameTime">The game time.</param>
         public override void Update(GameTime gameTime)
         {
-            //Call the base method.
-            base.Update(gameTime);
-
             //Update the sprite.
             _Sprites.Update(gameTime, Position, Rotation);
         }
@@ -101,9 +94,6 @@ namespace Library.Core
         /// <param name="spriteBatch">The sprite batch to use.</param>
         public override void Draw(SpriteBatch spriteBatch)
         {
-            //Call the base method.
-            base.Draw(spriteBatch);
-
             //Draw the sprite.
             _Sprites.Draw(spriteBatch);
         }
@@ -157,11 +147,31 @@ namespace Library.Core
         /// <returns>Whether the point collides or not.</returns>
         public override bool IsPixelsIntersecting(Vector2 point)
         {
-            //If the point and this item intersects, return true.
-            if (Helper.IsPointWithinImage(point, _Sprites.FirstSprite())) { return true; }
+            return Helper.IsPointWithinImage(point, _Sprites.FirstSprite());
+        }
+        /// <summary>
+        /// Clone the texture item.
+        /// </summary>
+        /// <returns>A clone of this texture item.</returns>
+        public override Item Clone()
+        {
+            //Create the clone.
+            TextureItem clone = new TextureItem(_Level, _Name, _Position, _Rotation, _Scale);
 
-            //Return false;
-            return false;
+            //Clone the properties.
+            clone.Level = _Level;
+            clone.Name = _Name;
+            clone.Position = _Position;
+            clone.Rotation = _Rotation;
+            clone.Scale = _Scale;
+            clone.Width = _Width;
+            clone.Height = _Height;
+            clone.IsVisible = _IsVisible;
+            clone.Origin = _Origin;
+            clone.Sprites = _Sprites.Clone();
+
+            //Return the clone.
+            return clone;
         }
         /// <summary>
         /// Change the scale of this item.

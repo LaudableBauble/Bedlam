@@ -114,7 +114,7 @@ namespace Library.Core
             foreach (Item item in _Items) { item.Update(gameTime); }
 
             //Update the layer's camera matrix.
-            _CameraMatrix = Helper.TransformCameraMatrix((_Level.Camera.Position * _ScrollSpeed), _Level.Camera.Rotation, _Level.Camera.ZoomValue, _Level.Camera.Origin);
+            _CameraMatrix = Helper.TransformCameraMatrix(_Level.Camera.Position * _ScrollSpeed, _Level.Camera.Rotation, _Level.Camera.ZoomValue, _Level.Camera.Origin);
         }
         /// <summary>
         /// Draw the layer and its items.
@@ -208,9 +208,9 @@ namespace Library.Core
             foreach (Item item in _Items) { item.IsVisible = isVisible; }
         }
         /// <summary>
-        /// Get the world coordinates of a position given the layer's scrolling speed.
+        /// Get the world coordinates of a position given the layer's scrolling speed and the camera matrix.
         /// </summary>
-        /// <param name="position">The local position.</param>
+        /// <param name="position">The local position on the screen.</param>
         /// <returns>The transformed world position.</returns>
         public Vector2 GetWorldPosition(Vector2 position)
         {
