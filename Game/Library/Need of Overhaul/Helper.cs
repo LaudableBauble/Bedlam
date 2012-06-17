@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
-using System.Windows.Forms;
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
@@ -28,6 +27,7 @@ using Library.Animate;
 using Library.Core;
 using Library.Enums;
 using Library.Factories;
+using Library.GUI.Basic;
 using Library.Imagery;
 
 namespace Library
@@ -561,6 +561,37 @@ namespace Library
                 formatter.Serialize(stream, source);
                 stream.Seek(0, SeekOrigin.Begin);
                 return (T)formatter.Deserialize(stream);
+            }
+        }
+        /// <summary>
+        /// A method to populate a TreeView with directories, subdirectories, etc.
+        /// Author: Danny Battison
+        /// Contact: gabehabe@googlemail.com
+        /// </summary>
+        /// <param name="dir">The path of the directory.</param>
+        /// <param name="node">The "master" node to populate.</param>
+        public static void PopulateTree(string dir, TreeNode node)
+        {
+            //Get the information of the directory.
+            DirectoryInfo directory = new DirectoryInfo(dir);
+
+            //Loop through each subdirectory.
+            foreach (DirectoryInfo d in directory.GetDirectories())
+            {
+                //Create a new node and add it to its parent.
+                TreeNode t = node.AddNode();
+                t.Checkbox.Text = d.Name;
+
+                //Populate the new node recursively.
+                PopulateTree(d.FullName, t);
+            }
+
+            //Loop through each file in the directory and add these as nodes.
+            foreach (FileInfo f in directory.GetFiles())
+            {
+                //Create a new node and add it to its parent.
+                TreeNode t = node.AddNode();
+                t.Checkbox.Text = f.Name;
             }
         }
         /// <summary>

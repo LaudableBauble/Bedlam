@@ -14,6 +14,7 @@ using Microsoft.Xna.Framework.Storage;
 
 using FarseerPhysics.DrawingSystem;
 
+using Library.Enums;
 using Library.Imagery;
 using Library.Infrastructure;
 
@@ -25,7 +26,7 @@ namespace Library.GUI.Basic
     public class TreeView : Component
     {
         #region Fields
-        private List<TreeViewNode> _Nodes;
+        private List<TreeNode> _Nodes;
         private SpriteFont _Font;
         private float _Indent;
         private Vector2 _ChildPosition;
@@ -33,7 +34,7 @@ namespace Library.GUI.Basic
         private float _ChildHeight;
         private Button _MoveNodeUp;
         private Button _MoveNodeDown;
-        private TreeViewNode _SelectedNode;
+        private TreeNode _SelectedNode;
 
         public delegate void TickHandler(object obj, TickEventArgs e);
         public event TickHandler Ticked;
@@ -45,7 +46,7 @@ namespace Library.GUI.Basic
         /// </summary>
         /// <param name="index">The index of the node.</param>
         /// <returns>The node instance.</returns>
-        public TreeViewNode this[int index]
+        public TreeNode this[int index]
         {
             get { return (_Nodes[index]); }
             set { _Nodes[index] = value; }
@@ -81,7 +82,7 @@ namespace Library.GUI.Basic
             base.Initialize(gui, position, width, height);
 
             //Intialize some variables.
-            _Nodes = new List<TreeViewNode>();
+            _Nodes = new List<TreeNode>();
             _Indent = 15;
             _ChildPosition = new Vector2(Position.X + _Indent, Position.Y + 10);
             _ChildWidth = 200;
@@ -123,10 +124,11 @@ namespace Library.GUI.Basic
         /// <summary>
         /// Add a treeview node to the list.
         /// </summary>
-        public void AddNode()
+        /// <returns>The added node.</returns>
+        public TreeNode AddNode()
         {
             //The new tree view node.
-            TreeViewNode node = new TreeViewNode(GUI, null, _ChildPosition, _ChildWidth, _ChildHeight);
+            TreeNode node = new TreeNode(GUI, null, _ChildPosition, _ChildWidth, _ChildHeight);
 
             //Add the child node to the list of other nodes, but also the list of other items.
             Add(node);
@@ -140,13 +142,16 @@ namespace Library.GUI.Basic
             node.NodeStateChanged += OnChildNodeStateChanged;
             node.MouseClick += OnChildNodeMouseClick;
             node.Ticked += OnChildNodeTicked;
+
+            //Return the node.
+            return node;
         }
         /// <summary>
         /// Insert a node.
         /// </summary>
         /// <param name="index">The index of where to insert the node.</param>
         /// <param name="node">The node to insert.</param>
-        public void InsertNode(int index, TreeViewNode node)
+        public void InsertNode(int index, TreeNode node)
         {
             //Add the node to the list of other items.
             Add(node);
@@ -168,7 +173,7 @@ namespace Library.GUI.Basic
             Vector2 last = _ChildPosition;
 
             //Loop through all nodes and update their positions.
-            foreach (TreeViewNode node in _Nodes)
+            foreach (TreeNode node in _Nodes)
             {
                 //Calculate their new position, but only if they are visible.
                 if (node.IsVisible) { last = node.UpdateTree(new Vector2(last.X, (last.Y + 15)), _Indent); }
@@ -196,7 +201,7 @@ namespace Library.GUI.Basic
         /// </summary>
         /// <param name="node">The node to move.</param>
         /// <returns>Whether the operation was succesful or not. For instance if the node already is at the top, this method will return false.</returns>
-        public bool MoveNodeUp(TreeViewNode node)
+        public bool MoveNodeUp(TreeNode node)
         {
             //First see if the child node actually exists directly beneath this node.
             if (_Nodes.Exists(n => (n.Equals(node))))
@@ -226,7 +231,7 @@ namespace Library.GUI.Basic
         /// </summary>
         /// <param name="node">The node to move.</param>
         /// <returns>Whether the operation was succesful or not. For instance if the node already is at the bottom, this method will return false.</returns>
-        public bool MoveNodeDown(TreeViewNode node)
+        public bool MoveNodeDown(TreeNode node)
         {
             //First see if the child node actually exists directly beneath this node.
             if (_Nodes.Exists(n => (n.Equals(node))))
@@ -258,7 +263,7 @@ namespace Library.GUI.Basic
         {
             //Clear the tree view.
             //TODO: Delete them properly.
-            for (int i = 0; i < _Items.Count; i++) { if (_Items[i] is TreeViewNode) { _Items.RemoveAt(i); } }
+            for (int i = 0; i < _Items.Count; i++) { if (_Items[i] is TreeNode) { _Items.RemoveAt(i); } }
             _Nodes.Clear();
         }
         /// <summary>
@@ -266,7 +271,7 @@ namespace Library.GUI.Basic
         /// </summary>
         /// <param name="node">The node in question.</param>
         /// <returns>The index of the node.</returns>
-        public int GetNodeIndex(TreeViewNode node)
+        public int GetNodeIndex(TreeNode node)
         {
             //Return the index.
             return (_Nodes.IndexOf(node));
@@ -277,13 +282,13 @@ namespace Library.GUI.Basic
         /// <param name="node">The node in question.</param>
         /// <param name="surfaceScratchOnly">Whether to only look at the first layer of nodes or all the way down.</param>
         /// <returns>The index of the node.</returns>
-        public bool Contains(TreeViewNode node, bool surfaceScratchOnly)
+        public bool Contains(TreeNode node, bool surfaceScratchOnly)
         {
             //If the specified node exists directly underneath this one.
             if (_Nodes.Contains(node)) { return true; }
 
             //If allowed to go deep.
-            if (!surfaceScratchOnly) { foreach (TreeViewNode n in _Nodes) { if (n.Contains(node, false)) { return true; } } }
+            if (!surfaceScratchOnly) { foreach (TreeNode n in _Nodes) { if (n.Contains(node, false)) { return true; } } }
 
             //Return false, no one was found. I bet your face looks appropriately sunken and puffy at this time, complete with eyes red from crying.
             return false;
@@ -312,7 +317,7 @@ namespace Library.GUI.Basic
         private void OnChildNodeMouseClick(object obj, MouseClickEventArgs e)
         {
             //Save the clicked node as the selected node.
-            _SelectedNode = (obj as TreeViewNode);
+            _SelectedNode = (obj as TreeNode);
         }
         /// <summary>
         /// If any node has been either collapsed or expanded, update the tree view.
@@ -353,7 +358,7 @@ namespace Library.GUI.Basic
                         //Remove the node from its parent.
                         _SelectedNode.ParentNode.ChildNodes.Remove(_SelectedNode);
                         //If the parent node ends up with an empty list, change its node state.
-                        if (_SelectedNode.ParentNode.ChildNodes.Count == 0) { _SelectedNode.ParentNode.NodeState = TreeViewNodeState.None; }
+                        if (_SelectedNode.ParentNode.ChildNodes.Count == 0) { _SelectedNode.ParentNode.NodeState = TreeNodeState.None; }
 
                         //If the node has a grandparent.
                         if (_SelectedNode.ParentNode.ParentNode != null)
@@ -400,7 +405,7 @@ namespace Library.GUI.Basic
                         //Remove the node from its parent.
                         _SelectedNode.ParentNode.ChildNodes.Remove(_SelectedNode);
                         //If the parent node ends up with an empty list, change its node state.
-                        if (_SelectedNode.ParentNode.ChildNodes.Count == 0) { _SelectedNode.ParentNode.NodeState = TreeViewNodeState.None; }
+                        if (_SelectedNode.ParentNode.ChildNodes.Count == 0) { _SelectedNode.ParentNode.NodeState = TreeNodeState.None; }
 
                         //If the node has a grandparent.
                         if (_SelectedNode.ParentNode.ParentNode != null)
@@ -435,7 +440,7 @@ namespace Library.GUI.Basic
         /// <summary>
         /// The nodes that are stored in this treeview.
         /// </summary>
-        public List<TreeViewNode> Nodes
+        public List<TreeNode> Nodes
         {
             get { return _Nodes; }
             set { _Nodes = value; }

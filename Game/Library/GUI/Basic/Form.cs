@@ -46,7 +46,7 @@ namespace Library.GUI.Basic
 
         #region Constructor
         /// <summary>
-        /// Create a form.
+        /// Constructor for a form.
         /// </summary>
         /// <param name="gui">The GUI that this form will be a part of.</param>
         /// <param name="position">The position of this form.</param>
@@ -54,7 +54,6 @@ namespace Library.GUI.Basic
         /// <param name="width">The width of this form.</param>
         public Form(GraphicalUserInterface gui, Vector2 position, float width, float height)
         {
-            //Initialize some variables.
             Initialize(gui, position, width, height);
         }
         #endregion

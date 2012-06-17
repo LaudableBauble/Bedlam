@@ -813,7 +813,7 @@ namespace Game.Editors
                         _SelectedItem.Position = Helper.GetMousePosition() - _ItemGrapplePoint;
                         break;
                     }
-                case (ItemType.TextureItem): { goto case ItemType.Item; }
+                case ItemType.TextureItem: { goto case ItemType.Item; }
                 case ItemType.Entity:
                     {
                         //The mouse's position.
@@ -947,8 +947,7 @@ namespace Game.Editors
             _TreeView.Clear();
 
             //Begin with a root node.
-            _TreeView.AddNode();
-            TreeViewNode root = _TreeView[0];
+            TreeNode root = _TreeView.AddNode();
             root.Checkbox.Text = _Level.Name;
 
             //Go through each layer and add them as nodes in the tree.
@@ -1142,7 +1141,7 @@ namespace Game.Editors
             int item = -1;
 
             //Shortcut to the node.
-            TreeViewNode node = (obj as TreeViewNode);
+            TreeNode node = (obj as TreeNode);
 
             try
             {

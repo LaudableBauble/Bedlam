@@ -99,8 +99,8 @@ namespace Library
     public class ChildNodeAddedEventArgs : EventArgs
     {
         #region Fields
-        private TreeViewNode _Parent;
-        private TreeViewNode _Child;
+        private TreeNode _Parent;
+        private TreeNode _Child;
         #endregion
 
         #region Constructor
@@ -109,7 +109,7 @@ namespace Library
         /// </summary>
         /// <param name="parent">The parent node.</param>
         /// <param name="_Child">The child node that has just been added.</param>
-        public ChildNodeAddedEventArgs(TreeViewNode parent, TreeViewNode child)
+        public ChildNodeAddedEventArgs(TreeNode parent, TreeNode child)
         {
             //Pass along the data.
             _Parent = parent;
@@ -121,14 +121,14 @@ namespace Library
         /// <summary>
         /// The parent node.
         /// </summary>
-        public TreeViewNode Parent
+        public TreeNode Parent
         {
             get { return _Parent; }
         }
         /// <summary>
         /// The child node that has just been added.
         /// </summary>
-        public TreeViewNode Child
+        public TreeNode Child
         {
             get { return _Child; }
         }

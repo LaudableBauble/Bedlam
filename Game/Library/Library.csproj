@@ -106,6 +106,7 @@
     <Compile Include="Core\Level.cs" />
     <Compile Include="Entities\Box.cs" />
     <Compile Include="Factories\Factory.cs" />
+    <Compile Include="GUI\Advanced\EntityChooser.cs" />
     <Compile Include="GUI\Advanced\ItemModifier.cs" />
     <Compile Include="GUI\Advanced\ModifyItemFormOld.cs" />
     <Compile Include="GUI\Advanced\ModifyItemForm.cs" />
@@ -158,7 +159,7 @@
     <Compile Include="GUI\Basic\Slider.cs" />
     <Compile Include="GUI\Basic\Textbox.cs" />
     <Compile Include="GUI\Basic\TreeView.cs" />
-    <Compile Include="GUI\Basic\TreeViewNode.cs" />
+    <Compile Include="GUI\Basic\TreeNode.cs" />
     <Compile Include="GUI\GraphicalUserInterface.cs" />
     <Compile Include="Imagery\Frame.cs" />
     <Compile Include="Imagery\Sprite.cs" />

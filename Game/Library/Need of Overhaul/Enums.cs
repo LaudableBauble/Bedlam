@@ -32,6 +32,10 @@ namespace Library.Enums
     /// Whether to build from left to right or from right to left.
     /// </summary>
     public enum LayoutHorizontalAlignment { LeftToRight, RightToLeft }
+    /// <summary>
+    /// The state of the node in the tree view; that is if it's collapsed, expanded or neither.
+    /// </summary>
+    public enum TreeNodeState { None, Collapsed, Expanded }
     #endregion
 
     /// <summary>
@@ -56,7 +60,7 @@ namespace Library.Enums
         None, Left, Right
     }
     /// <summary>
-    /// The different types of items avaliable to the game.
+    /// The different types of items available to the game.
     /// This enum do not represent any specific or unique item but only the different base classes to choose from.
     /// </summary>
     public enum ItemType
