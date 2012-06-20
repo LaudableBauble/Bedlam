@@ -96,6 +96,10 @@
     <Compile Include="Animate\Animation.cs" />
     <Compile Include="Animate\AnimationReader.cs" />
     <Compile Include="Animate\Bone.cs" />
+    <Compile Include="Animate\Prototype\Animation.cs" />
+    <Compile Include="Animate\Prototype\Bone.cs" />
+    <Compile Include="Animate\Prototype\Keyframe.cs" />
+    <Compile Include="Animate\Prototype\Skeleton.cs" />
     <Compile Include="Animate\SkeletonReader.cs" />
     <Compile Include="Animate\Keyframe.cs" />
     <Compile Include="Animate\Skeleton.cs" />

@@ -149,8 +149,8 @@ namespace Library.GUI
         private void OnListSelect(object obj, ListItemSelectEventArgs e)
         {
             //Try and load the new texture.
-            _PctbDisplay.Picture = GUI.ContentManager.Load<Texture2D>(_Blueprints.Find(s => (s.Contains((e.Item as LabelListItem).Label.Text))));
-            _PctbDisplay.Picture.Name = _Blueprints.Find(s => (s.Contains((e.Item as LabelListItem).Label.Text)));
+            //_PctbDisplay.Picture = GUI.ContentManager.Load<Texture2D>(_Blueprints.Find(s => (s.Contains((e.Item as LabelListItem).Label.Text))));
+            //_PctbDisplay.Picture.Name = _Blueprints.Find(s => (s.Contains((e.Item as LabelListItem).Label.Text)));
         }
         /// <summary>
         /// The 'done' button has been clicked.
