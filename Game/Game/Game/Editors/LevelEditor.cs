@@ -64,6 +64,7 @@ namespace Game.Editors
         private List _PropertyList;
         private ItemModifier _ItemModifier;
         private Menu _Menu;
+        private ItemChooser _ItemChooser;
 
         private LineBrush _SelectionBrush;
         private bool _IsGUIClicked;
@@ -1010,6 +1011,18 @@ namespace Game.Editors
             catch { }
         }
         /// <summary>
+        /// Launch an Item Chooser so that the user can add an item to the level.
+        /// </summary>
+        private void LaunchItemChooser()
+        {
+            //Create a new item chooser and add it to the GUI.
+            _ItemChooser = new ItemChooser(_GUI, new Vector2(300, 100), 400, 500);
+            _GUI.AddForegroundItem(_ItemChooser);
+
+            //Subscribe to the chooser's close event.
+            _ItemChooser.Closed += OnItemChooserClose;
+        }
+        /// <summary>
         /// Get the index of an item in a layer.
         /// </summary>
         /// <param name="item">The item in question.</param>
@@ -1109,6 +1122,20 @@ namespace Game.Editors
             _Level.State = state;
         }
         /// <summary>
+        /// When the item chooser closes, if an item has been selected add it to the level.
+        /// </summary>
+        /// <param name="obj">The object that fired the event.</param>
+        /// <param name="e">The event arguments.</param>
+        private void OnItemChooserClose(object obj, EventArgs e)
+        {
+            //Get the item.
+            Item item = _ItemChooser.LoadItem();
+
+            //Unsubscribe from the item chooser.
+            _ItemChooser.Closed -= OnItemChooserClose;
+            _ItemChooser = null;
+        }
+        /// <summary>
         /// The menu has had an option selected.
         /// </summary>
         /// <param name="obj">The object that fired the event.</param>
@@ -1121,7 +1148,7 @@ namespace Game.Editors
                 case ("New Level"): { break; }
                 case ("Open Level"): { break; }
                 case ("Save Level"): { break; }
-                case ("Add Item"): { break; }
+                case ("Add Item"): { LaunchItemChooser(); break; }
                 case ("Add Layer"): { break; }
                 case ("Delete Layer"): { break; }
                 case ("Play"): { ChangeLevelState(LevelState.Play); break; }
@@ -1181,7 +1208,6 @@ namespace Game.Editors
         /// <param name="e">The event arguments.</param>
         private void OnGUIClicked(object obj, MouseClickEventArgs e)
         {
-            //The GUI has been clicked.
             _IsGUIClicked = true;
         }
         #endregion

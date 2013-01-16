@@ -16,6 +16,7 @@ using Microsoft.Xna.Framework.Storage;
 using FarseerPhysics.DrawingSystem;
 
 using Library.GUI.Basic;
+using Library.Core;
 using Library.Enums;
 using Library.Infrastructure;
 
@@ -34,9 +35,6 @@ namespace Library.GUI
         private float _Ratio;
         private float _Border;
         private ItemType _Type;
-
-        public delegate void SpritePickedHandler(object obj, SpritePickedEventArgs e);
-        public event SpritePickedHandler SpritePicked;
         #endregion
 
         #region Constructor
@@ -122,15 +120,12 @@ namespace Library.GUI
             _BtnFinish.Position = new Vector2(_Position.X + (2 * (Width / 3) - 25), _Position.Y + (Height - 30 - _Border));
         }
         /// <summary>
-        /// Let the world know that a sprite has been picked.
+        /// Load the currently selected item.
         /// </summary>
-        /// <param name="name">The new sprite name.</param>
-        /// <param name="origin">The origin of the sprite.</param>
-        /// <param name="end">The end position. Used to calculate the length and rotation offset in regard to a bone.</param>
-        protected virtual void SpritePickedInvoke(string name, Vector2 origin, Vector2 end)
+        /// <returns>The currently selected item.</returns>
+        public Item LoadItem()
         {
-            //If someone has hooked up a delegate to the event, fire it.
-            if (SpritePicked != null) { SpritePicked(this, new SpritePickedEventArgs(name, origin, end)); }
+            return null;
         }
         /// <summary>
         /// The slider's value has changed.
@@ -153,16 +148,13 @@ namespace Library.GUI
             //_PctbDisplay.Picture.Name = _Blueprints.Find(s => (s.Contains((e.Item as LabelListItem).Label.Text)));
         }
         /// <summary>
-        /// The 'done' button has been clicked.
+        /// The 'done' button has been clicked, close the form.
         /// </summary>
         /// <param name="obj">The object that fired the event.</param>
         /// <param name="e">The event's arguments.</param>
         public virtual void OnDoneButtonClick(object obj, MouseClickEventArgs e)
         {
-            //Invoke the sprite picked event.
-            //SpritePickedInvoke(_PctbDisplay.Name, CalculateSpriteOrigin(), CalculateSpriteEnd());
-            //Invoke the dispose event.
-            DisposeInvoke();
+            Close();
         }
         #endregion
 

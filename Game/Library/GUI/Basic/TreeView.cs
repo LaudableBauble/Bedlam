@@ -21,7 +21,7 @@ using Library.Infrastructure;
 namespace Library.GUI.Basic
 {
     /// <summary>
-    /// TreeViews are used to list data in a hierarchical order.
+    /// A tree view is used to list data in a hierarchical order.
     /// </summary>
     public class TreeView : Component
     {
@@ -35,8 +35,14 @@ namespace Library.GUI.Basic
         private Button _MoveNodeUp;
         private Button _MoveNodeDown;
         private TreeNode _SelectedNode;
+        #endregion
 
+        #region Events
         public delegate void TickHandler(object obj, TickEventArgs e);
+
+        /// <summary>
+        /// An event fired when a node in the tree has been ticked.
+        /// </summary>
         public event TickHandler Ticked;
         #endregion
 

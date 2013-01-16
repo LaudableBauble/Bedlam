@@ -232,6 +232,7 @@ namespace Library.GUI
         {
             //Update the list of items.
             _Items.Update();
+            _ForegroundItems.Update();
 
             //If there is any items vying for focus.
             if (_FocusQueue.Count > 0)

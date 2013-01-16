@@ -20,8 +20,6 @@ namespace Library.GUI.Basic
 {
     /// <summary>
     /// Forms are blank windows that can be populated by different combinations of items.
-    /// They can also be either silent (which means that they are simply acting as a canvas to items) or loud (which means that it lies ontop and prevents any other item
-    /// from accessing user input as long as it is alive.
     /// </summary>
     public class Form : Component
     {
@@ -29,6 +27,15 @@ namespace Library.GUI.Basic
         protected SpriteFont _Font;
         protected Layout _Layout;
         protected bool _IsDirty;
+        #endregion
+
+        #region Events
+        public delegate void FormEventHandler(object obj, EventArgs e);
+
+        /// <summary>
+        /// An event fired when the form has been closed.
+        /// </summary>
+        public event FormEventHandler Closed;
         #endregion
 
         #region Indexers
@@ -125,6 +132,13 @@ namespace Library.GUI.Basic
             return item;
         }
         /// <summary>
+        /// Close the form.
+        /// </summary>
+        public void Close()
+        {
+            FormClosedInvoke();
+        }
+        /// <summary>
         /// Manage the list of items.
         /// </summary>
         private void ManageItems()
@@ -210,6 +224,20 @@ namespace Library.GUI.Basic
 
             //Prepare to sort the list of items based on drawing order.
             _IsDirty = true;
+        }
+        /// <summary>
+        /// Close the form.
+        /// </summary>
+        protected virtual void FormClosedInvoke()
+        {
+            //Deactivate the form.
+            IsActive = false;
+
+            //If someone has hooked up a delegate to the event, fire it.
+            if (Closed != null) { Closed(this, new EventArgs()); }
+
+            //Dispose of the form.
+            DisposeInvoke();
         }
         #endregion
 

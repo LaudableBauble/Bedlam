@@ -21,7 +21,7 @@ using Library.Infrastructure;
 namespace Library.GUI.Basic
 {
     /// <summary>
-    /// Tree nodes are used to populate a tree view with data in a hierarchical order.
+    /// Tree nodes are used to populate a tree view with data.
     /// </summary>
     public class TreeNode : Component
     {
@@ -31,12 +31,24 @@ namespace Library.GUI.Basic
         private Button _Button;
         private Checkbox _Checkbox;
         private TreeNodeState _NodeState;
+        #endregion
 
+        #region Events
         public delegate void ChildNodeAddedHandler(object obj, ChildNodeAddedEventArgs e);
         public delegate void NodeStateChangedHandler(object obj, EventArgs e);
         public delegate void TickHandler(object obj, TickEventArgs e);
+
+        /// <summary>
+        /// An event fired when the node has been ticked.
+        /// </summary>
         public event TickHandler Ticked;
+        /// <summary>
+        /// An event fired when a child node has been added.
+        /// </summary>
         public event ChildNodeAddedHandler ChildNodeAdded;
+        /// <summary>
+        /// An event fired when the state of this node has changed; ie. either collapsed or expanded.
+        /// </summary>
         public event NodeStateChangedHandler NodeStateChanged;
         #endregion
 
