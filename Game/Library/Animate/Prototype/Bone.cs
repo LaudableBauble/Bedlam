@@ -24,14 +24,8 @@ namespace Library.Animate.Prototype
         private string _Name;
         private int _Index;
         private int _ParentIndex;
-        private bool _RootBone;
-        private Vector2 _AbsolutePosition;
-        private float _AbsoluteRotation;
-        private Vector2 _RelativePosition;
-        private float _RelativeRotation;
-        private float _RelativeDirection;
-        private Vector2 _Scale;
-        private float _Length;
+        private Vector2 _StartPosition;
+        private Vector2 _EndPosition;
         #endregion
 
         #region Constructors
@@ -40,7 +34,7 @@ namespace Library.Animate.Prototype
         /// </summary>
         public Bone()
         {
-            Initialize(null, "", -1, -1, Vector2.Zero, Vector2.One, 0, 1);
+            Initialize(null, "bone", -1, -1, Vector2.Zero, Vector2.One);
         }
         /// <summary>
         /// Create a bone.
@@ -49,53 +43,33 @@ namespace Library.Animate.Prototype
         /// <param name="name">The name of the bone.</param>
         /// <param name="index">The index of the bone.</param>
         /// <param name="parentIndex">The index of the parent bone.</param>
-        /// <param name="position">The absolute position of the bone.</param>
-        /// <param name="scale">The scale of the bone.</param>
-        /// <param name="rotation">The absolute rotation of the bone.</param>
-        /// <param name="length">The length of the bone.</param>
-        public Bone(Skeleton skeleton, string name, int index, int parentIndex, Vector2 position, Vector2 scale, float rotation, float length)
+        /// <param name="startPosition">The starting position of the bone.</param>
+        /// <param name="endPosition">The ending position of the bone.</param>
+        public Bone(Skeleton skeleton, string name, int index, int parentIndex, Vector2 startPosition, Vector2 endPosition)
         {
-            Initialize(skeleton, name, index, parentIndex, position, scale, rotation, length);
+            Initialize(skeleton, name, index, parentIndex, startPosition, endPosition);
         }
         #endregion
 
         #region Methods
         /// <summary>
-        /// Intialize the bone.
+        /// Initialize the bone.
         /// </summary>
         /// <param name="skeleton">The skeleton this bone is a part of.</param>
         /// <param name="name">The name of the bone.</param>
         /// <param name="index">The index of the bone.</param>
         /// <param name="parentIndex">The index of the parent bone.</param>
-        /// <param name="position">The absolute position of the bone.</param>
-        /// <param name="scale">The scale of the bone.</param>
-        /// <param name="rotation">The absolute rotation of the bone.</param>
-        /// <param name="length">The length of the bone.</param>
-        private void Initialize(Skeleton skeleton, string name, int index, int parentIndex, Vector2 position, Vector2 scale, float rotation, float length)
+        /// <param name="startPosition">The starting position of the bone.</param>
+        /// <param name="endPosition">The ending position of the bone.</param>
+        private void Initialize(Skeleton skeleton, string name, int index, int parentIndex, Vector2 startPosition, Vector2 endPosition)
         {
             //Save the given index for future use, along with initializing a few things.
             _Skeleton = skeleton;
             _Name = name;
             _Index = index;
             _ParentIndex = parentIndex;
-            _RootBone = false;
-            _Scale = scale;
-            _AbsolutePosition = position;
-            _AbsoluteRotation = rotation;
-            _RelativePosition = Vector2.Zero;
-            _RelativeRotation = rotation;
-            _Length = length;
-            _RelativeDirection = 0;
-
-            //Check if the bone is the skeleton's root bone.
-            if (parentIndex == -1) { _RootBone = true; }
-            else
-            {
-                //Calculate the position relative to the bone's parent.
-                UpdateRelativePosition();
-                UpdateRelativeRotation();
-                UpdateRelativeDirection();
-            }
+            _StartPosition = startPosition;
+            _EndPosition = endPosition;
         }
         /// <summary>
         /// Update the bone.
@@ -107,60 +81,6 @@ namespace Library.Animate.Prototype
             UpdateRelativeRotation();
         }
 
-        /// <summary>
-        /// Update the absolute position to accommodate for a change in its relative position.
-        /// </summary>
-        public void UpdateAbsolutePosition()
-        {
-            //Update the absolute position to accommodate for a change in its relative position.
-            if (!_RootBone) { _AbsolutePosition = _RelativePosition + _Skeleton.Bones[_ParentIndex].AbsolutePosition; }
-        }
-        /// <summary>
-        /// Update the relative position to accommodate for a change in its absolute position.
-        /// </summary>
-        public void UpdateRelativePosition()
-        {
-            //Update the relative position to accommodate for a change in its absolute position.
-            if (!_RootBone) { _RelativePosition = _AbsolutePosition - _Skeleton.Bones[_ParentIndex].AbsolutePosition; }
-        }
-        /// <summary>
-        /// Update the absolute rotation to accommodate for a change in its relative rotation.
-        /// </summary>
-        public void UpdateAbsoluteRotation()
-        {
-            //Update the absolute rotation to accommodate for a change in its relative rotation.
-            if (!_RootBone) { _AbsoluteRotation = _Skeleton.Bones[_ParentIndex].AbsoluteRotation + _RelativeRotation; }
-        }
-        /// <summary>
-        /// Update the relative rotation to accommodate for a change in its absolute rotation.
-        /// </summary>
-        public void UpdateRelativeRotation()
-        {
-            //Update the relative rotation to accommodate for a change in its absolute rotation.
-            if (!_RootBone) { UpdateRelativeRotation(_Skeleton.Bones[_ParentIndex].AbsoluteRotation); }
-        }
-        /// <summary>
-        /// Update the relative rotation to accommodate for a change in its absolute rotation.
-        /// </summary>
-        /// <param name="parentRotation">The absolute rotation of the parent.</param>
-        public void UpdateRelativeRotation(float parentRotation)
-        {
-            //Update the relative rotation to accommodate for a change in its absolute rotation.
-            if (!_RootBone) { _RelativeRotation = _AbsoluteRotation + ((-1) * parentRotation); }
-        }
-        /// <summary>
-        /// Update the relative direction, according to the rotation and movement of the parent.
-        /// </summary>
-        public void UpdateRelativeDirection()
-        {
-            //Check if the bone has a parent.
-            if (!_RootBone)
-            {
-                //Update the relative direction, according to the rotation and movement of the parent.
-                _RelativeDirection = /*Helper.WrapAngle(*/Helper.DifferenceInDirection(_Skeleton.Bones[_ParentIndex].AbsolutePosition,
-                    _Skeleton.Bones[_ParentIndex].AbsoluteRotation, _AbsolutePosition);
-            }
-        }
         /// <summary>
         /// Deep clone this bone.
         /// </summary>
@@ -174,12 +94,8 @@ namespace Library.Animate.Prototype
             bone.Name = _Name;
             bone.Index = _Index;
             bone.ParentIndex = _ParentIndex;
-            bone.RootBone = _RootBone;
-            bone.AbsolutePosition = _AbsolutePosition;
-            bone.AbsoluteRotation = _AbsoluteRotation;
-            bone.RelativeDirection = _RelativeDirection;
-            bone.Scale = _Scale;
-            bone.Length = _Length;
+            bone.StartPosition = _StartPosition;
+            bone.EndPosition = _EndPosition;
 
             //Return the deep cloned bone.
             return bone;
@@ -204,6 +120,14 @@ namespace Library.Animate.Prototype
             set { _Name = value; }
         }
         /// <summary>
+        /// The index of the bone.
+        /// </summary>
+        public int Index
+        {
+            get { return _Index; }
+            set { _Index = value; }
+        }
+        /// <summary>
         /// The index of this bone's parent.
         /// </summary>
         public int ParentIndex
@@ -211,65 +135,39 @@ namespace Library.Animate.Prototype
             get { return _ParentIndex; }
             set { _ParentIndex = value; }
         }
-        public int Index
+        /// <summary>
+        /// Whether the bone is a root bone.
+        /// </summary>
+        public bool IsRootBone
         {
-            get { return _Index; }
-            set { _Index = value; }
-        }
-        public bool RootBone
-        {
-            get { return _RootBone; }
-            set { _RootBone = value; }
+            get { return _ParentIndex == -1; }
         }
         /// <summary>
-        /// The absolute position of the bone.
+        /// The starting position of the bone, ie. the origin.
         /// </summary>
-        public Vector2 AbsolutePosition
+        public Vector2 StartPosition
         {
-            get { return _AbsolutePosition; }
-            set { _AbsolutePosition = value; UpdateRelativePosition(); }
+            get { return _StartPosition; }
+            set { _StartPosition = value; }
         }
         /// <summary>
-        /// The absolute rotation of the bone.
+        /// The ending position of the bone.
         /// </summary>
-        public float AbsoluteRotation
+        public Vector2 EndPosition
         {
-            get { return _AbsoluteRotation; }
-            set { _AbsoluteRotation = value; UpdateRelativeRotation(); }
+            get { return _EndPosition; }
+            set { _EndPosition = value; }
         }
         /// <summary>
-        /// The position of the bone, relative to its parent.
+        /// The rotation of the bone.
         /// </summary>
-        public Vector2 RelativePosition
+        public float Rotation
         {
-            get { return _RelativePosition; }
-            set { _RelativePosition = value; UpdateAbsolutePosition(); }
+            get { return Helper.CalculateAngleFromOrbitPositionBone(_StartPosition, _EndPosition); }
         }
-        /// <summary>
-        /// The rotation of the bone, relative to its parent.
-        /// </summary>
-        public float RelativeRotation
+        public Matrix Transform
         {
-            get { return _RelativeRotation; }
-            set { _RelativeRotation = value; UpdateAbsoluteRotation(); }
-        }
-        /// <summary>
-        /// The direction of the bone, relative to its parent.
-        /// </summary>
-        public float RelativeDirection
-        {
-            get { return _RelativeDirection; }
-            set { _RelativeDirection = value; }
-        }
-        public Vector2 Scale
-        {
-            get { return _Scale; }
-            set { _Scale = value; }
-        }
-        public float Length
-        {
-            get { return _Length; }
-            set { _Length = value; }
+            get { return Matrix.}
         }
         #endregion
     }

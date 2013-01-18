@@ -58,6 +58,7 @@ namespace Library.Animate.Prototype
             _Animations = new List<Animation>();
             _Sprites = new SpriteManager();
 
+            //Initialize the bone brushes.
             _BoneBrush = new FarseerPhysics.DrawingSystem.LineBrush(1, Color.Black);
             _SelectedBoneBrush = new FarseerPhysics.DrawingSystem.LineBrush(1, Color.Green);
             _JointBrush = new FarseerPhysics.DrawingSystem.LineBrush(1, Color.Red);
@@ -70,7 +71,7 @@ namespace Library.Animate.Prototype
             catch { }
 
             //Set the skeleton's position to be the same as its root bone.
-            _Position = RootBoneExists() ? GetRootBone().AbsolutePosition : Vector2.Zero;
+            _Position = RootBoneExists() ? GetRootBone().StartPosition : Vector2.Zero;
         }
         /// <summary>
         /// Load the skeleton's content.
@@ -106,8 +107,8 @@ namespace Library.Animate.Prototype
             foreach (Sprite sprite in _Sprites.Sprites)
             {
                 //Update the position and rotation.
-                sprite.Position = _Bones[Int32.Parse(sprite.Tag)].AbsolutePosition;
-                sprite.Rotation = _Bones[Int32.Parse(sprite.Tag)].AbsoluteRotation;
+                sprite.Position = _Bones[Int32.Parse(sprite.Tag)].StartPosition;
+                sprite.Rotation = _Bones[Int32.Parse(sprite.Tag)].Rotation;
             }
         }
         /// <summary>
@@ -141,7 +142,7 @@ namespace Library.Animate.Prototype
         /// <param name="origin">The origin of the sprite relative to the bone.</param>
         public void AddSprite(string path, int boneIndex, Vector2 origin)
         {
-            Factory.Instance.AddSprite(_Sprites, _Bones[boneIndex].Name, path, _Bones[boneIndex].AbsolutePosition, 0, Vector2.One, 0, 0, 0, boneIndex.ToString(), origin);
+            Factory.Instance.AddSprite(_Sprites, _Bones[boneIndex].Name, path, _Bones[boneIndex].StartPosition, 0, Vector2.One, 0, 0, 0, boneIndex.ToString(), origin);
         }
         /// <summary>
         /// Add a sprite to the skeleton.
@@ -151,7 +152,7 @@ namespace Library.Animate.Prototype
         /// <param name="origin">The origin of the sprite relative to the bone.</param>
         public void AddSprite(Texture2D texture, int boneIndex, Vector2 origin)
         {
-            Factory.Instance.AddSprite(_Sprites, _Bones[boneIndex].Name, texture, _Bones[boneIndex].AbsolutePosition, 0, Vector2.One, 0, 0, 0, boneIndex.ToString(), origin);
+            Factory.Instance.AddSprite(_Sprites, _Bones[boneIndex].Name, texture, _Bones[boneIndex].StartPosition, 0, Vector2.One, 0, 0, 0, boneIndex.ToString(), origin);
         }
         /// <summary>
         /// Transform the skeleton according to the state of its animation.
@@ -178,15 +179,15 @@ namespace Library.Animate.Prototype
                     if (animation.IsActive)
                     {
                         //Transform the bone according to the normalised blend factor of the animation.
-                        rotation += (animation.TransformBone(boneIndex) * (animation.GetBlendFactor(bone) / blendSum));
+                        rotation += animation.TransformBone(boneIndex) * (animation.GetBlendFactor(bone) / blendSum);
                     }
                 }
 
                 //If the bone's a root bone, take that into account.
-                if (bone.RootBone)
+                if (bone.IsRootBone)
                 {
                     //Set the bone's rotation to be a mix of the blended bone rotation and the skeleton's rotation.
-                    bone.AbsoluteRotation = (rotation + _Rotation);
+                    bone.AbsoluteRotation = rotation + _Rotation;
                     bone.AbsolutePosition = _Position;
                 }
                 //Otherwise continue as normal.
