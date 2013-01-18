@@ -93,16 +93,16 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Animate\Animation.cs" />
+    <Compile Include="Animate\Obsolete\Animation.cs" />
     <Compile Include="Animate\AnimationReader.cs" />
-    <Compile Include="Animate\Bone.cs" />
+    <Compile Include="Animate\Obsolete\Bone.cs" />
     <Compile Include="Animate\Prototype\Animation.cs" />
     <Compile Include="Animate\Prototype\Bone.cs" />
     <Compile Include="Animate\Prototype\Keyframe.cs" />
     <Compile Include="Animate\Prototype\Skeleton.cs" />
     <Compile Include="Animate\SkeletonReader.cs" />
-    <Compile Include="Animate\Keyframe.cs" />
-    <Compile Include="Animate\Skeleton.cs" />
+    <Compile Include="Animate\Obsolete\Keyframe.cs" />
+    <Compile Include="Animate\Obsolete\Skeleton.cs" />
     <Compile Include="Core\Limb.cs" />
     <Compile Include="Core\TextureItem.cs" />
     <Compile Include="Core\Item.cs" />
@@ -183,6 +183,7 @@
       <Name>Farseer Physics XNA</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\XNA Game Studio\Microsoft.Xna.GameStudio.targets" />
   <!--

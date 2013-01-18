@@ -495,7 +495,6 @@ namespace Library
         /// <returns>The orbit position.</returns>
         public static Vector2 CalculateOrbitPosition(Vector2 position, float rotation, float offset)
         {
-            //Return the orbit position.
             return (Vector2.Add(Vector2.Multiply(Helper.RadiansToVector(rotation), offset), position));
         }
         /// <summary>
@@ -659,7 +658,7 @@ namespace Library
                     //The absolute position.
                     textWriter.WriteStartElement("Position");
                     textWriter.WriteStartElement("X");
-                    textWriter.WriteString(bone.AbsolutePosition.X.ToString());
+                    /*textWriter.WriteString(bone.AbsolutePosition.X.ToString());
                     textWriter.WriteEndElement();
                     textWriter.WriteStartElement("Y");
                     textWriter.WriteString(bone.AbsolutePosition.Y.ToString());
@@ -675,7 +674,7 @@ namespace Library
                     textWriter.WriteString(bone.Scale.X.ToString());
                     textWriter.WriteEndElement();
                     textWriter.WriteStartElement("Y");
-                    textWriter.WriteString(bone.Scale.Y.ToString());
+                    textWriter.WriteString(bone.Scale.Y.ToString());*/
                     textWriter.WriteEndElement();
                     textWriter.WriteEndElement();
                     //The length.
@@ -735,7 +734,7 @@ namespace Library
                 //The absolute position.
                 textWriter.WriteStartElement("Position");
                 textWriter.WriteStartElement("X");
-                textWriter.WriteString(bone.AbsolutePosition.X.ToString());
+                /*textWriter.WriteString(bone.AbsolutePosition.X.ToString());
                 textWriter.WriteEndElement();
                 textWriter.WriteStartElement("Y");
                 textWriter.WriteString(bone.AbsolutePosition.Y.ToString());
@@ -751,7 +750,7 @@ namespace Library
                 textWriter.WriteString(bone.Scale.X.ToString());
                 textWriter.WriteEndElement();
                 textWriter.WriteStartElement("Y");
-                textWriter.WriteString(bone.Scale.Y.ToString());
+                textWriter.WriteString(bone.Scale.Y.ToString());*/
                 textWriter.WriteEndElement();
                 textWriter.WriteEndElement();
                 //The length.
@@ -885,7 +884,8 @@ namespace Library
                         float length = float.Parse(boneNode.SelectSingleNode("Length").InnerText);
 
                         //Add the loaded bone to the keyframe.
-                        keyframe.AddBone(new Bone(skeleton, name, index, parentIndex, position, scale, rotation, length));
+                        //keyframe.AddBone(new Bone(skeleton, name, index, parentIndex, position, scale, rotation, length));
+                        keyframe.AddBone(new Bone(skeleton, name, index, parentIndex, position, Helper.CalculateOrbitPosition(position, rotation, length)));
 
                         //The code below is only a temporary fix and corrects a problem with relative bone rotations in a keyframe.
                         try
@@ -894,7 +894,7 @@ namespace Library
                             Keyframe prev = keyframe.BonesToBe.Exists(b => (parentIndex == b.Index)) ? keyframe : animation.GetPreviousKeyframe(parentIndex, keyframe.FrameNumber + 1);
                             Bone parent = prev.GetBone(parentIndex);
 
-                            bone.UpdateRelativeRotation(parent.AbsoluteRotation);
+                            //bone.UpdateRelativeRotation(parent.AbsoluteRotation);
                         }
                         catch { }
                     }

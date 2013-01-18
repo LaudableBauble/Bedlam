@@ -286,8 +286,8 @@ namespace Game.Editors
                         foreach (Bone b in _Character.Skeleton.Bones)
                         {
                             //The average distance to the bone.
-                            float distance = Vector2.Distance(new Vector2(Mouse.GetState().X, Mouse.GetState().Y), Vector2.Divide(Vector2.Add(b.AbsolutePosition,
-                                Helper.CalculateOrbitPosition(b.AbsolutePosition, b.AbsoluteRotation, b.Length)), 2));
+                            float distance = Vector2.Distance(new Vector2(Mouse.GetState().X, Mouse.GetState().Y), Vector2.Divide(Vector2.Add(b.TransformedPosition,
+                                Helper.CalculateOrbitPosition(b.TransformedPosition, b.TransformedRotation, b.Length)), 2));
 
                             //Determine the shortest distance and the bone.
                             if (shortest == -1) { index = b.Index; shortest = distance; }
@@ -346,13 +346,13 @@ namespace Game.Editors
                         if (input.CurrentKeyboardStates[0].IsKeyDown(Keys.Right))
                         {
                             //Rotate the bone and acknowledge that it has been modified.
-                            _Character.Skeleton.Bones[_SelectedBoneIndex].AbsoluteRotation += .1f;
+                            _Character.Skeleton.Bones[_SelectedBoneIndex].Rotation += .1f;
                             _ModifiedBone[_SelectedBoneIndex] = true;
                         }
                         else if (input.CurrentKeyboardStates[0].IsKeyDown(Keys.Left))
                         {
                             //Rotate the bone and acknowledge that it has been modified.
-                            _Character.Skeleton.Bones[_SelectedBoneIndex].AbsoluteRotation -= .1f;
+                            _Character.Skeleton.Bones[_SelectedBoneIndex].Rotation -= .1f;
                             _ModifiedBone[_SelectedBoneIndex] = true;
                         }
                     }
@@ -386,20 +386,20 @@ namespace Game.Editors
                 Bone bone = _Character.Skeleton.BoneUpdateOrder[boneIndex];
 
                 //If the bone's not a root bone, continue as usual.
-                if (!bone.RootBone)
+                if (!bone.IsRootBone)
                 {
                     //The new absolute position.
-                    bone.AbsolutePosition = Helper.CalculateOrbitPosition(_Character.Skeleton.Bones[bone.ParentIndex].AbsolutePosition,
+                    /*bone.AbsolutePosition = Helper.CalculateOrbitPosition(_Character.Skeleton.Bones[bone.ParentIndex].AbsolutePosition,
                         (bone.RelativeDirection + _Character.Skeleton.Bones[bone.ParentIndex].AbsoluteRotation), Vector2.Distance(Vector2.Zero, bone.RelativePosition));
 
                     //Update the absolute rotation and the relative direction.
                     bone.UpdateAbsoluteRotation();
-                    bone.UpdateRelativeDirection();
+                    bone.UpdateRelativeDirection();*/
                 }
             }
         }
         /// <summary>
-        /// Transform the skeleton according to a state of one of its animations, that is a certain keyframe.
+        /// Transform the skeleton according to a state of one of its animations, ie. a certain keyframe.
         /// </summary>
         /// <param name="animation">The animation in focus.</param>
         /// <param name="frameNumber">The index of the frame.</param>
@@ -411,54 +411,21 @@ namespace Game.Editors
                 //Current bone.
                 Bone bone = _Character.Skeleton.BoneUpdateOrder[boneIndex];
 
-                //If the bone's a root bone, take that into account.
-                if (bone.RootBone)
+                //If the frame happens to be a keyframe.
+                if (animation.Keyframes.Exists(kf => (kf.FrameNumber == frameNumber)))
                 {
-                    //If the frame happens to be a keyframe.
-                    if (animation.Keyframes.Exists(kf => (kf.FrameNumber == frameNumber)))
+                    //Get the keyframe.
+                    Keyframe keyframe = animation.Keyframes.Find(kf => (kf.FrameNumber == frameNumber));
+
+                    //If the bone is involved in any key changes in the not so distant future.
+                    if (keyframe.ExistsBone(bone.Index))
                     {
-                        //Get the keyframe.
-                        Keyframe keyframe = animation.Keyframes.Find(kf => (kf.FrameNumber == frameNumber));
+                        //Get the correct bone in the next keyframe's list of bones to update, that is the one that's currently being updated.
+                        Bone boneToBe = keyframe.GetBone(bone.Index);
 
-                        //If the bone is involved in any key changes in the not so distant future.
-                        if (keyframe.ExistsBone(bone.Index))
-                        {
-                            //Get the correct bone in the next keyframe's list of bones to update, that is the one that's currently being updated.
-                            Bone boneToBe = keyframe.GetBone(bone.Index);
-
-                            //Perform the linear interpolation between the last and next keyframe bone states.
-                            bone.AbsoluteRotation = MathHelper.Lerp(bone.AbsoluteRotation, boneToBe.AbsoluteRotation, 1);
-                        }
+                        //Perform the linear interpolation between the last and next keyframe bone states.
+                        bone.Rotation = MathHelper.Lerp(bone.Rotation, boneToBe.Rotation, 1);
                     }
-                }
-                //Otherwise continue as normal.
-                else
-                {
-                    //If the frame happens to be a keyframe.
-                    if (animation.Keyframes.Exists(kf => (kf.FrameNumber == frameNumber)))
-                    {
-                        //Get the keyframe.
-                        Keyframe keyframe = animation.Keyframes.Find(kf => (kf.FrameNumber == frameNumber));
-
-                        //If the bone is involved in any key changes in the not so distant future.
-                        if (keyframe.ExistsBone(bone.Index))
-                        {
-                            //Get the correct bone in the next keyframe's list of bones to update, that is the one that's currently being updated.
-                            Bone boneToBe = keyframe.GetBone(bone.Index);
-
-                            //Perform linear interpolation between the last and next keyframe bone states.
-                            bone.RelativeRotation = MathHelper.Lerp(bone.RelativeRotation, boneToBe.RelativeRotation, 1);
-                        }
-                    }
-
-                    //The new absolute position.
-                    bone.AbsolutePosition = Helper.CalculateOrbitPosition(_Character.Skeleton.Bones[bone.ParentIndex].AbsolutePosition,
-                        (bone.RelativeDirection + _Character.Skeleton.Bones[bone.ParentIndex].AbsoluteRotation), Vector2.Distance(Vector2.Zero, bone.RelativePosition));
-
-                    //Update the absolute rotation.
-                    bone.UpdateAbsoluteRotation();
-                    //Update the relative direction.
-                    bone.UpdateRelativeDirection();
                 }
             }
         }
@@ -501,8 +468,8 @@ namespace Game.Editors
                     (_InformationList[13] as LabelListItem).Label.Text = "Selected Index: " + _SelectedBoneIndex;
                     (_InformationList[14] as LabelListItem).Label.Text = "Parent Index: " + _Character.Skeleton.Bones[_SelectedBoneIndex].ParentIndex;
                     (_InformationList[15] as LabelListItem).Label.Text = "Name: " + _Character.Skeleton.Bones[_SelectedBoneIndex].Name;
-                    (_InformationList[16] as LabelListItem).Label.Text = "Position: " + _Character.Skeleton.Bones[_SelectedBoneIndex].AbsolutePosition.ToString();
-                    (_InformationList[17] as LabelListItem).Label.Text = "Rotation: " + _Character.Skeleton.Bones[_SelectedBoneIndex].AbsoluteRotation;
+                    (_InformationList[16] as LabelListItem).Label.Text = "Position: " + _Character.Skeleton.Bones[_SelectedBoneIndex].StartPosition.ToString();
+                    (_InformationList[17] as LabelListItem).Label.Text = "Rotation: " + _Character.Skeleton.Bones[_SelectedBoneIndex].Rotation;
                     (_InformationList[18] as LabelListItem).Label.Text = "Length: " + _Character.Skeleton.Bones[_SelectedBoneIndex].Length;
                 }
                 //Otherwise just update as needed.
@@ -517,8 +484,8 @@ namespace Game.Editors
                     (_InformationList[13] as LabelListItem).Label.Text = "Selected Index: " + _SelectedBoneIndex;
                     (_InformationList[14] as LabelListItem).Label.Text = "Parent Index: " + _Character.Skeleton.Bones[_SelectedBoneIndex].ParentIndex;
                     (_InformationList[15] as LabelListItem).Label.Text = "Name: " + _Character.Skeleton.Bones[_SelectedBoneIndex].Name;
-                    (_InformationList[16] as LabelListItem).Label.Text = "Position: " + _Character.Skeleton.Bones[_SelectedBoneIndex].AbsolutePosition.ToString();
-                    (_InformationList[17] as LabelListItem).Label.Text = "Rotation: " + _Character.Skeleton.Bones[_SelectedBoneIndex].AbsoluteRotation;
+                    (_InformationList[16] as LabelListItem).Label.Text = "Position: " + _Character.Skeleton.Bones[_SelectedBoneIndex].StartPosition.ToString();
+                    (_InformationList[17] as LabelListItem).Label.Text = "Rotation: " + _Character.Skeleton.Bones[_SelectedBoneIndex].Rotation;
                     (_InformationList[18] as LabelListItem).Label.Text = "Length: " + _Character.Skeleton.Bones[_SelectedBoneIndex].Length;
                 }
             }
@@ -774,9 +741,8 @@ namespace Game.Editors
         /// </summary>
         private void MoveBone(int index, Vector2 move)
         {
-            //Move the specified bone and update its relative direction.
-            _Character.Skeleton.Bones[_SelectedBoneIndex].AbsolutePosition += move;
-            _Character.Skeleton.Bones[_SelectedBoneIndex].UpdateRelativeDirection();
+            //Move the specified bone.
+            _Character.Skeleton.Bones[_SelectedBoneIndex].StartPosition += move;
         }
         /// <summary>
         /// Save the animation.

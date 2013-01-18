@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Net;
 using Microsoft.Xna.Framework.Storage;
 
-namespace Library.Animate
+namespace Library.Animate.Obsolete
 {
     /// <summary>
     /// A bone can be linked together with other bones to become a skeleton and choreographed to perform various animations.

@@ -79,8 +79,8 @@ namespace Game
             screenManager.AddScreen(new BackgroundScreen());
             screenManager.AddScreen(new MainMenuScreen());
 
-            //Jump to the a screen. NOTE: For simplicity's sake.
-            LoadingScreen.Load(screenManager, true, new LevelEditorScreen());
+            //Jump to a specified screen. NOTE: For simplicity's and debugging's sake.
+            LoadingScreen.Load(screenManager, true, new AnimationEditorScreen());
 
             base.Initialize();
         }

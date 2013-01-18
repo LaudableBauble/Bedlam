@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Net;
 using Microsoft.Xna.Framework.Storage;
 
-namespace Library.Animate
+namespace Library.Animate.Obsolete
 {
     /// <summary>
     /// An animation is basically a list of keyframes that together lay the key steps of the animation

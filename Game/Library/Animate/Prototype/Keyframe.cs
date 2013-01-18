@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Net;
 using Microsoft.Xna.Framework.Storage;
 
-namespace Library.Animate.Prototype
+namespace Library.Animate
 {
     /// <summary>
     /// Keyframes are used to accurately determine the bone rotations at a specified time so that a skeleton can be made to animate according to wishes.

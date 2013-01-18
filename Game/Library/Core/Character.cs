@@ -95,7 +95,7 @@ namespace Library.Core
             Rotation = (Limbs.Count != 0) ? Limbs[0].Body.Rotation : Rotation;
             _Skeleton.Position = Position;
             _Skeleton.Rotation = Rotation;
-            _Skeleton.Bones[0].RelativeRotation = Rotation;
+            _Skeleton.Bones[0].Rotation = Rotation;
             _Skeleton.Update(gameTime);
 
             //Update the sprites attached to the skeleton.

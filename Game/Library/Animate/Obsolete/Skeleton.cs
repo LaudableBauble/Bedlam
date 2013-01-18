@@ -15,7 +15,7 @@ using Microsoft.Xna.Framework.Storage;
 using Library.Factories;
 using Library.Imagery;
 
-namespace Library.Animate
+namespace Library.Animate.Obsolete
 {
     /// <summary>
     /// The skeleton uses a number of linked bones and animations to animate a character.

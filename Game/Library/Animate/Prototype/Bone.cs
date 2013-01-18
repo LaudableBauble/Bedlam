@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Net;
 using Microsoft.Xna.Framework.Storage;
 
-namespace Library.Animate.Prototype
+namespace Library.Animate
 {
     /// <summary>
     /// A bone can be linked together with other bones to become a skeleton and choreographed to perform various animations.
@@ -26,6 +26,8 @@ namespace Library.Animate.Prototype
         private int _ParentIndex;
         private Vector2 _StartPosition;
         private Vector2 _EndPosition;
+        private Vector2 _TransformedPosition;
+        private float _TransformedRotation;
         #endregion
 
         #region Constructors
@@ -70,15 +72,29 @@ namespace Library.Animate.Prototype
             _ParentIndex = parentIndex;
             _StartPosition = startPosition;
             _EndPosition = endPosition;
+            _TransformedPosition = Vector2.Zero;
+            _TransformedRotation = 0;
         }
         /// <summary>
-        /// Update the bone.
+        /// Update the bone according to a transformation matrix.
+        /// Will not actually change the position or rotation of the bone, just its equivalent in the 'real' world.
         /// </summary>
-        public void Update()
+        public void Update(Matrix transform)
         {
-            //Try to keep the rotation within reasonable limits. Commentary: Scrap that last part, will ya'? Let the rotation run wild.
-            //_AbsoluteRotation = Helper.WrapAngle(_AbsoluteRotation);
-            UpdateRelativeRotation();
+            //Create the variables that'll handle the matrix decomposing.
+            Vector3 position;
+            Vector3 scale;
+            Vector2 direction;
+            Quaternion rotation;
+
+            //Decompose the transformation matrix and extract the new position, scale and rotation.
+            transform.Decompose(out scale, out rotation, out position);
+            //Get the direction from the quaternion.
+            direction = Vector2.Transform(Vector2.UnitX, rotation);
+
+            //Update the bone's position, scale and rotation.
+            _TransformedPosition = new Vector2(position.X, position.Y);
+            _TransformedRotation = (float)Math.Atan2(direction.Y, direction.X);
         }
 
         /// <summary>
@@ -164,10 +180,41 @@ namespace Library.Animate.Prototype
         public float Rotation
         {
             get { return Helper.CalculateAngleFromOrbitPositionBone(_StartPosition, _EndPosition); }
+            set { _EndPosition = Helper.CalculateOrbitPosition(_StartPosition, value, Length); }
         }
+        /// <summary>
+        /// The transformed position of the bone, ie. its absolute position according to the applied transformation matrix.
+        /// </summary>
+        public Vector2 TransformedPosition
+        {
+            get { return _TransformedPosition; }
+        }
+        /// <summary>
+        /// The transformed rotation of the bone, ie. the absolute rotation according to the applied transformation matrix.
+        /// </summary>
+        public float TransformedRotation
+        {
+            get { return _TransformedRotation; }
+        }
+        /// <summary>
+        /// The length of the bone.
+        /// </summary>
+        public float Length
+        {
+            get { return (float)Math.Abs((_StartPosition - _EndPosition).Length()); }
+            set { }
+        }
+        /// <summary>
+        /// The bone's current transformation matrix.
+        /// </summary>
         public Matrix Transform
         {
-            get { return Matrix.}
+            get
+            {
+                return Matrix.CreateScale(1, 1, 1) *
+                    Matrix.CreateRotationZ(Rotation) *
+                    Matrix.CreateTranslation(StartPosition.X, StartPosition.Y, 0);
+            }
         }
         #endregion
     }

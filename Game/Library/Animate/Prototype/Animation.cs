@@ -12,7 +12,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Net;
 using Microsoft.Xna.Framework.Storage;
 
-namespace Library.Animate.Prototype
+namespace Library.Animate
 {
     /// <summary>
     /// An animation is basically a list of keyframes that together lay the key steps of the animation
@@ -122,10 +122,11 @@ namespace Library.Animate.Prototype
 
         /// <summary>
         /// Transform a specified bone in the skeleton according to the state of the animation.
+        /// The method tries to return an interpolation value that is calculated between the bone's position in the previous keyframe and the next.
         /// No blend factors or strength come into play here. That is up to the skeleton to utilize correctly.
         /// </summary>
         /// <param name="boneIndex">The index of the bone transform.</param>
-        /// <returns>The rotation of the specified bone after the transformation.</returns>
+        /// <returns>The interpolated rotation of the specified bone after the transformation.</returns>
         public float TransformBone(int boneIndex)
         {
             //Current bone.
@@ -145,16 +146,12 @@ namespace Library.Animate.Prototype
                 //Calculate the interpolation amount.
                 float interpolation = CalculateInterpolation(previousKeyframe.FrameNumber, nextKeyframe.FrameNumber);
 
-                //First be mindful whether the bone is a root bone or not.
-                //Secondly, perform the linear interpolation between the last and next keyframe bone states and return the result.
-                if (bone.RootBone) { return MathHelper.Lerp(boneThatWas.AbsoluteRotation, boneToBe.AbsoluteRotation, interpolation); }
-                else { return MathHelper.Lerp(boneThatWas.RelativeRotation, boneToBe.RelativeRotation, interpolation); }
+                //Perform the linear interpolation between the last and next keyframe bone states and return the result.
+                return MathHelper.Lerp(boneThatWas.Rotation, boneToBe.Rotation, interpolation);
             }
 
-            //First be mindful whether the bone is a root bone or not.
-            //Secondly, as the transformation has not occured, simply return the current and unmodified rotation of the bone.
-            if (bone.RootBone) { return bone.AbsoluteRotation; }
-            else { return bone.RelativeRotation; }
+            //As the transformation has not occured, simply return the current and unmodified rotation of the bone.
+            return bone.Rotation;
         }
         /// <summary>
         /// Transform the skeleton according to the state of its animation.
@@ -163,13 +160,13 @@ namespace Library.Animate.Prototype
         public void TransformSkeleton()
         {
             //Loop through all bones in the skeleton.
-            for (int boneIndex = 0; boneIndex < _Skeleton.BoneUpdateOrder.Count; boneIndex++)
+            /*for (int boneIndex = 0; boneIndex < _Skeleton.BoneUpdateOrder.Count; boneIndex++)
             {
                 //Current bone.
                 Bone bone = _Skeleton.BoneUpdateOrder[boneIndex];
 
                 //If the bone's a root bone, take that into account.
-                if (bone.RootBone)
+                if (bone.IsRootBone)
                 {
                     //If the bone is involved in any key changes in the not so distant future.
                     if (_Keyframes.Exists(kf => (kf.ExistsBone(bone.Index))))
@@ -219,7 +216,7 @@ namespace Library.Animate.Prototype
                     //Update the relative direction.
                     bone.UpdateRelativeDirection();
                 }
-            }
+            }*/
         }
         /// <summary>
         /// Transform the skeleton according to the state of its animation.
@@ -353,12 +350,11 @@ namespace Library.Animate.Prototype
             #endregion
         }
         /// <summary>
-        /// Reset the specified keyframe.
+        /// Reset the specified keyframe to factory settings, i.e the natural/current pose of the skeleton.
         /// </summary>
         /// <param name="frameNumber">The keyframe's frame number.</param>
         public void ResetKeyframe(int frameNumber)
         {
-            //Reset the specified keyframe to factory settings, i.e the natural/current pose of the skeleton.
             GetKeyframe(frameNumber).SetBones(_Skeleton);
         }
         /// <summary>

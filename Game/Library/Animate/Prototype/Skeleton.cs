@@ -15,7 +15,7 @@ using Microsoft.Xna.Framework.Storage;
 using Library.Factories;
 using Library.Imagery;
 
-namespace Library.Animate.Prototype
+namespace Library.Animate
 {
     /// <summary>
     /// The skeleton uses a number of linked bones and animations to animate a character.
@@ -30,6 +30,7 @@ namespace Library.Animate.Prototype
 
         private Vector2 _Position;
         private float _Rotation;
+
         private FarseerPhysics.DrawingSystem.LineBrush _BoneBrush;
         private FarseerPhysics.DrawingSystem.LineBrush _SelectedBoneBrush;
         private FarseerPhysics.DrawingSystem.LineBrush _JointBrush;
@@ -50,13 +51,15 @@ namespace Library.Animate.Prototype
         /// Initialize the skeleton.
         /// </summary>
         /// <param name="graphicsDevice">The graphics device to be used.</param>
-        protected void Initialize(GraphicsDevice graphicsDevice)
+        public void Initialize(GraphicsDevice graphicsDevice)
         {
             //Initialize variables.
             _Bones = new List<Bone>();
             _BoneUpdateOrder = _Bones;
             _Animations = new List<Animation>();
             _Sprites = new SpriteManager();
+            _Position = HasRootBone() ? GetRootBone().StartPosition : Vector2.Zero;
+            _Rotation = 0;
 
             //Initialize the bone brushes.
             _BoneBrush = new FarseerPhysics.DrawingSystem.LineBrush(1, Color.Black);
@@ -69,9 +72,6 @@ namespace Library.Animate.Prototype
                 _JointBrush.Load(graphicsDevice);
             }
             catch { }
-
-            //Set the skeleton's position to be the same as its root bone.
-            _Position = RootBoneExists() ? GetRootBone().StartPosition : Vector2.Zero;
         }
         /// <summary>
         /// Load the skeleton's content.
@@ -88,9 +88,6 @@ namespace Library.Animate.Prototype
         /// <param name="gameTime">The engine time to adhere to.</param>
         public void Update(GameTime gameTime)
         {
-            //Update all bones in the skeleton.
-            _Bones.ForEach(b => b.Update());
-
             //If there's an active animation to update.
             if (ActiveAnimationsExists())
             {
@@ -164,10 +161,12 @@ namespace Library.Animate.Prototype
             {
                 //Current bone.
                 Bone bone = _BoneUpdateOrder[boneIndex];
-                //A 'tabula rasa' just waiting to be filled with bone rotational data.
+                //A 'tabula rasa' just waiting to be filled with bone rotational data. The new rotation of the bone.
                 float rotation = 0;
                 //The sum of all blend factors.
                 float blendSum = 0;
+
+                //The 
 
                 //Sum up all animations' individual blend factors for this bone.
                 foreach (Animation animation in _Animations) { if (animation.IsActive) { blendSum += animation.GetBlendFactor(bone); } }
@@ -183,28 +182,14 @@ namespace Library.Animate.Prototype
                     }
                 }
 
-                //If the bone's a root bone, take that into account.
-                if (bone.IsRootBone)
-                {
-                    //Set the bone's rotation to be a mix of the blended bone rotation and the skeleton's rotation.
-                    bone.AbsoluteRotation = rotation + _Rotation;
-                    bone.AbsolutePosition = _Position;
-                }
-                //Otherwise continue as normal.
-                else
-                {
-                    //Set the bone rotation.
-                    bone.RelativeRotation = rotation;
+                //Set the bone's rotation.
+                bone.Rotation = rotation;
 
-                    //The new absolute position and relative rotation.
-                    bone.AbsolutePosition = Helper.CalculateOrbitPosition(_Bones[bone.ParentIndex].AbsolutePosition,
-                        (bone.RelativeDirection + _Bones[bone.ParentIndex].AbsoluteRotation), Vector2.Distance(Vector2.Zero, bone.RelativePosition));
+                //Get the parent's transformation matrix.
+                Matrix parentTransform = bone.IsRootBone ? Matrix.Identity : _Bones[bone.ParentIndex].Transform;
 
-                    //Update the absolute rotation.
-                    bone.UpdateAbsoluteRotation();
-                    //Update the relative direction.
-                    bone.UpdateRelativeDirection();
-                }
+                //Update the bone according to the transformation matrices.
+                bone.Update(bone.Transform * parentTransform);
             }
         }
         /// <summary>
@@ -220,13 +205,13 @@ namespace Library.Animate.Prototype
                 if (b.Index == selected)
                 {
                     //Draw with green.
-                    _SelectedBoneBrush.Draw(spriteBatch, b.AbsolutePosition, Helper.CalculateOrbitPosition(b.AbsolutePosition, b.AbsoluteRotation, b.Length));
+                    _SelectedBoneBrush.Draw(spriteBatch, b.TransformedPosition, Helper.CalculateOrbitPosition(b.TransformedPosition, b.TransformedRotation, b.Length));
                 }
                 //Draw the bone with black.
-                else { _BoneBrush.Draw(spriteBatch, b.AbsolutePosition, Helper.CalculateOrbitPosition(b.AbsolutePosition, b.AbsoluteRotation, b.Length)); }
+                else { _BoneBrush.Draw(spriteBatch, b.TransformedPosition, Helper.CalculateOrbitPosition(b.TransformedPosition, b.TransformedRotation, b.Length)); }
 
                 //Draw the joint.
-                _JointBrush.Draw(spriteBatch, b.AbsolutePosition, Helper.CalculateOrbitPosition(b.AbsolutePosition, 0, 1));
+                _JointBrush.Draw(spriteBatch, b.TransformedPosition, Helper.CalculateOrbitPosition(b.TransformedPosition, 0, 1));
             }
         }
         /// <summary>
@@ -234,7 +219,6 @@ namespace Library.Animate.Prototype
         /// </summary>
         public void AddAnimation()
         {
-            //Add an animation to the skeleton.
             _Animations.Add(new Animation(this));
         }
         /// <summary>
@@ -252,7 +236,6 @@ namespace Library.Animate.Prototype
         /// <param name="animation">The animation to add.</param>
         public void AddAnimation(Animation animation)
         {
-            //Add an animation to the skeleton.
             _Animations.Add(animation);
         }
         /// <summary>
@@ -262,7 +245,6 @@ namespace Library.Animate.Prototype
         /// <param name="frameNumber">The number this keyframe has in the animation.</param>
         public void AddKeyframe(int index, int frameNumber)
         {
-            //Add a bone to the skeleton.
             _Animations[index].AddKeyframe(frameNumber);
         }
         /// <summary>
@@ -273,15 +255,14 @@ namespace Library.Animate.Prototype
         /// <param name="bone">A copy of the bone to animate, only modified to portray the final composition of that bone. This is what the bone will animate into.</param>
         public void AddBoneToBe(int animationIndex, int keyframeIndex, Bone bone)
         {
-            //Add a bone to be the keyframe a keyframe of an animation.
             _Animations[animationIndex].Keyframes[keyframeIndex].AddBone(bone);
         }
         /// <summary>
-        /// Sort the list of bones so that they are stored in a hierarchical fashion.
+        /// Sort the list of bones so that they are stored in a hierarchical fashion, ie. by parent index.
+        /// That is the bones with the lowest parent index will show up at the top of the list.
         /// </summary>
         public void SortBones()
         {
-            //Sort the bones by parent index, that is the bones with the lowest parent index will show up at the top of the list.
             _BoneUpdateOrder.Sort((a, b) => a.ParentIndex.CompareTo(b.ParentIndex));
         }
         /// <summary>
@@ -312,23 +293,22 @@ namespace Library.Animate.Prototype
             if (parentIndex != -1)
             {
                 //Calculate the position of the bone by looking at the position, rotation and length of its parent.
-                return (Helper.CalculateOrbitPosition(_Bones[parentIndex].AbsolutePosition, _Bones[parentIndex].AbsoluteRotation, _Bones[parentIndex].Length));
+                return Helper.CalculateOrbitPosition(_Bones[parentIndex].StartPosition, _Bones[parentIndex].Rotation, _Bones[parentIndex].Length);
             }
             else { return Vector2.Zero; }
         }
-        public float CalculateLength(int index, Vector2 childPosition)
+        /*public float CalculateLength(int index, Vector2 childPosition)
         {
             //Calculate the position of the bone by looking at the position, rotation and length of its parent.
             return (Vector2.Distance(Bones[index].RelativePosition, childPosition));
-        }
+        }*/
         /// <summary>
         /// Whether a root bone exists in the skeleton.
         /// </summary>
-        /// <returns>True or false.</returns>
-        public bool RootBoneExists()
+        /// <returns>Whether a root bone exists.</returns>
+        public bool HasRootBone()
         {
-            //Check if there exists a root bone in the skeleton and return the result.
-            return (_Bones.Exists(bone => (bone.RootBone == true)));
+            return (_Bones.Exists(bone => bone.IsRootBone));
         }
         /// <summary>
         /// Get the root bone of this skeleton. If there is none, the method returns null.
@@ -336,7 +316,7 @@ namespace Library.Animate.Prototype
         /// <returns>The root bone for the skeleton.</returns>
         public Bone GetRootBone()
         {
-            return _Bones.Find(bone => (bone.RootBone == true));
+            return _Bones.Find(bone => bone.IsRootBone);
         }
         #endregion
 
@@ -346,7 +326,7 @@ namespace Library.Animate.Prototype
         /// </summary>
         public string Name { get; set; }
         /// <summary>
-        /// The position of the skeleton.
+        /// The position of the skeleton, ie. the root bone.
         /// </summary>
         public Vector2 Position
         {
@@ -354,7 +334,7 @@ namespace Library.Animate.Prototype
             set { _Position = value; }
         }
         /// <summary>
-        /// The rotation of the skeleton.
+        /// The rotation of the skeleton, ie. the root bone.
         /// </summary>
         public float Rotation
         {
