@@ -26,6 +26,7 @@ namespace Library.Animate
         private int _ParentIndex;
         private Vector2 _StartPosition;
         private Vector2 _EndPosition;
+        private Matrix _Transform;
         private Vector2 _TransformedPosition;
         private float _TransformedRotation;
         #endregion
@@ -72,14 +73,16 @@ namespace Library.Animate
             _ParentIndex = parentIndex;
             _StartPosition = startPosition;
             _EndPosition = endPosition;
+            _Transform = Matrix.Identity;
             _TransformedPosition = Vector2.Zero;
             _TransformedRotation = 0;
         }
         /// <summary>
-        /// Update the bone according to a transformation matrix.
+        /// Update the bone's transformation matrix, as well as its transformed position and rotation.
         /// Will not actually change the position or rotation of the bone, just its equivalent in the 'real' world.
         /// </summary>
-        public void Update(Matrix transform)
+        /// <param name="parent">The parent's transformation matrix. It needs to be stacked, ie. it needs to contain parent * grandparent etc. all the way to the root.</param>
+        public void Update(Matrix parent)
         {
             //Create the variables that'll handle the matrix decomposing.
             Vector3 position;
@@ -87,13 +90,20 @@ namespace Library.Animate
             Vector2 direction;
             Quaternion rotation;
 
+            //Get the local transformation matrix and multiply it with the parent transformation.
+            _Transform = Matrix.CreateScale(1, 1, 1) * Matrix.CreateRotationZ(Rotation) * Matrix.CreateTranslation(StartPosition.X, StartPosition.Y, 0) * parent;
+            //_Transform = Matrix.CreateScale(1, 1, 1) * Matrix.CreateRotationZ(0) * Matrix.CreateTranslation(EndPosition.X, EndPosition.Y, 0) * parent;
+
             //Decompose the transformation matrix and extract the new position, scale and rotation.
-            transform.Decompose(out scale, out rotation, out position);
+            _Transform.Decompose(out scale, out rotation, out position);
             //Get the direction from the quaternion.
             direction = Vector2.Transform(Vector2.UnitX, rotation);
 
+            if (new Vector2(position.X, position.Y) != _TransformedPosition)
+            { }
+
             //Update the bone's position, scale and rotation.
-            _TransformedPosition = new Vector2(position.X, position.Y);
+            _TransformedPosition = new Vector2(position.X - _EndPosition.X + _StartPosition.X, position.Y - _EndPosition.Y + _StartPosition.Y);
             _TransformedRotation = (float)Math.Atan2(direction.Y, direction.X);
         }
 
@@ -159,7 +169,7 @@ namespace Library.Animate
             get { return _ParentIndex == -1; }
         }
         /// <summary>
-        /// The starting position of the bone, ie. the origin.
+        /// The starting position of the bone, ie. the origin, relative to the starting position of the parent. NOTE: Decide what the positions are relative to, this is KEY!
         /// </summary>
         public Vector2 StartPosition
         {
@@ -167,7 +177,7 @@ namespace Library.Animate
             set { _StartPosition = value; }
         }
         /// <summary>
-        /// The ending position of the bone.
+        /// The ending position of the bone, relative to the starting position of the parent.
         /// </summary>
         public Vector2 EndPosition
         {
@@ -175,11 +185,11 @@ namespace Library.Animate
             set { _EndPosition = value; }
         }
         /// <summary>
-        /// The rotation of the bone.
+        /// The rotation of the bone. This updates the end position.
         /// </summary>
         public float Rotation
         {
-            get { return Helper.CalculateAngleFromOrbitPositionBone(_StartPosition, _EndPosition); }
+            get { return Helper.CalculateAngleFromOrbitPosition(_StartPosition, _EndPosition); }
             set { _EndPosition = Helper.CalculateOrbitPosition(_StartPosition, value, Length); }
         }
         /// <summary>
@@ -205,16 +215,11 @@ namespace Library.Animate
             set { }
         }
         /// <summary>
-        /// The bone's current transformation matrix.
+        /// The bone's current transformation matrix. The matrix is updated every Update().
         /// </summary>
         public Matrix Transform
         {
-            get
-            {
-                return Matrix.CreateScale(1, 1, 1) *
-                    Matrix.CreateRotationZ(Rotation) *
-                    Matrix.CreateTranslation(StartPosition.X, StartPosition.Y, 0);
-            }
+            get { return _Transform; }
         }
         #endregion
     }

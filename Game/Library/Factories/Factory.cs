@@ -523,7 +523,7 @@ namespace Library.Factories
         /// <param name="length">The length of the bone.</param>
         public void AddBone(Skeleton skeleton, int parentIndex, float length)
         {
-            AddBone(skeleton, parentIndex, skeleton.CalculatePosition(parentIndex), length);
+            AddBone(skeleton, parentIndex, Vector2.Zero, length);
         }
         /// <summary>
         /// Add a bone to a skeleton.
@@ -605,7 +605,7 @@ namespace Library.Factories
         /// <param name="rotationOffset">The bone sprite's rotation offset.</param>
         public void AddBone(Skeleton skeleton, string spritePath, int parentIndex, float length, Vector2 origin, float rotationOffset)
         {
-            AddBone(skeleton, spritePath, parentIndex, skeleton.CalculatePosition(parentIndex), length, origin, rotationOffset);
+            AddBone(skeleton, spritePath, parentIndex, Vector2.Zero, length, origin, rotationOffset);
         }
         /// <summary>
         /// Add a bone to a skeleton.
@@ -617,7 +617,6 @@ namespace Library.Factories
         /// <param name="origin">The origin of the sprite to attach to the bone.</param>
         public void AddBone(Skeleton skeleton, string spritePath, int parentIndex, Vector2 position, float length, Vector2 origin)
         {
-            //Add a bone to a skeleton.
             AddBone(skeleton, spritePath, parentIndex, position, length, origin, 0);
         }
         /// <summary>
@@ -644,7 +643,6 @@ namespace Library.Factories
         /// <param name="rotationOffset">The bone sprite's rotation offset.</param>
         public void AddBone(Skeleton skeleton, string spritePath, int parentIndex, Vector2 position, float length, Vector2 origin, float rotationOffset)
         {
-            //Add a bone to a skeleton.
             AddBone(skeleton, "", spritePath, -1, parentIndex, position, length, 0, Vector2.One, origin, rotationOffset);
         }
         /// <summary>
@@ -658,7 +656,6 @@ namespace Library.Factories
         /// <param name="origin">The origin of the sprite to attach to the bone.</param>
         public void AddBone(Skeleton skeleton, string name, string spritePath, Vector2 position, float length, Vector2 origin)
         {
-            //Add the bone.
             AddBone(skeleton, name, spritePath, position, length, 0, origin);
         }
         /// <summary>
@@ -673,7 +670,6 @@ namespace Library.Factories
         /// <param name="origin">The origin of the sprite to attach to the bone.</param>
         public void AddBone(Skeleton skeleton, string name, string spritePath, Vector2 position, float length, float rotation, Vector2 origin)
         {
-            //Add the bone.
             AddBone(skeleton, name, spritePath, position, length, rotation, origin, 0);
         }
         /// <summary>
@@ -719,11 +715,9 @@ namespace Library.Factories
         /// <param name="rotation">The rotation of the bone.</param>
         /// <param name="origin">The origin of the sprite to attach to the bone.</param>
         /// <param name="rotationOffset">The bone sprite's rotation offset.</param>
-        public void AddBone(Skeleton skeleton, string name, string spritePath, int parentIndex, float length, float rotation, Vector2 origin,
-            float rotationOffset)
+        public void AddBone(Skeleton skeleton, string name, string spritePath, int parentIndex, float length, float rotation, Vector2 origin, float rotationOffset)
         {
-            //Add the bone.
-            AddBone(skeleton, name, spritePath, -1, parentIndex, skeleton.CalculatePosition(parentIndex), length, rotation, Vector2.One, origin, rotationOffset);
+            AddBone(skeleton, name, spritePath, -1, parentIndex, Vector2.Zero, length, rotation, Vector2.One, origin, rotationOffset);
         }
         /// <summary>
         /// Add a bone to a skeleton.

@@ -104,8 +104,8 @@ namespace Library.Animate
             foreach (Sprite sprite in _Sprites.Sprites)
             {
                 //Update the position and rotation.
-                sprite.Position = _Bones[Int32.Parse(sprite.Tag)].StartPosition;
-                sprite.Rotation = _Bones[Int32.Parse(sprite.Tag)].Rotation;
+                sprite.Position = _Bones[Int32.Parse(sprite.Tag)].TransformedPosition;
+                sprite.Rotation = _Bones[Int32.Parse(sprite.Tag)].TransformedRotation;
             }
         }
         /// <summary>
@@ -166,8 +166,6 @@ namespace Library.Animate
                 //The sum of all blend factors.
                 float blendSum = 0;
 
-                //The 
-
                 //Sum up all animations' individual blend factors for this bone.
                 foreach (Animation animation in _Animations) { if (animation.IsActive) { blendSum += animation.GetBlendFactor(bone); } }
 
@@ -177,19 +175,26 @@ namespace Library.Animate
                     //If the animation is active.
                     if (animation.IsActive)
                     {
+                        //Calculate the normalised blend factor and make sure it isn't NaN or 0.
+                        float blend = animation.GetBlendFactor(bone) / blendSum;
+                        blend = float.IsNaN(blend) || blend == 0 ? 1 : blend;
+
                         //Transform the bone according to the normalised blend factor of the animation.
-                        rotation += animation.TransformBone(boneIndex) * (animation.GetBlendFactor(bone) / blendSum);
+                        rotation += animation.TransformBone(boneIndex) * blend;
                     }
                 }
 
-                //Set the bone's rotation.
+                if (bone.Index == 1)
+                {
+                    Vector2 end = Helper.CalculateOrbitPosition(bone.StartPosition, rotation, bone.Length);
+                    float rot = Helper.CalculateAngleFromOrbitPosition(bone.StartPosition, end);
+                }
+
+                //Calculate the new end position of the bone.
                 bone.Rotation = rotation;
 
-                //Get the parent's transformation matrix.
-                Matrix parentTransform = bone.IsRootBone ? Matrix.Identity : _Bones[bone.ParentIndex].Transform;
-
-                //Update the bone according to the transformation matrices.
-                bone.Update(bone.Transform * parentTransform);
+                //Update the bone according to the parent's transformation matrix.
+                bone.Update(bone.IsRootBone ? Matrix.Identity : _Bones[bone.ParentIndex].Transform);
             }
         }
         /// <summary>
@@ -284,18 +289,27 @@ namespace Library.Animate
         /// <returns>The index of the bone.</returns>
         public int FindBone(Bone bone)
         {
-            //Return the index of the bone.
             return (_Bones.FindIndex(b => (b.Equals(bone))));
         }
-        public Vector2 CalculatePosition(int parentIndex)
+        /// <summary>
+        /// Calculate the absolute end position of a bone.
+        /// </summary>
+        /// <param name="index">The index of the bone in question.</param>
+        /// <returns>The absolute end position.</returns>
+        public Vector2 CalculateAbsoluteEndPosition(int index)
         {
-            //If the parent exists.
-            if (parentIndex != -1)
+            //A placeholder for the absolute position.
+            Vector2 position = Vector2.Zero;
+
+            //Stack the position and move on to the next parent, until we reach the root bone.
+            while (index != -1)
             {
-                //Calculate the position of the bone by looking at the position, rotation and length of its parent.
-                return Helper.CalculateOrbitPosition(_Bones[parentIndex].StartPosition, _Bones[parentIndex].Rotation, _Bones[parentIndex].Length);
+                position += _Bones[index].EndPosition;
+                index = _Bones[index].ParentIndex;
             }
-            else { return Vector2.Zero; }
+
+            //Return the absolute position.
+            return position;
         }
         /*public float CalculateLength(int index, Vector2 childPosition)
         {

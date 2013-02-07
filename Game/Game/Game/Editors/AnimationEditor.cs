@@ -97,7 +97,7 @@ namespace Game.Editors
             _Character.Skeleton.AddKeyframe(0, 15);
             _Character.Skeleton.AddKeyframe(0, 19);
 
-            //Intialize the list of modified bones.
+            //Initialize the list of modified bones.
             ResetModifiedBones();
 
             //Add items to the GUI.
@@ -195,24 +195,25 @@ namespace Game.Editors
                 new Vector2(35f, 0.5f), (float)Math.PI);
 
             //Head.
-            Factory.Instance.AddBone(_Character.Skeleton, "Head", "Animation/Textures/Main Character[Head]", 0, new Vector2(600, 250), 128, new Vector2(49, 128));
+            Factory.Instance.AddBone(_Character.Skeleton, "Head", "Animation/Textures/Main Character[Head]", 0, new Vector2(0, 0), 128, (float)Math.PI,
+                new Vector2(49, 128), 0);
 
             //Left Upper Arm.
-            Factory.Instance.AddBone(_Character.Skeleton, "Left Upper Arm", "Animation/Textures/Main Character[UpperArm]", 0, new Vector2(600, 250), 72,
+            Factory.Instance.AddBone(_Character.Skeleton, "Left Upper Arm", "Animation/Textures/Main Character[UpperArm]", 0, new Vector2(0, 0), 72,
                 (float)Math.PI / 2, new Vector2(9.5f, 0), (float)Math.PI);
             //Left Lower Arm.
             Factory.Instance.AddBone(_Character.Skeleton, "Left Lower Arm", "Animation/Textures/Main Character[LowerArm]", 2, 68, (float)Math.PI, new Vector2(8.5f, 0),
                 -(float)Math.PI);
 
             //Right Upper Arm.
-            Factory.Instance.AddBone(_Character.Skeleton, "Right Upper Arm", "Animation/Textures/Main Character[UpperArm]", 0, new Vector2(600, 250), 72,
+            Factory.Instance.AddBone(_Character.Skeleton, "Right Upper Arm", "Animation/Textures/Main Character[UpperArm]", 0, new Vector2(0, 0), 72,
                 -((float)Math.PI / 2), new Vector2(9.5f, 0), (float)Math.PI);
             //Right Lower Arm.
             Factory.Instance.AddBone(_Character.Skeleton, "Right Lower Arm", "Animation/Textures/Main Character[LowerArm]", 4, 68, (float)Math.PI, new Vector2(8.5f, 0),
                 (float)Math.PI);
 
             //Right Upper Leg.
-            Factory.Instance.AddBone(_Character.Skeleton, "Right Upper Leg", "Animation/Textures/Main Character[UpperLeg]", 0, new Vector2(600, 408), 69,
+            Factory.Instance.AddBone(_Character.Skeleton, "Right Upper Leg", "Animation/Textures/Main Character[UpperLeg]", 0, new Vector2(0, 158), 69,
                 3 * (-(float)Math.PI / 4), new Vector2(9.5f, 0), (float)Math.PI);
             //Right Lower Leg.
             Factory.Instance.AddBone(_Character.Skeleton, "Right Lower Leg", "Animation/Textures/Main Character[LowerLeg]", 6, 65, 3.5f * (-(float)Math.PI / 4),
@@ -222,7 +223,7 @@ namespace Game.Editors
                 -(float)Math.PI);
 
             //Left Upper Leg.
-            Factory.Instance.AddBone(_Character.Skeleton, "Left Upper Leg", "Animation/Textures/Main Character[UpperLeg]", 0, new Vector2(600, 408), 69,
+            Factory.Instance.AddBone(_Character.Skeleton, "Left Upper Leg", "Animation/Textures/Main Character[UpperLeg]", 0, new Vector2(0, 158), 69,
                 3 * ((float)Math.PI / 4), new Vector2(9.5f, 0), (float)Math.PI);
             //Left Lower Leg.
             Factory.Instance.AddBone(_Character.Skeleton, "Left Lower Leg", "Animation/Textures/Main Character[LowerLeg]", 9, 65, 3.5f * ((float)Math.PI / 4),
@@ -234,6 +235,9 @@ namespace Game.Editors
 
             //Load the character.
             _Character.LoadContent(_ContentManager);
+
+            //Reset the list of modified bones flags.
+            ResetModifiedBones();
 
             //Animation animation = contentManager.Load<Animation>("animation01");
 
@@ -385,17 +389,8 @@ namespace Game.Editors
                 //Current bone.
                 Bone bone = _Character.Skeleton.BoneUpdateOrder[boneIndex];
 
-                //If the bone's not a root bone, continue as usual.
-                if (!bone.IsRootBone)
-                {
-                    //The new absolute position.
-                    /*bone.AbsolutePosition = Helper.CalculateOrbitPosition(_Character.Skeleton.Bones[bone.ParentIndex].AbsolutePosition,
-                        (bone.RelativeDirection + _Character.Skeleton.Bones[bone.ParentIndex].AbsoluteRotation), Vector2.Distance(Vector2.Zero, bone.RelativePosition));
-
-                    //Update the absolute rotation and the relative direction.
-                    bone.UpdateAbsoluteRotation();
-                    bone.UpdateRelativeDirection();*/
-                }
+                //Update the bone according to the parent's transformation matrix.
+                bone.Update(bone.IsRootBone ? Matrix.Identity : _Character.Skeleton.Bones[bone.ParentIndex].Transform);
             }
         }
         /// <summary>
@@ -444,7 +439,7 @@ namespace Game.Editors
                     _InformationList.Items.Clear();
 
                     //Add all items again with updated information.
-                    for (int i = 0; i <= 18; i++)
+                    for (int i = 0; i <= 20; i++)
                     {
                         //add the items.
                         _InformationList.AddItem();
@@ -468,9 +463,11 @@ namespace Game.Editors
                     (_InformationList[13] as LabelListItem).Label.Text = "Selected Index: " + _SelectedBoneIndex;
                     (_InformationList[14] as LabelListItem).Label.Text = "Parent Index: " + _Character.Skeleton.Bones[_SelectedBoneIndex].ParentIndex;
                     (_InformationList[15] as LabelListItem).Label.Text = "Name: " + _Character.Skeleton.Bones[_SelectedBoneIndex].Name;
-                    (_InformationList[16] as LabelListItem).Label.Text = "Position: " + _Character.Skeleton.Bones[_SelectedBoneIndex].StartPosition.ToString();
-                    (_InformationList[17] as LabelListItem).Label.Text = "Rotation: " + _Character.Skeleton.Bones[_SelectedBoneIndex].Rotation;
-                    (_InformationList[18] as LabelListItem).Label.Text = "Length: " + _Character.Skeleton.Bones[_SelectedBoneIndex].Length;
+                    (_InformationList[16] as LabelListItem).Label.Text = "Relative Position: " + _Character.Skeleton.Bones[_SelectedBoneIndex].StartPosition.ToString();
+                    (_InformationList[17] as LabelListItem).Label.Text = "Position: " + _Character.Skeleton.Bones[_SelectedBoneIndex].TransformedPosition.ToString();
+                    (_InformationList[18] as LabelListItem).Label.Text = "Relative Rotation: " + _Character.Skeleton.Bones[_SelectedBoneIndex].Rotation;
+                    (_InformationList[19] as LabelListItem).Label.Text = "Rotation: " + _Character.Skeleton.Bones[_SelectedBoneIndex].TransformedRotation;
+                    (_InformationList[20] as LabelListItem).Label.Text = "Length: " + _Character.Skeleton.Bones[_SelectedBoneIndex].Length;
                 }
                 //Otherwise just update as needed.
                 else
@@ -484,9 +481,11 @@ namespace Game.Editors
                     (_InformationList[13] as LabelListItem).Label.Text = "Selected Index: " + _SelectedBoneIndex;
                     (_InformationList[14] as LabelListItem).Label.Text = "Parent Index: " + _Character.Skeleton.Bones[_SelectedBoneIndex].ParentIndex;
                     (_InformationList[15] as LabelListItem).Label.Text = "Name: " + _Character.Skeleton.Bones[_SelectedBoneIndex].Name;
-                    (_InformationList[16] as LabelListItem).Label.Text = "Position: " + _Character.Skeleton.Bones[_SelectedBoneIndex].StartPosition.ToString();
-                    (_InformationList[17] as LabelListItem).Label.Text = "Rotation: " + _Character.Skeleton.Bones[_SelectedBoneIndex].Rotation;
-                    (_InformationList[18] as LabelListItem).Label.Text = "Length: " + _Character.Skeleton.Bones[_SelectedBoneIndex].Length;
+                    (_InformationList[16] as LabelListItem).Label.Text = "Relative Position: " + _Character.Skeleton.Bones[_SelectedBoneIndex].StartPosition.ToString();
+                    (_InformationList[17] as LabelListItem).Label.Text = "Position: " + _Character.Skeleton.Bones[_SelectedBoneIndex].TransformedPosition.ToString();
+                    (_InformationList[18] as LabelListItem).Label.Text = "Relative Rotation: " + _Character.Skeleton.Bones[_SelectedBoneIndex].Rotation;
+                    (_InformationList[19] as LabelListItem).Label.Text = "Rotation: " + _Character.Skeleton.Bones[_SelectedBoneIndex].TransformedRotation;
+                    (_InformationList[20] as LabelListItem).Label.Text = "Length: " + _Character.Skeleton.Bones[_SelectedBoneIndex].Length;
                 }
             }
             catch { }

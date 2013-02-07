@@ -122,7 +122,7 @@ namespace Library.Animate
 
         /// <summary>
         /// Transform a specified bone in the skeleton according to the state of the animation.
-        /// The method tries to return an interpolation value that is calculated between the bone's position in the previous keyframe and the next.
+        /// The method tries to return an interpolation value that is calculated between the bone's rotation in the previous keyframe and the next.
         /// No blend factors or strength come into play here. That is up to the skeleton to utilize correctly.
         /// </summary>
         /// <param name="boneIndex">The index of the bone transform.</param>
